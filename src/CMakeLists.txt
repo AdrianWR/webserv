@@ -1,2 +1,2 @@
-add_executable(CMAKE_PROJECT_NAME main.cpp)
-target_compile_features(CMAKE_PROJECT_NAME PRIVATE cxx_std_98)
+add_executable(${CMAKE_PROJECT_NAME} main.cpp)
+target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_98)

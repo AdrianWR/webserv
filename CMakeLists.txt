@@ -14,6 +14,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	set(CMAKE_CXX_STANDARD_REQUIRED ON)
 	set(CMAKE_CXX_EXTENSIONS OFF)
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+	#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 	include(CTest)
 	 # Docs only available if this is the main app
@@ -34,7 +35,11 @@ if(${CMAKE_VERSION} VERSION_LESS 3.14)
 endif()
 
 # Compiled library code
+add_subdirectory(lib)
+
+#Compile the main executable
 add_subdirectory(src)
+
 
 # Testing only available if this is the main app
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)

@@ -8,14 +8,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(
-  hello_test
-  hello_test.cpp
-)
-target_link_libraries(
-  hello_test
-  gtest_main
-)
+add_executable(hello_test hello_test.cpp)
+target_include_directories(hello_test PRIVATE ${PROJECT_SOURCE_DIR}/include ${google_googletest_INCLUDE_DIRS})
+target_link_libraries(hello_test PRIVATE http gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(hello_test)
