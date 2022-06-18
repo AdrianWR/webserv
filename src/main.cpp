@@ -1,6 +1,10 @@
+/*
+** server.c -- a stream socket server demo
+*/
+
 #include <iostream>
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+int main(void) {
+  std::cout << "Starting new webserver..." << std::endl;
+  return 0;
 }

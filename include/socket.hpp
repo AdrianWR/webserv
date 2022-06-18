@@ -27,39 +27,66 @@ public:
     std::string message;
   };
 
-private:
+protected:
   static const int MAX_HOSTNAME = 200;
-  static const int MAX_CONNECTIONS = 5;
+  static const int SIN_FAMILY = AF_INET;
+
+  int _socket(int domain, int type, int protocol);
+  void _close();
 
 public:
   int sockfd;
-  struct sockaddr_in serv_addr;
+  int sockfd_client;
   bool is_valid;
   std::string host;
-  std::string port;
+  unsigned short int port;
 
 public:
   Socket();
   Socket(const Socket &);
   Socket &operator=(const Socket &);
-  ~Socket();
+  virtual ~Socket();
 
-  Socket(const std::string &host, const std::string &port);
-  int create();
+  Socket(const std::string &host, const unsigned short &port);
+
   int bind_and_listen(const int port);
-  void accept_connection(Socket &) const;
+  int accept_connection() const;
   bool connect(const std::string host, const int port);
 
-  bool send(const std::string) const;
-  bool send(const char *, int) const;
-  bool receive(std::string &) const;
-  bool receive(char *, int) const;
+  void start_server(void);
 
   void setNonBlocking(const bool);
   bool isReady() const;
   bool isValid() const;
+};
 
-  void _close();
+class TCPServerSocket : public Socket {
+protected:
+  static const int MAX_CONNECTIONS = 5;
+
+  void _bind();
+  void _listen();
+  void _setsockopt();
+
+public:
+  TCPServerSocket();
+  TCPServerSocket(const TCPServerSocket &);
+  TCPServerSocket &operator=(const TCPServerSocket &);
+  TCPServerSocket(const std::string &host, const unsigned short &port);
+  ~TCPServerSocket();
+
+  void server();
+};
+
+class TCPClientSocket : public Socket {
+public:
+  TCPClientSocket();
+  TCPClientSocket(const TCPClientSocket &);
+  TCPClientSocket &operator=(const TCPClientSocket &);
+  ~TCPClientSocket();
+
+private:
+  void _connect();
 };
 
 #endif

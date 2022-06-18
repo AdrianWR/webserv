@@ -7,38 +7,24 @@ TEST(TestSocket, TestSocketDefaultConstructor) {
 
   ASSERT_TRUE(s.sockfd == -1);
   ASSERT_TRUE(s.host == "");
-  ASSERT_TRUE(s.port == "");
+  ASSERT_TRUE(s.port == 0);
 }
 
 TEST(TestSocket, TestSocketHostPortConstructor) {
-  Socket s("localhost", "8080");
+  Socket s("localhost", 8080);
 
-  ASSERT_TRUE(s.sockfd == -1);
+  ASSERT_TRUE(s.sockfd != -1);
   ASSERT_TRUE(s.host == "localhost");
-  ASSERT_TRUE(s.port == "8080");
+  ASSERT_TRUE(s.port == 8080);
 }
 
-TEST(TestSocket, TestSocketCreation) {
-  Socket s;
+TEST(TestServerSocket, TestBindAndListen) {
 
-  ASSERT_TRUE(s.sockfd == -1);
-  s.create();
-  ASSERT_TRUE(s.sockfd != -1);
-}
+  int val, sock_info;
+  socklen_t len = sizeof(val);
 
-TEST(TestSocket, TestBindAndListen) {
-  Socket s;
-
-  ASSERT_TRUE(s.sockfd == -1);
-  s.create();
-  s.bind_and_listen(8080);
-  ASSERT_TRUE(s.sockfd != -1);
-
-  Socket s1;
-  s1.create();
-  try {
-    s1.bind_and_listen(8080);
-  } catch (std::exception &e) {
-    EXPECT_STREQ(e.what(), "Could not bind socket: Address already in use");
-  }
+  TCPServerSocket s("localhost", 8080);
+  sock_info = getsockopt(s.sockfd, SOL_SOCKET, SO_ACCEPTCONN, &val, &len);
+  ASSERT_EQ(sock_info, 0);
+  ASSERT_GT(val, 0);
 }
