@@ -12,6 +12,7 @@
 #include <ctime>
 #include <sstream>
 #include <string>
+#include <unistd.h>
 
 inline std::string NowTime();
 
@@ -39,8 +40,9 @@ private:
 template <typename T> Log<T>::Log() {}
 
 template <typename T> std::ostringstream &Log<T>::Get(TLogLevel level) {
-  os << NowTime();
-  os << " | [" << ToString(level) << "] | ";
+  os << NowTime() << " | ";
+  os << getpid() << " | ";
+  os << "[" << ToString(level) << "] | ";
   return os;
 }
 

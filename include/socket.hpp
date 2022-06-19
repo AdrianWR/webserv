@@ -9,6 +9,8 @@
 #include <string>
 #include <sys/socket.h>
 
+enum BlockingMode { BLOCKING, NON_BLOCKING };
+
 class Socket {
 
 public:
@@ -31,12 +33,12 @@ protected:
   static const int MAX_HOSTNAME = 200;
   static const int SIN_FAMILY = AF_INET;
 
+  enum BlockingMode _mode;
   int _socket(int domain, int type, int protocol);
   void _close();
 
 public:
-  int sockfd;
-  int sockfd_client;
+  int listener_sockfd;
   bool is_valid;
   std::string host;
   unsigned short int port;
@@ -47,7 +49,8 @@ public:
   Socket &operator=(const Socket &);
   virtual ~Socket();
 
-  Socket(const std::string &host, const unsigned short &port);
+  Socket(const std::string &host, const unsigned short &port,
+         enum BlockingMode mode = NON_BLOCKING);
 
   void setNonBlocking(const bool);
   bool isReady() const;
@@ -61,12 +64,15 @@ protected:
   void _bind();
   void _listen();
   void _setsockopt();
+  void _blocking_server();
+  void _non_blocking_server();
 
 public:
   TCPServerSocket();
   TCPServerSocket(const TCPServerSocket &);
   TCPServerSocket &operator=(const TCPServerSocket &);
-  TCPServerSocket(const std::string &host, const unsigned short &port);
+  TCPServerSocket(const std::string &host, const unsigned short &port,
+                  enum BlockingMode mode = NON_BLOCKING);
   ~TCPServerSocket();
 
   void server();
