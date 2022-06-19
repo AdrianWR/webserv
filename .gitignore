@@ -3,6 +3,7 @@
 
 build/
 .vscode/
+webserv.pdf
 
 ### C++ ###
 # Prerequisites
