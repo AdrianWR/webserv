@@ -28,3 +28,5 @@ TEST(TestServerSocket, TestBindAndListen) {
   ASSERT_EQ(sock_info, 0);
   ASSERT_GT(val, 0);
 }
+
+TEST(TestServerSocket, TestAccept) {}

@@ -49,12 +49,6 @@ public:
 
   Socket(const std::string &host, const unsigned short &port);
 
-  int bind_and_listen(const int port);
-  int accept_connection() const;
-  bool connect(const std::string host, const int port);
-
-  void start_server(void);
-
   void setNonBlocking(const bool);
   bool isReady() const;
   bool isValid() const;
