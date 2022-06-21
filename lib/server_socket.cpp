@@ -35,8 +35,8 @@ TCPServerSocket::TCPServerSocket(const std::string &host,
                                  enum BlockingMode mode)
     : Socket(host, port, mode) {
   _setsockopt(listener_sockfd);
-  _bind();
-  _listen();
+  _bind(listener_sockfd, port);
+  _listen(listener_sockfd);
 }
 
 TCPServerSocket::~TCPServerSocket() {}
@@ -94,7 +94,7 @@ void TCPServerSocket::_non_blocking_server() {
     for (int i = 0; i < max_fd; i++) {
       if (FD_ISSET(i, &ready_socket_set)) {
         if (i == listener_sockfd) {
-          int client_sockfd = _accept();
+          int client_sockfd = _accept(listener_sockfd);
           LOG(DEBUG) << "Accepted connection from " << host << ":" << port;
           FD_SET(client_sockfd, &current_socket_set);
           if (client_sockfd > max_fd) {
@@ -118,38 +118,36 @@ void TCPServerSocket::_setsockopt(int listener_sockfd) {
   }
 }
 
-void TCPServerSocket::_bind(void) {
-  struct sockaddr_in serv_addr;
+void TCPServerSocket::_bind(int listener_sockfd, unsigned short port) {
+  struct sockaddr_in server_addr;
 
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(port);
+  memset(&server_addr, 0, sizeof(server_addr));
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_addr.s_addr = INADDR_ANY;
+  server_addr.sin_port = htons(port);
 
-  if (bind(listener_sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) <
-      0) {
+  if (bind(listener_sockfd, (struct sockaddr *)&server_addr,
+           sizeof(server_addr)) < 0) {
     throw SocketException("Could not bind socket");
   }
 }
 
-void TCPServerSocket::_listen(void) {
+void TCPServerSocket::_listen(int listener_sockfd) {
   if (listen(listener_sockfd, MAX_CONNECTIONS) < 0) {
     throw SocketException("Could not listen on socket");
   }
 }
 
-int TCPServerSocket::_accept(void) {
-  struct sockaddr_storage
-      their_addr; // sockaddr_storage is a union of sockaddr and sockaddr_in6
+int TCPServerSocket::_accept(int listener_sockfd) {
+  struct sockaddr_storage in_addr; // sockaddr_storage works for IPv4 and IPv6
   socklen_t addr_length;
 
-  addr_length = sizeof their_addr;
-  int new_fd =
-      accept(listener_sockfd, reinterpret_cast<struct sockaddr *>(&their_addr),
-             &addr_length);
-  if (new_fd < 0) {
+  addr_length = sizeof(in_addr);
+  int fd = accept(listener_sockfd, (struct sockaddr *)&in_addr, &addr_length);
+  if (fd < 0) {
     throw SocketException("Could not accept client connection");
   }
-  return new_fd;
+  return fd;
 }
 
 void TCPServerSocket::handleConnection(int client_sockfd) {

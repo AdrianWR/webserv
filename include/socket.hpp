@@ -33,7 +33,6 @@ protected:
   static const int MAX_HOSTNAME = 200;
   static const int SIN_FAMILY = AF_INET;
   static const unsigned int BUFFER_SIZE = 1024;
-  struct sockaddr_in server_addr;
 
   enum BlockingMode _mode;
   int _socket(int domain, int type, int protocol);
@@ -62,11 +61,10 @@ public:
 class TCPServerSocket : public Socket {
 protected:
   static const int MAX_CONNECTIONS = 5;
-
-  void _bind();
-  void _listen();
-  void _setsockopt();
-  int _accept();
+  void _setsockopt(int sockfd);
+  void _bind(int listener_sockfd, unsigned short port);
+  void _listen(int listener_sockfd);
+  int _accept(int listener_sockfd);
   void _blocking_server();
   void _non_blocking_server();
 

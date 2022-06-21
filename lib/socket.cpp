@@ -34,9 +34,6 @@ Socket &Socket::operator=(const Socket &s) {
 Socket::Socket(const std::string &host, const unsigned short &port,
                enum BlockingMode mode)
     : host(host), port(port), _mode(mode) {
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(port);
-  server_addr.sin_addr.s_addr = inet_addr(host.c_str());
   listener_sockfd = Socket::_socket(AF_INET, SOCK_STREAM, 0);
 }
 
