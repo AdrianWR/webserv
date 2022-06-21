@@ -1,6 +1,7 @@
 #include "log.hpp"
 #include "socket.hpp"
 
+#include <poll.h>
 #include <stdlib.h>
 #include <sys/select.h>
 #include <unistd.h>
@@ -75,35 +76,48 @@ void TCPServerSocket::_blocking_server() {
 }
 
 void TCPServerSocket::_non_blocking_server() {
-  fd_set current_socket_set;
-  fd_set ready_socket_set;
-  int max_fd = listener_sockfd;
+  struct pollfd fds[200];
+  int nfds = 1;
 
-  LOG(INFO) << "Initializing synchronous I/O select multiplexer";
-  FD_ZERO(&current_socket_set);
-  FD_SET(listener_sockfd, &current_socket_set);
-  max_fd = listener_sockfd;
+  LOG(INFO) << "Initializing server polling";
+  memset(fds, 0, sizeof(fds));
+  fds[0].fd = listener_sockfd;
+  fds[0].events = POLLIN;
 
-  for (;;) {
-    LOG(INFO) << "Selecting on " << max_fd + 1 << " file descriptors";
-    ready_socket_set = current_socket_set;
-    if (select(max_fd, &ready_socket_set, NULL, NULL, NULL) < 0) {
-      throw SocketException("Could not select");
+  while (true) {
+    int ret = poll(fds, nfds, -1);
+    if (ret < 0) {
+      throw SocketException("Error polling socket");
     }
-    LOG(INFO) << "Select returned";
-    for (int i = 0; i < max_fd; i++) {
-      if (FD_ISSET(i, &ready_socket_set)) {
-        if (i == listener_sockfd) {
-          int client_sockfd = _accept(listener_sockfd);
-          LOG(DEBUG) << "Accepted connection from " << host << ":" << port;
-          FD_SET(client_sockfd, &current_socket_set);
-          if (client_sockfd > max_fd) {
-            max_fd = client_sockfd;
+    LOG(DEBUG) << "Successfully polled client socket. Current events: " << ret;
+    if (fds[0].revents & POLLIN) {
+      int new_fd = _accept(listener_sockfd);
+      if (new_fd < 0) {
+        throw SocketException("Could not accept client connection");
+      }
+      fds[nfds].fd = new_fd;
+      fds[nfds].events = POLLIN;
+      nfds++;
+    } else {
+      for (int i = 1; i < nfds; i++) {
+        if (fds[i].revents & POLLIN) {
+          char buffer[BUFFER_SIZE];
+          int bytes_read = recv(fds[i].fd, buffer, BUFFER_SIZE, 0);
+          if (bytes_read < 0) {
+            throw SocketException("Error reading from socket");
           }
-        } else {
-          LOG(DEBUG) << "Handling connection from " << host << ":" << port;
-          handleConnection(i);
-          FD_CLR(i, &current_socket_set);
+          if (bytes_read == 0) {
+            close(fds[i].fd);
+            fds[i].fd = -1;
+            nfds--;
+          } else {
+            buffer[0] = '4';
+            buffer[1] = '2';
+            LOG(DEBUG) << "Sending response to client: " << buffer;
+            if (send(fds[i].fd, buffer, bytes_read, 0) < 0) {
+              throw SocketException("Error writing to socket");
+            }
+          }
         }
       }
     }
