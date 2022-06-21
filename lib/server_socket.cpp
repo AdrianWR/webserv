@@ -1,6 +1,8 @@
 #include "log.hpp"
 #include "socket.hpp"
+
 #include <stdlib.h>
+#include <sys/select.h>
 #include <unistd.h>
 
 TCPServerSocket::TCPServerSocket() {}
@@ -32,8 +34,7 @@ TCPServerSocket::TCPServerSocket(const std::string &host,
                                  const unsigned short &port,
                                  enum BlockingMode mode)
     : Socket(host, port, mode) {
-  listener_sockfd = Socket::_socket(SIN_FAMILY, SOCK_STREAM, 0);
-  _setsockopt();
+  _setsockopt(listener_sockfd);
   _bind();
   _listen();
 }
@@ -74,10 +75,42 @@ void TCPServerSocket::_blocking_server() {
 }
 
 void TCPServerSocket::_non_blocking_server() {
-  LOG(INFO) << "TCPServerSocket::_non_blocking_server()";
+  fd_set current_socket_set;
+  fd_set ready_socket_set;
+  int max_fd = listener_sockfd;
+
+  LOG(INFO) << "Initializing synchronous I/O select multiplexer";
+  FD_ZERO(&current_socket_set);
+  FD_SET(listener_sockfd, &current_socket_set);
+  max_fd = listener_sockfd;
+
+  for (;;) {
+    LOG(INFO) << "Selecting on " << max_fd + 1 << " file descriptors";
+    ready_socket_set = current_socket_set;
+    if (select(max_fd, &ready_socket_set, NULL, NULL, NULL) < 0) {
+      throw SocketException("Could not select");
+    }
+    LOG(INFO) << "Select returned";
+    for (int i = 0; i < max_fd; i++) {
+      if (FD_ISSET(i, &ready_socket_set)) {
+        if (i == listener_sockfd) {
+          int client_sockfd = _accept();
+          LOG(DEBUG) << "Accepted connection from " << host << ":" << port;
+          FD_SET(client_sockfd, &current_socket_set);
+          if (client_sockfd > max_fd) {
+            max_fd = client_sockfd;
+          }
+        } else {
+          LOG(DEBUG) << "Handling connection from " << host << ":" << port;
+          handleConnection(i);
+          FD_CLR(i, &current_socket_set);
+        }
+      }
+    }
+  }
 }
 
-void TCPServerSocket::_setsockopt(void) {
+void TCPServerSocket::_setsockopt(int listener_sockfd) {
   int yes = 1;
   if (setsockopt(listener_sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) <
       0) {
@@ -102,4 +135,36 @@ void TCPServerSocket::_listen(void) {
   if (listen(listener_sockfd, MAX_CONNECTIONS) < 0) {
     throw SocketException("Could not listen on socket");
   }
+}
+
+int TCPServerSocket::_accept(void) {
+  struct sockaddr_storage
+      their_addr; // sockaddr_storage is a union of sockaddr and sockaddr_in6
+  socklen_t addr_length;
+
+  addr_length = sizeof their_addr;
+  int new_fd =
+      accept(listener_sockfd, reinterpret_cast<struct sockaddr *>(&their_addr),
+             &addr_length);
+  if (new_fd < 0) {
+    throw SocketException("Could not accept client connection");
+  }
+  return new_fd;
+}
+
+void TCPServerSocket::handleConnection(int client_sockfd) {
+  // char buffer[BUFFER_SIZE];
+  // int bytes_read = recv(client_sockfd, buffer, BUFFER_SIZE, 0);
+  // if (bytes_read < 0) {
+  //   throw SocketException("Could not read from socket");
+  // }
+  // LOG(DEBUG) << "Received " << bytes_read << " bytes from client";
+  // if (send(client_sockfd, buffer, bytes_read, 0) < 0) {
+  //   throw SocketException("Could not send message");
+  // }
+  LOG(DEBUG) << "Received connection from client";
+  if (send(client_sockfd, "Hello, world!", 13, 0) < 0) {
+    throw SocketException("Could not send message");
+  }
+  close(client_sockfd);
 }

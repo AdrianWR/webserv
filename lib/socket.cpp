@@ -1,5 +1,7 @@
 #include "socket.hpp"
+#include <arpa/inet.h>
 #include <fcntl.h>
+#include <netinet/in.h>
 #include <unistd.h>
 
 Socket::Socket()
@@ -32,7 +34,10 @@ Socket &Socket::operator=(const Socket &s) {
 Socket::Socket(const std::string &host, const unsigned short &port,
                enum BlockingMode mode)
     : host(host), port(port), _mode(mode) {
-  listener_sockfd = Socket::_socket(SIN_FAMILY, SOCK_STREAM, 0);
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_port = htons(port);
+  server_addr.sin_addr.s_addr = inet_addr(host.c_str());
+  listener_sockfd = Socket::_socket(AF_INET, SOCK_STREAM, 0);
 }
 
 Socket::~Socket() { _close(); }
@@ -41,11 +46,11 @@ int Socket::_socket(int domain, int type, int protocol) {
   if ((listener_sockfd = socket(domain, type, protocol)) < 0) {
     throw SocketException("Could not create socket");
   }
-  if (_mode == NON_BLOCKING) {
-    if (fcntl(listener_sockfd, F_SETFL, O_NONBLOCK) < 0) {
-      throw SocketException("Error setting socket to non-blocking");
-    }
-  }
+  // if (_mode == NON_BLOCKING) {
+  //   if (fcntl(listener_sockfd, F_SETFL, O_NONBLOCK) < 0) {
+  //     throw SocketException("Error setting socket to non-blocking");
+  //   }
+  // }
   return listener_sockfd;
 }
 
