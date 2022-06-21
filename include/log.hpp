@@ -42,7 +42,7 @@ template <typename T> Log<T>::Log() {}
 template <typename T> std::ostringstream &Log<T>::Get(TLogLevel level) {
   os << NowTime() << " | ";
   os << getpid() << " | ";
-  os << "[" << ToString(level) << "] | ";
+  os << "[" << ToString(level) << "] \t| ";
   return os;
 }
 
