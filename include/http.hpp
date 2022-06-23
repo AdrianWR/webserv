@@ -14,26 +14,31 @@ typedef enum http_method {
   HTTP_UNKNOWN
 } http_method_t;
 
-class HttpHeader {
+class BaseHttp {
+private:
+  http_method_t _method;
+
 public:
-  HttpHeader();
-  ~HttpHeader();
-  HttpHeader(const HttpHeader &);
-  HttpHeader &operator=(const HttpHeader &);
-  HttpHeader()
+  BaseHttp();
+  BaseHttp(const BaseHttp &);
+  BaseHttp &operator=(const BaseHttp &);
+  virtual ~BaseHttp() = 0;
+
+  BaseHttp(const char *buffer); // Construct with header from client
+  BaseHttp(const char *buffer,
+           int length); // Construct with header and body from client
+
+  void setMethod(http_method_t method);
+  http_method_t getMethod();
 };
 
-class HttpResponse {
+class HttpResponse : public BaseHttp {
 public:
-  HttpResponse();
-  ~HttpResponse();
+  HttpResponse(){};
+  ~HttpResponse(){};
   HttpResponse(const HttpResponse &);
   HttpResponse &operator=(const HttpResponse &);
-  HttpResponse(int code, const char *message);
-
-  HttpHeader &header();
-  int code;
-  const char *message;
+  HttpResponse(char *content);
 };
 
 #endif

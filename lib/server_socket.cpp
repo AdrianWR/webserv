@@ -111,9 +111,11 @@ void TCPServerSocket::_non_blocking_server() {
             fds[i].fd = -1;
             nfds--;
           } else {
-            buffer[0] = '4';
-            buffer[1] = '2';
-            LOG(DEBUG) << "Sending response to client: " << buffer;
+            LOG(DEBUG) << "Sending response to client:\n" << buffer;
+
+            char *buffer = "HTTP/1.1 200 OK\nContent-Type: "
+                           "text/plain\nContent-Length: 12\n\nHello world!";
+
             if (send(fds[i].fd, buffer, bytes_read, 0) < 0) {
               throw SocketException("Error writing to socket");
             }

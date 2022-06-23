@@ -44,10 +44,10 @@ int Socket::_socket(int domain, int type, int protocol) {
     throw SocketException("Could not create socket");
   }
   // if (_mode == NON_BLOCKING) {
-  //   if (fcntl(listener_sockfd, F_SETFL, O_NONBLOCK) < 0) {
-  //     throw SocketException("Error setting socket to non-blocking");
-  //   }
-  // }
+  //    if (fcntl(listener_sockfd, F_SETFL, O_NONBLOCK) < 0) {
+  //      throw SocketException("Error setting socket to non-blocking");
+  //    }
+  //  }
   return listener_sockfd;
 }
 
