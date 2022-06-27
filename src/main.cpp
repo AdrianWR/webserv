@@ -19,7 +19,7 @@ int main(void) {
   sigIntHandler.sa_flags = 0;
   sigaction(SIGINT, &sigIntHandler, NULL);
 
-  LOG(DEBUG) << "Starting new webserver on port 8080";
+  LOG(INFO) << "Starting new webserver on port 8080";
   try {
     TCPServerSocket s("localhost", 8080, NON_BLOCKING);
     s.server();
