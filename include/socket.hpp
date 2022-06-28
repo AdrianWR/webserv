@@ -34,7 +34,6 @@ protected:
   static const int SIN_FAMILY = AF_INET;
   static const unsigned int BUFFER_SIZE = 1024;
 
-  enum BlockingMode _mode;
   int _socket(int domain, int type, int protocol);
   void _close();
 
@@ -42,7 +41,8 @@ public:
   int listener_sockfd;
   bool is_valid;
   std::string host;
-  unsigned short int port;
+  unsigned short int _port;
+  enum BlockingMode _mode;
 
 public:
   Socket();

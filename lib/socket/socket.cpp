@@ -5,17 +5,17 @@
 #include <unistd.h>
 
 Socket::Socket()
-    : listener_sockfd(-1), host(""), port(0), _mode(NON_BLOCKING) {}
+    : listener_sockfd(-1), host(""), _port(0), _mode(NON_BLOCKING) {}
 
 Socket::Socket(const Socket &s)
-    : listener_sockfd(s.listener_sockfd), host(s.host), port(s.port),
+    : listener_sockfd(s.listener_sockfd), host(s.host), _port(s._port),
       _mode(s._mode) {}
 
 Socket &Socket::operator=(const Socket &s) {
   if (this != &s) {
     listener_sockfd = s.listener_sockfd;
     host = s.host;
-    port = s.port;
+    _port = s._port;
     _mode = s._mode;
   }
   return *this;
@@ -33,7 +33,7 @@ Socket &Socket::operator=(const Socket &s) {
  **/
 Socket::Socket(const std::string &host, const unsigned short &port,
                enum BlockingMode mode)
-    : host(host), port(port), _mode(mode) {
+    : host(host), _port(port), _mode(mode) {
   listener_sockfd = Socket::_socket(AF_INET, SOCK_STREAM, 0);
 }
 

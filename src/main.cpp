@@ -6,6 +6,7 @@
 
 void sigint_handler(int sig) {
   LOG(INFO) << "Received SIGINT, shutting down...";
+  LOG(DEBUG) << "Signal number: " << sig;
   exit(0);
 }
 

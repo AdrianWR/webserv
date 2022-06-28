@@ -7,7 +7,7 @@ TEST(TestSocket, TestSocketDefaultConstructor) {
 
   ASSERT_TRUE(s.listener_sockfd == -1);
   ASSERT_TRUE(s.host == "");
-  ASSERT_TRUE(s.port == 0);
+  ASSERT_TRUE(s._port == 0);
 }
 
 TEST(TestSocket, TestSocketHostPortConstructor) {
@@ -15,7 +15,7 @@ TEST(TestSocket, TestSocketHostPortConstructor) {
 
   ASSERT_TRUE(s.listener_sockfd != -1);
   ASSERT_TRUE(s.host == "localhost");
-  ASSERT_TRUE(s.port == 8080);
+  ASSERT_TRUE(s._port == 8080);
 }
 
 TEST(TestServerSocket, TestBindAndListen) {

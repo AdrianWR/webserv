@@ -8,13 +8,13 @@
 
 TCPServerSocket::TCPServerSocket() {}
 
-TCPServerSocket::TCPServerSocket(const TCPServerSocket &s) {}
+TCPServerSocket::TCPServerSocket(const TCPServerSocket &s) : Socket(s) {}
 
 TCPServerSocket &TCPServerSocket::operator=(const TCPServerSocket &s) {
   if (this != &s) {
     listener_sockfd = s.listener_sockfd;
     host = s.host;
-    port = s.port;
+    _port = s._port;
     _mode = s._mode;
   }
   return *this;
@@ -53,10 +53,7 @@ void TCPServerSocket::server() {
 
 void TCPServerSocket::_blocking_server() {
 
-  struct sockaddr_storage their_addr;
-  int addr_length = sizeof their_addr;
-
-  LOG(INFO) << "Listening for connections on " << host << ":" << port;
+  LOG(INFO) << "Listening for connections on " << host << ":" << _port;
   while (true) {
 
     int new_fd = accept(listener_sockfd, (struct sockaddr *)NULL, NULL);
@@ -113,10 +110,10 @@ void TCPServerSocket::_non_blocking_server() {
           } else {
             LOG(DEBUG) << "Sending response to client:\n" << buffer;
 
-            char *buffer = "HTTP/1.1 200 OK\nContent-Type: "
-                           "text/plain\nContent-Length: 12\n\nHello world!";
+            std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
+                               "text/plain\nContent-Length: 12\n\nHello world!";
 
-            if (send(fds[i].fd, buffer, bytes_read, 0) < 0) {
+            if (send(fds[i].fd, buff.c_str(), bytes_read, 0) < 0) {
               throw SocketException("Error writing to socket");
             }
           }

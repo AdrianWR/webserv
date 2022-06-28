@@ -8,7 +8,7 @@ BaseHttp::BaseHttp() : _method(HTTP_UNKNOWN) {}
 
 BaseHttp::~BaseHttp() {}
 
-BaseHttp::BaseHttp(const char *buffer) {}
+// BaseHttp::BaseHttp(const char *buffer) {}
 
 BaseHttp::HeaderField BaseHttp::_parseHeaderField(const std::string &str) {
   std::string::size_type pos = str.find(':');
