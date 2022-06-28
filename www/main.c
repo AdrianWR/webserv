@@ -3,21 +3,29 @@
 #include <string>
 #include <sstream>
 
-int main () {
-	std::string line;
-	std::string content;
-	std::stringstream buffer;
-	size_t content_size;
-	std::ifstream myfile ("./site1/site1.html");
+
+std::string file_to_string(std::string file_path)
+{
+	std::string			line;
+	std::stringstream	buffer;
+	std::ifstream		myfile(file_path);
+
 	if (myfile.is_open())
 	{
 		while (getline(myfile,line)) { buffer << line; };
 		myfile.close();
-		content = buffer.str();
-		content_size = content.length();
-			std::cout << content << ":" << content_size << "\n";
+		return buffer.str();
 	}
 	else
+	{
 		std::cout << "Unable to open file"; 
+		return "";
+	}
+}
+
+int main () {
+	std::string content = file_to_string("./site1/site1.html");
+	size_t content_size = content.length();
+	std::cout << content << ":" << content_size << "\n";
 	return 0;
 }
