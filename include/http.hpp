@@ -98,7 +98,7 @@ protected:
   HttpMethod _method;
   HeaderMap _headers;
 
-  HeaderMap _parseStatusLine(const std::string &statusLine);
+  virtual HeaderMap _parseStatusLine(const std::string &statusLine);
   HeaderField _parseHeaderField(const std::string &str);
 
 public:
@@ -116,6 +116,10 @@ public:
 };
 
 class HttpRequest : public BaseHttp {
+
+protected:
+  HeaderMap _parseStatusLine(const std::string &statusLine);
+
 public:
   HttpRequest();
   HttpRequest(const HttpRequest &);

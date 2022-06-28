@@ -1,6 +1,7 @@
 #include "http.hpp"
+#include <sstream>
 
-HttpRequest::HttpRequest() : _method(HTTP_UNKNOWN) {}
+HttpRequest::HttpRequest() : BaseHttp() {}
 
 HttpRequest::~HttpRequest() {}
 
