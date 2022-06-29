@@ -1,3 +1,4 @@
+#include "http.hpp"
 #include "log.hpp"
 #include "socket.hpp"
 
@@ -86,7 +87,8 @@ void TCPServerSocket::_non_blocking_server() {
     if (ret < 0) {
       throw SocketException("Error polling socket");
     }
-    LOG(DEBUG) << "Successfully polled client socket. Current events: " << ret;
+    // LOG(DEBUG) << "Successfully polled client socket. Current events: " <<
+    // ret;
     if (fds[0].revents & POLLIN) {
       int new_fd = _accept(listener_sockfd);
       if (new_fd < 0) {
@@ -108,8 +110,13 @@ void TCPServerSocket::_non_blocking_server() {
             fds[i].fd = -1;
             nfds--;
           } else {
-            LOG(DEBUG) << "Sending response to client:\n" << buffer;
+            // LOG(DEBUG) << "Sending response to client:\n" << buffer;
 
+            HttpRequest request;
+            HttpRequest::HeaderMap headers = request.parse(buffer);
+            headers = request.getHeaders();
+
+            LOG(ERROR) << "Headers: " << headers;
             std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
                                "text/plain\nContent-Length: 12\n\nHello world!";
 

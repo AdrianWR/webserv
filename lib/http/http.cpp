@@ -4,7 +4,25 @@
 #include <sstream>
 #include <string>
 
-BaseHttp::BaseHttp() : _method(HTTP_UNKNOWN) {}
+const std::string BaseHttp::_delimiter = "\r\n";
+const BaseHttp::MethodMap BaseHttp::_methodName =
+    BaseHttp::_initializeMethodNames();
+
+std::map<HttpMethod, std::string> BaseHttp::_initializeMethodNames() {
+  std::map<HttpMethod, std::string> method_names;
+  method_names.insert(std::make_pair(HTTP_GET, "GET"));
+  method_names.insert(std::make_pair(HTTP_POST, "POST"));
+  method_names.insert(std::make_pair(HTTP_PUT, "PUT"));
+  method_names.insert(std::make_pair(HTTP_DELETE, "DELETE"));
+  method_names.insert(std::make_pair(HTTP_HEAD, "HEAD"));
+  method_names.insert(std::make_pair(HTTP_OPTIONS, "OPTIONS"));
+  method_names.insert(std::make_pair(HTTP_CONNECT, "CONNECT"));
+  method_names.insert(std::make_pair(HTTP_TRACE, "TRACE"));
+  method_names.insert(std::make_pair(HTTP_PATCH, "PATCH"));
+  return method_names;
+}
+
+BaseHttp::BaseHttp() : _method(HTTP_GET) {}
 
 BaseHttp::~BaseHttp() {}
 
@@ -36,29 +54,63 @@ BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str) {
   return headers;
 }
 
-BaseHttp::HeaderMap BaseHttp::parseHeader(const char *buffer) {
+/**
+ * @brief Parse the header from the client. The header parsed is stored in the
+ * Http object to be used in other methods.
+ * @param buffer The bytes buffer containing the request header.
+ * @return The header map. The keys are the header names. The values are the
+ * values, as defined in RFC 2616.
+ */
+BaseHttp::HeaderMap BaseHttp::parse(const char *buffer) {
   HeaderMap headers;
   std::string ss(buffer);
+  size_t delimiter_size = _delimiter.size();
 
   // Parse first header line
-  std::string::size_type pos = ss.find("\r\n");
+  std::string::size_type pos = ss.find(_delimiter);
   if (pos == std::string::npos)
     throw HttpException("Failed to parse header");
   std::string header = ss.substr(0, pos);
-  headers = _parseStatusLine(header);
-  ss.erase(0, pos + 2);
+  headers = _parseStatusLine(header); // Might be overridden by subclass
+  ss.erase(0, pos + delimiter_size);
 
   // Parse remaining header lines
+  std::string header_line;
   while (ss.size() > 0) {
-    pos = ss.find("\r\n");
+    pos = ss.find(_delimiter);
     if (pos == std::string::npos)
-      throw HttpException("Failed to parse header");
-    std::string header = ss.substr(0, pos);
-    headers.insert(_parseHeaderField(header));
-    ss.erase(0, pos + 2);
+      throw HttpException("Failed to parse header: no delimiter found.");
+    header_line = ss.substr(0, pos);
+    if (header_line.size() == 0)
+      break;
+    header_line = ss.substr(0, pos);
+    headers.insert(_parseHeaderField(header_line));
+    ss.erase(0, pos + delimiter_size);
   }
 
+  _headers = headers;
+  LOG(DEBUG) << "Parsed headers: " << _headers;
   return headers;
 }
 
 HttpMethod BaseHttp::getMethod() { return _method; }
+
+/**
+ * @brief: Get the headers of the HTTP request. "method", "path" and "version"
+ * are always present.
+ *
+ * @return: A std::map<std::string, std::string> of header fields.
+ *
+ * @note: The returned map is a copy of the internal map.
+ */
+BaseHttp::HeaderMap BaseHttp::getHeaders() { return _headers; }
+
+std::ostream &operator<<(std::ostream &os,
+                         const BaseHttp::HeaderMap &header_map) {
+  BaseHttp::HeaderMap::const_iterator it;
+
+  for (it = header_map.begin(); it != header_map.end(); it++) {
+    os << it->first << ": " << it->second << std::endl;
+  }
+  return os;
+}

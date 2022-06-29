@@ -11,10 +11,9 @@ enum HttpMethod {
   HTTP_DELETE,
   HTTP_HEAD,
   HTTP_OPTIONS,
-  HTTP_TRACE,
   HTTP_CONNECT,
-  HTTP_PATCH,
-  HTTP_UNKNOWN
+  HTTP_TRACE,
+  HTTP_PATCH
 };
 
 enum HttpStatusCode {
@@ -91,15 +90,24 @@ public:
   };
 
 public:
+  // typedef enum HttpMethod HttpMethod;
   typedef std::pair<std::string, std::string> HeaderField;
   typedef std::map<std::string, std::string> HeaderMap;
+  typedef std::map<HttpMethod, std::string> MethodMap;
 
 protected:
   HttpMethod _method;
   HeaderMap _headers;
+  static const MethodMap _methodName;
+  static const std::map<HttpStatusCode, std::string> _status_codes;
+  static const std::string _delimiter;
+  static const std::string _header_delimiter;
+  static const std::string _http_version;
 
   virtual HeaderMap _parseStatusLine(const std::string &statusLine);
   HeaderField _parseHeaderField(const std::string &str);
+
+  static std::map<HttpMethod, std::string> _initializeMethodNames();
 
 public:
   BaseHttp();
@@ -112,8 +120,12 @@ public:
            int length); // Construct with header and body from client
 
   HttpMethod getMethod();
-  HeaderMap parseHeader(const char *buffer);
+  HeaderMap getHeaders();
+  HeaderMap parse(const char *buffer);
 };
+
+std::ostream &operator<<(std::ostream &os,
+                         const BaseHttp::HeaderMap &header_map);
 
 class HttpRequest : public BaseHttp {
 
