@@ -10,6 +10,7 @@ std::string file_to_string(std::string file_path)
 	std::stringstream	buffer;
 	std::ifstream		myfile(file_path);
 
+	// Se arquivo existe, serve arquivo
 	if (myfile.is_open())
 	{
 		while (getline(myfile,line)) { buffer << line; };
@@ -21,6 +22,9 @@ std::string file_to_string(std::string file_path)
 		std::cout << "Unable to open file"; 
 		return "";
 	}
+	// Se arquivo nao existe
+		// Se autoindex == on, serve executa autoindex.php
+		// Se nao ,erro
 }
 
 int main () {
