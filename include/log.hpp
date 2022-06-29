@@ -120,10 +120,10 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
 
 inline std::string NowTime() {
   time_t now;
+  char buf[32];
+
   time(&now);
-  char buf[sizeof "2011-10-08T07:07:09Z"];
-  // strftime(buf, sizeof buf, "%FT%TZ", gmtime(&now));
-  strftime(buf, sizeof buf, "%Y-%m-%d %H:%M:%S %Z", localtime(&now));
+  strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", localtime(&now));
   return buf;
 }
 
