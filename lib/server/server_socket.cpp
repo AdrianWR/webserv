@@ -114,6 +114,7 @@ void TCPServerSocket::_non_blocking_server() {
 
             HttpRequest request;
             HttpRequest::HeaderMap headers = request.parse(buffer);
+
             headers = request.getHeaders();
 
             LOG(ERROR) << "Headers: " << headers;
