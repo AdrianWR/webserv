@@ -1,4 +1,5 @@
 #include "log.hpp"
+#include "server.hpp"
 #include "socket.hpp"
 #include <csignal>
 #include <cstdlib>
