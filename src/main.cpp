@@ -1,5 +1,6 @@
 #include "log.hpp"
 #include "socket.hpp"
+#include "utils.hpp"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
@@ -11,6 +12,12 @@ void sigint_handler(int sig) {
 }
 
 int main(void) {
+
+	file_parser_c	file_parser;
+	std::cout << "Rodeii\n";
+	file_parser.teste();
+	return 0;
+
   struct sigaction sigIntHandler;
 
   FILELog::ReportingLevel() = FILELog::FromString("DEBUG");

@@ -3,7 +3,6 @@
 #include <string>
 #include <sstream>
 
-
 std::string file_to_string(std::string file_path)
 {
 	std::string			line;

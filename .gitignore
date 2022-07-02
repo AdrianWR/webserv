@@ -40,4 +40,7 @@ webserv
 *.out
 *.app
 
+# Swaps
+*.sw*
+
 # End of https://www.toptal.com/developers/gitignore/api/C++
