@@ -16,6 +16,7 @@ int main(void) {
 	file_parser_c	file_parser;
 	std::cout << "Rodeii\n";
 	file_parser.teste();
+	file_parser.le_arquivo("./www/conf/conf1");
 	return 0;
 
   struct sigaction sigIntHandler;

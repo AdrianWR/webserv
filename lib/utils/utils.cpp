@@ -21,6 +21,36 @@ void file_parser_c::teste(){
 	std::cout << "teste metodo file_paser\n";
 }
 
+void file_parser_c::printa_linha(std::fstream &fileStream) {
+	std::string buffer;
+
+	fileStream >> buffer;
+	std::cout << "|" << buffer;
+	fileStream >> buffer;
+	std::cout << " " << buffer << "|" << std::endl;
+}
+
+void file_parser_c::le_arquivo(std::string arquivo){
+    std::fstream	fileStream;
+	std::string		buffer = "";
+
+	fileStream.open(arquivo.c_str());
+	if (!fileStream.is_open()) {
+		std::cout << "Erro abrir arquivo\n";
+		return;
+	}
+	else
+		std::cout << "Arquivo aberto\n";
+
+	while (fileStream >> buffer)
+	{
+		if (!buffer.compare("{")) {
+			printa_linha(fileStream);
+		}
+		else
+			std::cout << "|" << buffer << "|" << std::endl;
+	}
+}
 //TCPServerSocket::TCPServerSocket() {}
 //
 //TCPServerSocket::TCPServerSocket(const TCPServerSocket &s) : Socket(s) {}

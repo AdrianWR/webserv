@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 
 class file_parser_c {
 public:
@@ -17,6 +18,10 @@ public:
 
 	// Metodos
 	void teste();
+
+	void le_arquivo(std::string arquivo);
+	void printa_linha(std::fstream &fileStream);
+
 };
 
 
