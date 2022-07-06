@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "socket.hpp"
 #include <string>
 #include <vector>
 
@@ -8,19 +9,27 @@ class ServerBlock {
 private:
   std::string _host;
   unsigned short _port;
+  TCPServerSocket _socket;
 
 public:
-  ServerBlock() {}
-  ServerBlock(const std::string &host, unsigned short port)
-      : _host(host), _port(port) {}
+  ServerBlock();
+  ServerBlock(const ServerBlock &serverBlock);
+  ~ServerBlock();
+  ServerBlock(const std::string &host, unsigned short port);
 
   std::string getHost() const { return _host; }
   unsigned short getPort() const { return _port; }
+  TCPServerSocket getSocket() const { return _socket; }
 
   int initializeServerSocket();
 };
 
 class HttpServer {
+
+public:
+  typedef std::vector<struct pollfd> pollFdVector;
+  typedef pollFdVector::iterator pollFdVectorIterator;
+
 public:
   class HttpServerException : public std::exception {
   private:
@@ -37,7 +46,7 @@ private:
 
   std::vector<ServerBlock> _servers;
 
-  void _handleConnection(int fd, int &nfds);
+  void _handleConnection(int &it);
 
 public:
   HttpServer();

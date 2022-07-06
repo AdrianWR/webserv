@@ -1,5 +1,6 @@
 add_library(server
     socket.cpp
+    server_block.cpp
     server_socket.cpp
     server.cpp
 )

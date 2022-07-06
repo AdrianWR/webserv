@@ -75,8 +75,9 @@ public:
                   enum BlockingMode mode = NON_BLOCKING);
   ~TCPServerSocket();
 
-  int _accept(int listener_sockfd);
+  static int accept_connection(int listener_sockfd);
   void handleConnection(int client_sockfd);
+  struct pollfd getPollfd() const;
 
   void server();
 };
