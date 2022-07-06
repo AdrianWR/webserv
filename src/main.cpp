@@ -23,8 +23,9 @@ int main(void) {
 
   LOG(INFO) << "Starting new webserver on port 8080";
   try {
-    TCPServerSocket s("localhost", 8080, NON_BLOCKING);
-    s.server();
+    // s.server();
+    HttpServer s;
+    s.run();
   } catch (std::exception &e) {
     LOG(ERROR) << e.what();
   }

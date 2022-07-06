@@ -64,7 +64,6 @@ protected:
   void _setsockopt(int sockfd);
   void _bind(int listener_sockfd, unsigned short port);
   void _listen(int listener_sockfd);
-  int _accept(int listener_sockfd);
   void _blocking_server();
   void _non_blocking_server();
 
@@ -76,6 +75,7 @@ public:
                   enum BlockingMode mode = NON_BLOCKING);
   ~TCPServerSocket();
 
+  int _accept(int listener_sockfd);
   void handleConnection(int client_sockfd);
 
   void server();

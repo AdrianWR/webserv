@@ -21,8 +21,23 @@ public:
 };
 
 class HttpServer {
+public:
+  class HttpServerException : public std::exception {
+  private:
+    std::string _message;
+
+  public:
+    HttpServerException(const std::string &message) : _message(message) {}
+    ~HttpServerException() throw() {}
+    virtual const char *what() const throw() { return _message.c_str(); }
+  };
+
 private:
+  static const unsigned int BUFFER_SIZE = 1024;
+
   std::vector<ServerBlock> _servers;
+
+  void _handleConnection(int fd, int &nfds);
 
 public:
   HttpServer();
