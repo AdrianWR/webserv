@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <set>
 
 class file_parser_c {
 public:
@@ -23,6 +24,51 @@ public:
 	void printa_linha(std::fstream &fileStream);
 
 };
+
+class reserved_words_c {
+public:
+	reserved_words_c();
+	std::set <std::string>	list;
+	bool	is_reserved_word(std::string query_string);
+};
+
+class config_block {
+public:
+	// Constructor
+	config_block();
+	// Destructor
+	~config_block();
+	// Assignment operator
+	config_block &operator=(const config_block &);
+public:
+	std::string		server_name;
+	unsigned int	port;
+	bool			get_allowed;
+	bool			post_allowed;
+	bool			delete_allowed;
+	bool			autoindex;
+	std::string		cgi;
+	std::string		index;
+	std::string		error_page;
+	std::string		redirection;
+	std::string		upload_path;
+
+public:
+	void print();
+
+};
+
+
+
+	
+
+
+
+
+
+
+
+
 
 
 //
@@ -97,7 +143,7 @@ public:
 //};
 //
 //class TCPClientSocket : public Socket {
-//public:
+///public:
 //  TCPClientSocket();
 //  TCPClientSocket(const TCPClientSocket &);
 //  TCPClientSocket &operator=(const TCPClientSocket &);

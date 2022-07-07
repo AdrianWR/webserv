@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++98 -Wall -Wextra -pedantic -Werror   CMakeFiles/webserv.dir/main.cpp.o  -o ../webserv  ../lib/socket/libsocket.a ../lib/utils/libutils.a ../lib/http/libhttp.a 

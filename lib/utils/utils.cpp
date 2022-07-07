@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+// file_parser_c class:
 // Construtor
 file_parser_c::file_parser_c(){
 	std::cout << "file parser constructor" << std::endl;
@@ -51,6 +52,85 @@ void file_parser_c::le_arquivo(std::string arquivo){
 			std::cout << "|" << buffer << "|" << std::endl;
 	}
 }
+
+// reserved_words class:
+reserved_words_c::reserved_words_c(){
+	list.insert("server_name");
+	list.insert("port");
+	list.insert("get_allowed");
+	list.insert("post_allowed");
+	list.insert("delete_iallowed");
+	list.insert("autoindex");
+	list.insert("cgi");
+	list.insert("index");
+	list.insert("error_page");
+	list.insert("redirection");
+	list.insert("upload_page");
+}
+
+bool	reserved_words_c::is_reserved_word(std::string query_string)
+{
+	if (list.find(query_string) == list.end())
+		return false;
+	return true;
+}
+
+// config_block class:
+config_block::config_block() {
+	server_name = "localhost";
+	port = 80;
+	get_allowed = true;
+	post_allowed = false;
+	delete_allowed = false;
+	autoindex = false;
+	cgi = "";
+	index = "index.html";
+	error_page = "./errors/404.html";
+	redirection = "/";
+	upload_path = "/";
+}
+
+config_block::~config_block() {}
+
+config_block  &config_block::operator=(const config_block &rhs) {
+  if (this != &rhs) {
+	server_name = rhs.server_name;
+	port = rhs.port;
+	get_allowed = rhs.get_allowed;
+	post_allowed = rhs.post_allowed;
+	delete_allowed = rhs.delete_allowed;
+	autoindex = rhs.autoindex;
+	cgi = rhs.cgi;
+	index = rhs.index;
+	error_page = rhs.error_page;
+	redirection = rhs.redirection;
+	upload_path = rhs.upload_path;
+  }
+  return *this;
+}
+
+void	config_block::print() {
+	std::cout << "-------------------------------------------------------\n";
+	std::cout << "server_name:"		<< "\t\t" << server_name << std::endl;
+	std::cout << "port:"			<< "\t\t\t" << port << std::endl;
+	std::cout << "get_allowed:"		<< "\t\t" << get_allowed << std::endl;
+	std::cout << "post_allowed:"	<< "\t\t" << post_allowed << std::endl;
+	std::cout << "delete_allowed:"	<< "\t\t" << delete_allowed << std::endl;
+	std::cout << "autoindex:"		<< "\t\t" << autoindex << std::endl;
+	std::cout << "cgi:"				<< "\t\t" << cgi << std::endl;
+	std::cout << "index:"			<< "\t\t\t" << index << std::endl;
+	std::cout << "error_page:"		<< "\t\t" << error_page << std::endl;
+	std::cout << "redirection:"		<< "\t\t" << redirection << std::endl;
+	std::cout << "upload_path::"	<< "\t\t" << upload_path << std::endl;
+	std::cout << "-------------------------------------------------------\n";
+}
+
+
+
+
+
+
+
 //TCPServerSocket::TCPServerSocket() {}
 //
 //TCPServerSocket::TCPServerSocket(const TCPServerSocket &s) : Socket(s) {}

@@ -1,0 +1,5 @@
+if(EXISTS "/home/user42/webserver/tests/test_socket[1]_tests.cmake")
+  include("/home/user42/webserver/tests/test_socket[1]_tests.cmake")
+else()
+  add_test(test_socket_NOT_BUILT test_socket_NOT_BUILT)
+endif()
