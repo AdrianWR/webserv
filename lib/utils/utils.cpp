@@ -55,15 +55,18 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 // reserved_words class:
 reserved_words_c::reserved_words_c(){
+	list.insert("listen");
+	list.insert("root");
 	list.insert("server_name");
-	list.insert("port");
+	list.insert("error_page");
+	list.insert("client_body_buffer_size");
+	list.insert("cgi_pass");
+	list.insert("cgi_param");
 	list.insert("get_allowed");
 	list.insert("post_allowed");
-	list.insert("delete_iallowed");
+	list.insert("delete_allowed");
 	list.insert("autoindex");
-	list.insert("cgi");
 	list.insert("index");
-	list.insert("error_page");
 	list.insert("redirection");
 	list.insert("upload_page");
 }
@@ -77,58 +80,60 @@ bool	reserved_words_c::is_reserved_word(std::string query_string)
 
 // config_block class:
 config_block::config_block() {
-	server_name = "localhost";
-	port = 80;
-	get_allowed = true;
-	post_allowed = false;
-	delete_allowed = false;
-	autoindex = false;
-	cgi = "";
-	index = "index.html";
-	error_page = "./errors/404.html";
-	redirection = "/";
-	upload_path = "/";
+	_listen.push_back(80);
+	_root = "/";
+	_server_name.push_back("default_server"); 
+	_error_page[404] = "./errors/404.html";
+	_client_body_buffer_size = 8; // max size for the client body, defaults to 8 000
+	_cgi_param["a"] = "A";
+	_cgi_pass = "";
+	_allowed_methods["GET"] = true;
+	_allowed_methods["POST"] = true;
+	_allowed_methods["DELETE"] = true;
+	_index.push_back("index.html");
+	_autoindex = false;
+	_redirection = "/";
+	_upload_path = "/";
 }
 
 config_block::~config_block() {}
 
 config_block  &config_block::operator=(const config_block &rhs) {
   if (this != &rhs) {
-	server_name = rhs.server_name;
-	port = rhs.port;
-	get_allowed = rhs.get_allowed;
-	post_allowed = rhs.post_allowed;
-	delete_allowed = rhs.delete_allowed;
-	autoindex = rhs.autoindex;
-	cgi = rhs.cgi;
-	index = rhs.index;
-	error_page = rhs.error_page;
-	redirection = rhs.redirection;
-	upload_path = rhs.upload_path;
+	_listen = rhs._listen;
+	_root = rhs._root;
+	_server_name = rhs._server_name;
+	_error_page = rhs._error_page;
+	_client_body_buffer_size = rhs._client_body_buffer_size;
+	_cgi_param = rhs._cgi_param;
+	_cgi_pass = rhs._cgi_pass;
+	_allowed_methods = rhs._allowed_methods;
+	_index = rhs._index;
+	_autoindex = rhs._autoindex;
+	_redirection = rhs._redirection;
+	_upload_path = rhs._upload_path;
   }
   return *this;
 }
 
 void	config_block::print() {
 	std::cout << "-------------------------------------------------------\n";
-	std::cout << "server_name:"		<< "\t\t" << server_name << std::endl;
-	std::cout << "port:"			<< "\t\t\t" << port << std::endl;
-	std::cout << "get_allowed:"		<< "\t\t" << get_allowed << std::endl;
-	std::cout << "post_allowed:"	<< "\t\t" << post_allowed << std::endl;
-	std::cout << "delete_allowed:"	<< "\t\t" << delete_allowed << std::endl;
-	std::cout << "autoindex:"		<< "\t\t" << autoindex << std::endl;
-	std::cout << "cgi:"				<< "\t\t" << cgi << std::endl;
-	std::cout << "index:"			<< "\t\t\t" << index << std::endl;
-	std::cout << "error_page:"		<< "\t\t" << error_page << std::endl;
-	std::cout << "redirection:"		<< "\t\t" << redirection << std::endl;
-	std::cout << "upload_path::"	<< "\t\t" << upload_path << std::endl;
+	std::cout << "server_name:"		<< "\t\t" << _server_name[0] << std::endl;
+	std::cout << "listen:"			<< "\t\t\t" << _listen[0] << std::endl;
+	std::cout << "root:"			<< "\t\t" << _root << std::endl;
+	std::cout << "error_page:"		<< "\t\t" << _error_page[404] << std::endl;
+	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
+	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
+	std::cout << "cgi param:"		<< "\t\t" << _cgi_param["a"] << std::endl;
+	std::cout << "get_allowed:"		<< "\t\t" << _allowed_methods["GET"] << std::endl;
+	std::cout << "post_allowed:"	<< "\t\t" << _allowed_methods["POST"] << std::endl;
+	std::cout << "delete_allowed:"	<< "\t\t" << _allowed_methods["DELETE"] << std::endl;
+	std::cout << "index:"			<< "\t\t\t" << _index[0] << std::endl;
+	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
+	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
+	std::cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
 	std::cout << "-------------------------------------------------------\n";
 }
-
-
-
-
-
 
 
 //TCPServerSocket::TCPServerSocket() {}

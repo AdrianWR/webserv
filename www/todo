@@ -38,4 +38,11 @@
 
 
 
+// server block
+	// pode ter varios listen
+	// pode ter varios server_name (host do request)
+	// pode repetir server_names entre ports ??
+	// tem que ter locations
+		// especificacao do metodos permitidos precisa ser por location
+	
 

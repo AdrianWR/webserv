@@ -5,6 +5,9 @@
 #include <string>
 #include <fstream>
 #include <set>
+#include <vector>
+#include <map>
+
 
 class file_parser_c {
 public:
@@ -41,17 +44,18 @@ public:
 	// Assignment operator
 	config_block &operator=(const config_block &);
 public:
-	std::string		server_name;
-	unsigned int	port;
-	bool			get_allowed;
-	bool			post_allowed;
-	bool			delete_allowed;
-	bool			autoindex;
-	std::string		cgi;
-	std::string		index;
-	std::string		error_page;
-	std::string		redirection;
-	std::string		upload_path;
+	std::vector<int>					_listen;
+	std::string							_root;
+	std::vector<std::string>			_server_name;
+	std::map<int, std::string>			_error_page; // error page redirections
+	int									_client_body_buffer_size; // max size for the client body, defaults to 8 000
+	std::map<std::string, std::string>	_cgi_param;
+	std::string							_cgi_pass;
+	std::map<std::string, bool>			_allowed_methods;
+	std::vector<std::string>			_index;
+	bool								_autoindex;
+	std::string							_redirection;
+	std::string							_upload_path;
 
 public:
 	void print();
