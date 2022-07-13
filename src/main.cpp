@@ -1,6 +1,7 @@
 #include "log.hpp"
 #include "server.hpp"
 #include "socket.hpp"
+#include "utils.hpp"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
@@ -11,7 +12,29 @@ void sigint_handler(int sig) {
   exit(0);
 }
 
+bool is_in(int i, std::set <int> s) {
+		if (s.find(i) == s.end())
+			return false;
+		return true;
+	}
+
 int main(void) {
+
+	file_parser_c	file_parser;
+	std::cout << "Rodei\n";
+	file_parser.teste();
+	file_parser.le_arquivo("./www/conf/conf1");
+
+	config_block	block;
+	block = config_block();
+	block.print();
+
+	reserved_words_c rw;
+	std::cout << "server_name: " << rw.is_reserved_word("server_name") << std::endl;
+	std::cout << "paulo: " << rw.is_reserved_word("paulo") << std::endl;
+
+	return 0;
+
   struct sigaction sigIntHandler;
 
   FILELog::ReportingLevel() = FILELog::FromString("DEBUG");
