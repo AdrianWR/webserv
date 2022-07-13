@@ -127,6 +127,12 @@ public:
 std::ostream &operator<<(std::ostream &os,
                          const BaseHttp::HeaderMap &header_map);
 
+/**
+ * @brief HttpRequest
+ * @details
+ * This class is used to represent an HTTP request.
+ */
+
 class HttpRequest : public BaseHttp {
 
 protected:

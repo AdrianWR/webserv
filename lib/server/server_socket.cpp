@@ -43,93 +43,6 @@ TCPServerSocket::TCPServerSocket(const std::string &host,
 
 TCPServerSocket::~TCPServerSocket() {}
 
-void TCPServerSocket::server() {
-  if (_mode == BLOCKING) {
-    _blocking_server();
-  }
-  if (_mode == NON_BLOCKING) {
-    _non_blocking_server();
-  }
-}
-
-void TCPServerSocket::_blocking_server() {
-
-  LOG(INFO) << "Listening for connections on " << host << ":" << _port;
-  while (true) {
-
-    int new_fd = accept(listener_sockfd, (struct sockaddr *)NULL, NULL);
-    if (new_fd < 0) {
-      throw SocketException("Could not accept client connection");
-    }
-
-    if (!fork()) {
-      close(listener_sockfd);
-      if (send(new_fd, "Hello, world!", 13, 0) < 0) {
-        throw SocketException("Could not send message");
-      }
-      close(new_fd);
-      exit(0);
-    }
-  }
-}
-
-void TCPServerSocket::_non_blocking_server() {
-  struct pollfd fds[200];
-  int nfds = 1;
-
-  LOG(INFO) << "Initializing server polling";
-  memset(fds, 0, sizeof(fds));
-  fds[0].fd = listener_sockfd;
-  fds[0].events = POLLIN;
-
-  while (true) {
-    int ret = poll(fds, nfds, -1);
-    if (ret < 0) {
-      throw SocketException("Error polling socket");
-    }
-    // LOG(DEBUG) << "Successfully polled client socket. Current events: " <<
-    // ret;
-    if (fds[0].revents & POLLIN) {
-      int new_fd = _accept(listener_sockfd);
-      if (new_fd < 0) {
-        throw SocketException("Could not accept client connection");
-      }
-      fds[nfds].fd = new_fd;
-      fds[nfds].events = POLLIN;
-      nfds++;
-    } else {
-      for (int i = 1; i < nfds; i++) {
-        if (fds[i].revents & POLLIN) {
-          char buffer[BUFFER_SIZE];
-          int bytes_read = recv(fds[i].fd, buffer, BUFFER_SIZE, 0);
-          if (bytes_read < 0) {
-            throw SocketException("Error reading from socket");
-          }
-          if (bytes_read == 0) {
-            close(fds[i].fd);
-            fds[i].fd = -1;
-            nfds--;
-          } else {
-            // LOG(DEBUG) << "Sending response to client:\n" << buffer;
-
-            HttpRequest request;
-            HttpRequest::HeaderMap headers = request.parse(buffer);
-            headers = request.getHeaders();
-
-            LOG(ERROR) << "Headers: " << headers;
-            std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
-                               "text/plain\nContent-Length: 12\n\nHello world!";
-
-            if (send(fds[i].fd, buff.c_str(), bytes_read, 0) < 0) {
-              throw SocketException("Error writing to socket");
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 void TCPServerSocket::_setsockopt(int listener_sockfd) {
   int yes = 1;
   if (setsockopt(listener_sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) <
@@ -158,7 +71,7 @@ void TCPServerSocket::_listen(int listener_sockfd) {
   }
 }
 
-int TCPServerSocket::_accept(int listener_sockfd) {
+int TCPServerSocket::accept_connection(int listener_sockfd) {
   struct sockaddr_storage in_addr; // sockaddr_storage works for IPv4 and IPv6
   socklen_t addr_length;
 
@@ -185,4 +98,12 @@ void TCPServerSocket::handleConnection(int client_sockfd) {
     throw SocketException("Could not send message");
   }
   close(client_sockfd);
+}
+
+struct pollfd TCPServerSocket::getPollfd() const {
+  struct pollfd fd;
+
+  fd.fd = listener_sockfd;
+  fd.events = POLLIN;
+  return fd;
 }
