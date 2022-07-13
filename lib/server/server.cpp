@@ -41,7 +41,7 @@ void HttpServer::_handleConnection(int &fd) {
     std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
                        "text/plain\nContent-Length: 12\n\nHello world!";
 
-    if (send(fd, buff.c_str(), bytes_read, 0) < 0) {
+    if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
       throw HttpServerException("Error writing to socket");
     }
   }
@@ -65,6 +65,7 @@ void HttpServer::run() {
     if (ret < 0) {
       throw HttpServerException("Error polling socket");
     }
+
     // Check for new connections to accept
     for (std::size_t i = 0; i < listeners_size; i++) {
       if (fds[i].revents & POLLIN) {
@@ -73,6 +74,7 @@ void HttpServer::run() {
         fds.push_back(new_pollfd);
       }
     }
+
     // Check for new clients to handle
     for (std::size_t i = listeners_size; i < fds.size(); i++) {
       if (fds[i].fd > 0 && fds[i].revents & POLLIN) {

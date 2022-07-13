@@ -2,12 +2,13 @@
 #define SERVER_HPP
 
 #include "socket.hpp"
+#include <map>
 #include <string>
 #include <vector>
 
 class ServerBlock {
 private:
-  std::string _host;
+  std::vector<std::string> _server_names;
   unsigned short _port;
   TCPServerSocket _socket;
 
@@ -16,8 +17,8 @@ public:
   ServerBlock(const ServerBlock &serverBlock);
   ~ServerBlock();
   ServerBlock(const std::string &host, unsigned short port);
+  ServerBlock &operator=(const ServerBlock &serverBlock);
 
-  std::string getHost() const { return _host; }
   unsigned short getPort() const { return _port; }
   TCPServerSocket getSocket() const { return _socket; }
 

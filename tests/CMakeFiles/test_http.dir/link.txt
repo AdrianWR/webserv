@@ -1,1 +1,0 @@
-/usr/bin/c++   -std=c++98 -Wall -Wextra -pedantic -Werror   CMakeFiles/test_http.dir/test_http.cpp.o  -o test_http  ../lib/http/libhttp.a ../lib/libgtest_main.a ../lib/libgtest.a -lpthread 

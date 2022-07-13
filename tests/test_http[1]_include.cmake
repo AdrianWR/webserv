@@ -1,5 +1,0 @@
-if(EXISTS "/home/user42/webserver/tests/test_http[1]_tests.cmake")
-  include("/home/user42/webserver/tests/test_http[1]_tests.cmake")
-else()
-  add_test(test_http_NOT_BUILT test_http_NOT_BUILT)
-endif()
