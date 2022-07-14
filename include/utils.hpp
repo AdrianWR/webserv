@@ -45,16 +45,17 @@ public:
 	config_block &operator=(const config_block &);
 public:
 	std::vector<int>					_listen;
-	std::string							_root;
-	std::vector<std::string>			_server_name;
-	std::map<int, std::string>			_error_page; // error page redirections
+	std::vector<std::string>			_server_name; // "host" do http request !
 	int									_client_body_buffer_size; // max size for the client body, defaults to 8 000
+	std::map<int, std::string>			_error_page; // error page redirections
+	// location ?
+	std::map<std::string, bool>			_allowed_methods;
+	std::string							_redirection;
+	std::string							_root;
+	bool								_autoindex;
+	std::vector<std::string>			_index;
 	std::map<std::string, std::string>	_cgi_param;
 	std::string							_cgi_pass;
-	std::map<std::string, bool>			_allowed_methods;
-	std::vector<std::string>			_index;
-	bool								_autoindex;
-	std::string							_redirection;
 	std::string							_upload_path;
 
 public:
@@ -62,7 +63,18 @@ public:
 
 };
 
+// Fazer um objeto location
+// Objeto config block tem que ter um vector / map de locations
+// Alterar rotina de impressao
 
+
+// Ler arquivo por blocks config_blocks
+// No final de cada block, explodir para um map com chave server_name;listen
+	// Varrer vector de config_block e para cada block fazer produto cartesiano
+	// de server_name e listen
+		// gerar chave
+		// copiar bloco para map
+		// acertar listen e server name para ter um so no bloco do map
 
 	
 
