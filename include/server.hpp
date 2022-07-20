@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "http.hpp"
 #include "socket.hpp"
 #include <map>
 #include <string>
@@ -60,6 +61,8 @@ public:
   void setup(const std::string &config_file);
   void addServerBlock(const ServerBlock &serverBlock);
   void run();
+
+  static HttpResponse &handle(HttpRequest &request);
 };
 
 #endif

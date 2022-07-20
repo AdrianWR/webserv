@@ -17,14 +17,14 @@ protected:
                             "Connection: keep-alive\r\n\r\n ";
 };
 
-TEST_F(HttpTest, TestHttpRequestParse) {
-  HttpResponse response;
-  ASSERT_TRUE(response.getMethod() == HTTP_GET);
-}
+// TEST_F(HttpTest, TestHttpRequestParse) {
+//   HttpRequest request;
+//   ASSERT_TRUE(request.getMethod() == HTTP_GET);
+// }
 
 TEST_F(HttpTest, TestParseHeader) {
-  HttpResponse response;
-  HttpResponse::HeaderMap headers;
+  HttpRequest request;
+  HttpRequest::HeaderMap headers;
   // headers =
   //       response.parse("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
   //   ASSERT_EQ(headers["method"], "GET");
@@ -43,7 +43,7 @@ TEST_F(HttpTest, TestParseHeader) {
   //   ASSERT_EQ(headers["version"], "HTTP/1.1");
   //   ASSERT_EQ(headers["host"], " localhost");
 
-  headers = response.parse(buffer_mock);
+  headers = request.parse(buffer_mock);
   ASSERT_EQ(headers["method"], "GET");
   ASSERT_EQ(headers["path"], "/simple_get");
   ASSERT_EQ(headers["version"], "HTTP/1.1");

@@ -90,22 +90,19 @@ public:
   };
 
 public:
-  // typedef enum HttpMethod HttpMethod;
   typedef std::pair<std::string, std::string> HeaderField;
   typedef std::map<std::string, std::string> HeaderMap;
   typedef std::map<HttpMethod, std::string> MethodMap;
 
 protected:
-  HttpMethod _method;
   HeaderMap _headers;
+  std::string _body;
+
   static const MethodMap _methodName;
   static const std::map<HttpStatusCode, std::string> _status_codes;
   static const std::string _delimiter;
   static const std::string _header_delimiter;
   static const std::string _http_version;
-
-  virtual HeaderMap _parseStatusLine(const std::string &statusLine);
-  HeaderField _parseHeaderField(const std::string &str);
 
   static std::map<HttpMethod, std::string> _initializeMethodNames();
 
@@ -115,37 +112,46 @@ public:
   BaseHttp &operator=(const BaseHttp &);
   virtual ~BaseHttp() = 0;
 
-  BaseHttp(const char *buffer); // Construct with header from client
-  BaseHttp(const char *buffer,
-           int length); // Construct with header and body from client
+  const HeaderMap &getHeaders() const;
+  const std::string &getBody() const;
 
-  HttpMethod getMethod();
-  HeaderMap getHeaders();
-  HeaderMap parse(const char *buffer);
+  void setBody(const std::string &body);
+  void setHeader(const std::string &, const std::string &);
+  void setHeader(const HeaderField &);
 };
 
 std::ostream &operator<<(std::ostream &os,
                          const BaseHttp::HeaderMap &header_map);
 
 /**
- * @brief HttpRequest
- * @details
- * This class is used to represent an HTTP request.
+ * @brief HTTP Request class for receiving requests from clients.
  */
-
 class HttpRequest : public BaseHttp {
 
-protected:
-  HeaderMap _parseStatusLine(const std::string &statusLine);
+private:
+  HttpMethod _method;
+  std::string _path;
+  std::string _version;
 
 public:
   HttpRequest();
   HttpRequest(const HttpRequest &);
   HttpRequest &operator=(const HttpRequest &);
+  HttpRequest(const char *);
   ~HttpRequest();
+
+  HeaderMap parse(const char *);
+
+  HttpMethod getMethod() const { return _method; }
+  std::string getPath() const { return _path; }
+  std::string getVersion() const { return _version; }
 };
 
 class HttpResponse : public BaseHttp {
+private:
+  HttpStatusCode _status_code;
+  std::string _version;
+
 public:
   HttpResponse(){};
   ~HttpResponse(){};

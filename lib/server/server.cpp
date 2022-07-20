@@ -85,3 +85,11 @@ void HttpServer::run() {
     }
   }
 }
+
+// HttpResponse &HttpServer::handle(HttpRequest &request) {
+//   // HttpResponse response;
+//   // response.setStatusCode(200);
+//   // response.setContentType("text/plain");
+//   // response.setContent("Hello world!");
+//   // return response;
+// }

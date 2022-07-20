@@ -1,10 +1,14 @@
 #include "http.hpp"
 #include "log.hpp"
 #include <algorithm>
+#include <cstring>
 #include <sstream>
 #include <string>
 
+// Static members
+
 const std::string BaseHttp::_delimiter = "\r\n";
+
 const BaseHttp::MethodMap BaseHttp::_methodName =
     BaseHttp::_initializeMethodNames();
 
@@ -22,88 +26,63 @@ std::map<HttpMethod, std::string> BaseHttp::_initializeMethodNames() {
   return method_names;
 }
 
-BaseHttp::BaseHttp() : _method(HTTP_GET) {}
+// Constructors
+
+BaseHttp::BaseHttp() {}
+
+BaseHttp::BaseHttp(const BaseHttp &src)
+    : _headers(src._headers), _body(src._body) {}
+
+BaseHttp &BaseHttp::operator=(const BaseHttp &src) {
+  if (this != &src) {
+    _headers = src._headers;
+    _body = src._body;
+  }
+  return *this;
+}
 
 BaseHttp::~BaseHttp() {}
 
-// BaseHttp::BaseHttp(const char *buffer) {}
-
-BaseHttp::HeaderField BaseHttp::_parseHeaderField(const std::string &str) {
-  std::string::size_type pos = str.find(':');
-  if (pos == std::string::npos)
-    return HeaderField("", "");
-  std::string key = str.substr(0, pos);
-  std::transform(key.begin(), key.end(), key.begin(), ::tolower);
-  std::string value = str.substr(pos + 1);
-  if (value.size() > 0 && value[0] == ' ')
-    value.erase(0, 1);
-  return HeaderField(key, value);
-}
-
-#include <cstring>
-
-BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str) {
-  std::stringstream ss(str);
-  HeaderMap headers;
-
-  ss >> headers["method"] >> headers["path"] >> headers["version"];
-  if (ss.fail())
-    throw HttpException("Invalid status line");
-  if (headers["method"] == "")
-    throw HttpException("Invalid status line: method is empty");
-  return headers;
-}
+// Getters
 
 /**
- * @brief Parse the header from the client. The header parsed is stored in the
- * Http object to be used in other methods.
- * @param buffer The bytes buffer containing the request header.
- * @return The header map. The keys are the header names. The values are the
- * values, as defined in RFC 2616.
+ * @brief Get the headers of the HTTP request or response.
+ * @return A std::map<std::string, std::string> of header fields.
  */
-BaseHttp::HeaderMap BaseHttp::parse(const char *buffer) {
-  HeaderMap headers;
-  std::string ss(buffer);
-  size_t delimiter_size = _delimiter.size();
-
-  // Parse first header line
-  std::string::size_type pos = ss.find(_delimiter);
-  if (pos == std::string::npos)
-    throw HttpException("Failed to parse header");
-  std::string header = ss.substr(0, pos);
-  headers = _parseStatusLine(header); // Might be overridden by subclass
-  ss.erase(0, pos + delimiter_size);
-
-  // Parse remaining header lines
-  std::string header_line;
-  while (ss.size() > 0) {
-    pos = ss.find(_delimiter);
-    if (pos == std::string::npos)
-      throw HttpException("Failed to parse header: no delimiter found.");
-    header_line = ss.substr(0, pos);
-    if (header_line.size() == 0)
-      break;
-    header_line = ss.substr(0, pos);
-    headers.insert(_parseHeaderField(header_line));
-    ss.erase(0, pos + delimiter_size);
-  }
-
-  _headers = headers;
-  LOG(DEBUG) << "Parsed headers: " << _headers;
-  return headers;
-}
-
-HttpMethod BaseHttp::getMethod() { return _method; }
+const BaseHttp::HeaderMap &BaseHttp::getHeaders() const { return _headers; }
 
 /**
- * @brief: Get the headers of the HTTP request. "method", "path" and "version"
- * are always present.
- *
- * @return: A std::map<std::string, std::string> of header fields.
- *
- * @note: The returned map is a copy of the internal map.
+ * @brief Get the body of the HTTP request or response.
+ * @return A std::string of the body.
  */
-BaseHttp::HeaderMap BaseHttp::getHeaders() { return _headers; }
+const std::string &BaseHttp::getBody() const { return _body; }
+
+// Setters
+
+/*
+ * @brief Set the body of the HTTP request or response.
+ * @param body The body (content) of the HTTP request or response.
+ */
+void BaseHttp::setBody(const std::string &body) { _body = body; }
+
+/*
+ * @brief Set a header field of the HTTP request or response.
+ * @param name The name of the header field.
+ * @param value The value of the header field.
+ */
+void BaseHttp::setHeader(const std::string &key, const std::string &value) {
+  _headers[key] = value;
+}
+
+/*
+ * @brief Set a header field of the HTTP request or response.
+ * @param headerField The header field to set.
+ */
+void BaseHttp::setHeader(const HeaderField &headerField) {
+  _headers[headerField.first] = headerField.second;
+}
+
+// Non-Member Functions
 
 std::ostream &operator<<(std::ostream &os,
                          const BaseHttp::HeaderMap &header_map) {
