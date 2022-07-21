@@ -1,4 +1,4 @@
-sample_server_X {
+sample_server_Y {
 
 	listen 80 81 8080 8081
 	server_name www.site1 www.site1.com site1
@@ -19,5 +19,18 @@ sample_server_X {
 		allowed_methods	DELETE	false
 		cgi_param p1 um
 		cgi_param p2 dois
+	}
+	location /sounds {
+		redirection www.amazon.com
+		root /var/www
+		upload_path /uploads_sounds
+		cgi_pass	pass
+		autoindex	true
+		index nada vazio vacuo 
+		allowed_methods	GET		false
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p10 dez
+		cgi_param p20 vinte
 	}
 }

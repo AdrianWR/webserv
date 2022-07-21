@@ -49,22 +49,18 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key, c
 		// redirection
 		if (!last_rword.compare("redirection")) {
 			loc._redirection = buffer;
-			std::cout << "redirection: " << loc._redirection << std::endl;
 		}
 		// root
 		else if (!last_rword.compare("root")) {
 			loc._root = buffer;
-			std::cout << "root: " << loc._root << std::endl;
 		}
 		// upload_path
 		else if (!last_rword.compare("upload_path")) {
 			loc._upload_path = buffer;
-			std::cout << "upload_path: " << loc._upload_path << std::endl;
 		}
 		// cgi_pass
 		else if (!last_rword.compare("cgi_pass")) {
 			loc._cgi_pass = buffer;
-			std::cout << "cgi_pass: " << loc._cgi_pass << std::endl;
 		}
 		// autoindex
 		else if (!last_rword.compare("autoindex")) {
@@ -72,12 +68,10 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key, c
 				loc._autoindex = true;
 			else
 				loc._autoindex = false;
-			std::cout << "autoindex: " << loc._autoindex << std::endl;
 		}
 		// index
 		else if (!last_rword.compare("index")) {
 			loc._index.push_back(buffer);
-			std::cout << "index: " << loc._index.back() << std::endl;
 		}
 		// alllowed_methods
 		else if (!last_rword.compare("allowed_methods")) {
@@ -89,14 +83,12 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key, c
 			else
 				aux= false;
 			loc._allowed_methods[key] = aux;
-			std::cout << "k: " << key << "   v:" << loc._allowed_methods[key] << std::endl;
 		}
 		// cgi_param
 		else if (!last_rword.compare("cgi_param")) {
 			std::string	key = buffer;
 			fs >> buffer;
 			loc._cgi_param[key] = buffer;
-			std::cout << "k: " << key << "   v:" << loc._cgi_param[key] << std::endl;
 		}
 		// }
 		else if (!last_rword.compare("}")) {
@@ -140,19 +132,15 @@ void file_parser_c::le_arquivo(std::string arquivo){
 		// client_body_buffer_size
 		if (!last_rword.compare("client_body_buffer_size")) {
 			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
-			std::cout << "body: " << config_temp._client_body_buffer_size << std::endl;
 		}
 		// server_name
 		else if (!last_rword.compare("server_name")) {
 			config_temp._server_name.push_back(buffer);
-			std::cout << "sname: " << config_temp._server_name.back() << std::endl;
 		}
 		// listen
 		else if (!last_rword.compare("listen")) {
 			std::istringstream(buffer) >> temp_port; 
-			std::cout << "l: " << temp_port << std::endl;
 			config_temp._listen.push_back(temp_port);
-			std::cout << "lv: " << config_temp._listen.back() << std::endl;
 		}
 		// error_page
 		else if (!last_rword.compare("error_page")) {
@@ -160,14 +148,12 @@ void file_parser_c::le_arquivo(std::string arquivo){
 			std::istringstream(buffer) >> key; 
 			fileStream >> buffer;
 			config_temp._error_page[key] = buffer;
-			std::cout << "k: " << key << "   v:" << config_temp._error_page[key] << std::endl;
 		}
 		// location
 		else if (!last_rword.compare("location")) {
 				// pega key do location
 				std::string location_key = buffer;
 				fileStream >> buffer;
-					std::cout << "xxx: |" << location_key << "|" << std::endl;
 				parse_location(fileStream, location_key, config_temp);
 
 		}
@@ -304,7 +290,7 @@ void	config_block_file::print_block_file() {
 
 	std::map<int, std::string>::iterator e;
 	for (e = _error_page.begin(); e != _error_page.end(); e++) {
-		std::cout << "error_page:" << "\t\t\t" << e->second << std::endl;
+		std::cout << "error_page:" << "\t\t\t" << e->first << ":"<< e->second << std::endl;
 	};
 
 	std::map<std::string, location>::iterator i;
