@@ -32,9 +32,13 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 }
 
 void file_parser_c::le_arquivo(std::string arquivo){
+	reserved_words_c	r = reserved_words_c();
     std::fstream		fileStream;
 	std::string			buffer = "";
+	std::string			last_rword = "";
 	config_block_file	config_temp;
+	int					temp_port;
+	(void) temp_port;
 
 	config_temp = config_block_file();
 
@@ -48,16 +52,36 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 	while (fileStream >> buffer)
 	{
+		if (r.is_reserved_word(buffer)) {
+			last_rword = buffer;
+			fileStream >> buffer;
+		};
 		// client_body_buffer_size
-		if (!buffer.compare("client_body_buffer_size")) {
-			fileStream >> buffer;
+		if (!last_rword.compare("client_body_buffer_size")) {
 			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
+			std::cout << "body: " << config_temp._client_body_buffer_size << std::endl;
 		}
-		// 
-		if (!buffer.compare("client_body_buffer_size")) {
+		// server_name
+		else if (!last_rword.compare("server_name")) {
+			config_temp._server_name.push_back(buffer);
+			std::cout << "sname: " << buffer << std::endl;
+		}
+		// listen
+		else if (!last_rword.compare("listen")) {
+			std::istringstream(buffer) >> temp_port; 
+			std::cout << "l: " << temp_port << std::endl;
+			config_temp._listen.push_back(temp_port);
+			std::cout << "lv: " << config_temp._listen[config_temp._listen.size()-1] << std::endl;
+		}
+		// error_page
+		else if (!last_rword.compare("erro_page")) {
+			std::string key;
+			fileStream >> key;
 			fileStream >> buffer;
-			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
+			config_temp._error_page[key] = buffer;
+			std::cout << "k: " << key << "   v:" << buffer << std::endl;
 		}
+		else {std::cout << "nada\n";};
 	}
 
 	// Debug print temporario
@@ -68,6 +92,7 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 // reserved_words class:
 reserved_words_c::reserved_words_c(){
+	list.insert("}");
 	list.insert("listen");
 	list.insert("root");
 	list.insert("server_name");
@@ -160,8 +185,14 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
 
 void	config_block_file::print_block_file() {
 	std::cout << "-------------------------------------------------------\n";
-	std::cout << "server_name:"		<< "\t\t" << _server_name[0] << std::endl;
-	std::cout << "listen:"			<< "\t\t\t" << _listen[0] << std::endl;
+	std::vector<std::string>::iterator j;
+	for (j = _server_name.begin(); j != _server_name.end(); j++) {
+		std::cout << "server_name:"		<< "\t\t" << (*j) << std::endl;
+	};
+	std::vector<int>::iterator k;
+	for (k = _listen.begin(); k != _listen.end(); k++) {
+		std::cout << "listen:"			<< "\t\t\t" << (*k) << std::endl;
+	};
 	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
 	std::cout << "error page:"		<< "\t\t" << _error_page[404] << std::endl;
 	std::map<std::string, location>::iterator i;

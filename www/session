@@ -41,6 +41,7 @@ set suffixesadd=.c
 set tabstop=4
 set visualbell
 set wildmenu
+set window=39
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
@@ -193,7 +194,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 37)
+let s:l = 1 - ((0 * winheight(0) + 10) / 21)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -335,7 +336,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 1 - ((0 * winheight(0) + 10) / 21)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -477,7 +478,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 1 - ((0 * winheight(0) + 10) / 21)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -619,7 +620,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 1 - ((0 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -761,15 +762,15 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 57 - ((17 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+57
+normal! 022|
 lcd ~/webserver/www
 tabnext
-edit ~/webserver/www/conf/conf1
+edit ~/webserver/www/conf/conf2
 set splitbelow splitright
 set nosplitbelow
 set nosplitright
@@ -903,7 +904,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 1 - ((0 * winheight(0) + 18) / 37)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -912,12 +913,13 @@ normal! 0
 lcd ~/webserver/www
 tabnext 6
 set stal=1
-badd +0 ~/webserver/www/main.c
-badd +0 ~/webserver/www/todo
-badd +0 ~/webserver/src/main.cpp
-badd +0 ~/webserver/include/utils.hpp
-badd +0 ~/webserver/lib/utils/utils.cpp
+badd +1 ~/webserver/www/main.c
+badd +1 ~/webserver/www/todo
+badd +1 ~/webserver/src/main.cpp
+badd +1 ~/webserver/include/utils.hpp
+badd +1 ~/webserver/lib/utils/utils.cpp
 badd +0 ~/webserver/www/conf/conf1
+badd +0 ~/webserver/www/conf/conf2
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0
   silent exe 'bwipe ' . s:wipebuf
 endif

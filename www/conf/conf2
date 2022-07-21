@@ -1,5 +1,8 @@
 sample_server_X {
 
-	client_body_buffer_size 8000;
+	listen 80 81 8080 81
+	server_name www.site1 www.site1.com site1
+	client_body_buffer_size 8000
+	error_page 404 ./error/404.html
 
 }
