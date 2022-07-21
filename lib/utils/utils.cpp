@@ -31,7 +31,7 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 	std::cout << " " << buffer << "|" << std::endl;
 }
 
-void file_parser_c::parse_location(std::fstream &fs, std::string location_key) {
+void file_parser_c::parse_location(std::fstream &fs, std::string location_key, config_block_file &cb) {
 	reserved_words_c	r = reserved_words_c();
 	std::string			buffer = "";
 	std::string			last_rword = "";
@@ -51,20 +51,66 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key) {
 			loc._redirection = buffer;
 			std::cout << "redirection: " << loc._redirection << std::endl;
 		}
-//				std::map<std::string, bool>			_allowed_methods;
-//				std::string							_redirection;
-//				std::string							_root;
-//				bool								_autoindex;
-//				std::vector<std::string>			_index;
-//				std::map<std::string, std::string>	_cgi_param;
-//				std::string							_cgi_pass;
-//				std::string							_upload_path;
-	
-	
+		// root
+		else if (!last_rword.compare("root")) {
+			loc._root = buffer;
+			std::cout << "root: " << loc._root << std::endl;
+		}
+		// upload_path
+		else if (!last_rword.compare("upload_path")) {
+			loc._upload_path = buffer;
+			std::cout << "upload_path: " << loc._upload_path << std::endl;
+		}
+		// cgi_pass
+		else if (!last_rword.compare("cgi_pass")) {
+			loc._cgi_pass = buffer;
+			std::cout << "cgi_pass: " << loc._cgi_pass << std::endl;
+		}
+		// autoindex
+		else if (!last_rword.compare("autoindex")) {
+			if (!buffer.compare("true"))
+				loc._autoindex = true;
+			else
+				loc._autoindex = false;
+			std::cout << "autoindex: " << loc._autoindex << std::endl;
+		}
+		// index
+		else if (!last_rword.compare("index")) {
+			loc._index.push_back(buffer);
+			std::cout << "index: " << loc._index.back() << std::endl;
+		}
+		// alllowed_methods
+		else if (!last_rword.compare("allowed_methods")) {
+			std::string	key = buffer;
+			fs >> buffer;
+			bool aux;
+			if (!buffer.compare("true"))
+				aux= true;
+			else
+				aux= false;
+			loc._allowed_methods[key] = aux;
+			std::cout << "k: " << key << "   v:" << loc._allowed_methods[key] << std::endl;
+		}
+		// cgi_param
+		else if (!last_rword.compare("cgi_param")) {
+			std::string	key = buffer;
+			fs >> buffer;
+			loc._cgi_param[key] = buffer;
+			std::cout << "k: " << key << "   v:" << loc._cgi_param[key] << std::endl;
+		}
+		// }
+		else if (!last_rword.compare("}")) {
+			cb._location[location_key] = loc;
+			std::cout << "fim_parse_location_block" << std::endl;
+		}
 	}
-	// poe no map
+	// Remove defaults from containers
+//	if (!loc._index.front().compare("none")) {
+//		std::cout << "KKKKKKKKKKKKKKKKKKK\n";
+//		loc._index.erase(loc._index.begin());
+//	}
+//	loc._cgi_param["none"].erase();
 	std::cout << "Saindo parse location ... \n";
-
 }
 
 void file_parser_c::le_arquivo(std::string arquivo){
@@ -99,14 +145,14 @@ void file_parser_c::le_arquivo(std::string arquivo){
 		// server_name
 		else if (!last_rword.compare("server_name")) {
 			config_temp._server_name.push_back(buffer);
-			std::cout << "sname: " << buffer << std::endl;
+			std::cout << "sname: " << config_temp._server_name.back() << std::endl;
 		}
 		// listen
 		else if (!last_rword.compare("listen")) {
 			std::istringstream(buffer) >> temp_port; 
 			std::cout << "l: " << temp_port << std::endl;
 			config_temp._listen.push_back(temp_port);
-			std::cout << "lv: " << config_temp._listen[config_temp._listen.size()-1] << std::endl;
+			std::cout << "lv: " << config_temp._listen.back() << std::endl;
 		}
 		// error_page
 		else if (!last_rword.compare("error_page")) {
@@ -122,8 +168,7 @@ void file_parser_c::le_arquivo(std::string arquivo){
 				std::string location_key = buffer;
 				fileStream >> buffer;
 					std::cout << "xxx: |" << location_key << "|" << std::endl;
-				parse_location(fileStream, location_key);
-
+				parse_location(fileStream, location_key, config_temp);
 
 		}
 		else {std::cout << "nada\n";};
@@ -134,7 +179,7 @@ void file_parser_c::le_arquivo(std::string arquivo){
 	// Remove defaults from containers
 	if (config_temp._listen.front() == -1)
 		config_temp._listen.erase(config_temp._listen.begin());
-	if (!config_temp._server_name.front().compare("default_server"))
+	if (!config_temp._server_name.front().compare("none"))
 		config_temp._server_name.erase(config_temp._server_name.begin());
 
 	config_temp.print_block_file();
@@ -158,7 +203,8 @@ reserved_words_c::reserved_words_c(){
 	list.insert("autoindex");
 	list.insert("index");
 	list.insert("redirection");
-	list.insert("upload_page");
+	list.insert("upload_path");
+	list.insert("allowed_methods");
 }
 
 bool	reserved_words_c::is_reserved_word(std::string query_string)
@@ -177,8 +223,8 @@ location::location() {
 	_redirection = "/";
 	_root = "/";
 	_autoindex = false;
-	_index.push_back("index.html");
-	_cgi_param["a"] = "A";
+//	_index.push_back("none");
+//	_cgi_param["none"] = "none";
 	_cgi_pass = "";
 	_upload_path = "./upload/";
 }
@@ -207,19 +253,25 @@ void	location::print_location() {
 	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
 	std::cout << "root:"			<< "\t\t" << _root << std::endl;
 	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
-	std::cout << "index:"			<< "\t\t\t" << _index[0] << std::endl;
+	std::vector<std::string>::iterator k;
+	for (k = _index.begin(); k != _index.end(); k++) {
+		std::cout << "index:" << "\t\t\t" << (*k) << std::endl;
+	};
 	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
-	std::cout << "cgi param:"		<< "\t\t" << _cgi_param["a"] << std::endl;
+	std::map<std::string, std::string>::iterator i;
+	for (i = _cgi_param.begin(); i != _cgi_param.end(); i++) {
+		std::cout << "cgi_param:" << "\t\t\t" << i->first << ":"<< i->second << std::endl;
+	};
 	std::cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
 }
 
 // config_block_file class:
 config_block_file::config_block_file() {
 	_listen.push_back(-1);
-	_server_name.push_back("default_server"); 
+	_server_name.push_back("none"); 
 	_error_page[404] = "./errors/404.html";
 	_client_body_buffer_size = 8; // max size for the client body, defaults to 8 000
-	_location["."] = location();
+//	_location["none"] = location();
 }
 
 config_block_file::~config_block_file() {}

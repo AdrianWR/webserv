@@ -10,26 +10,6 @@
 #include <map>
 
 
-class file_parser_c {
-public:
-	// Construtor
-	file_parser_c();
-	// Destrutor
-	~file_parser_c();
-	// Asssignment
-	file_parser_c &operator=(const file_parser_c &);
-
-	// Atributos
-
-	// Metodos
-	void teste();
-
-	void le_arquivo(std::string arquivo);
-	void parse_location(std::fstream &fs, std::string location_key);
-	void printa_linha(std::fstream &fileStream);
-
-};
-
 class reserved_words_c {
 public:
 	reserved_words_c();
@@ -78,6 +58,26 @@ public:
 
 public:
 	void print_block_file();
+
+};
+
+class file_parser_c {
+public:
+	// Construtor
+	file_parser_c();
+	// Destrutor
+	~file_parser_c();
+	// Asssignment
+	file_parser_c &operator=(const file_parser_c &);
+
+	// Atributos
+
+	// Metodos
+	void teste();
+
+	void le_arquivo(std::string arquivo);
+	void parse_location(std::fstream &fs, std::string location_key, config_block_file  &cb);
+	void printa_linha(std::fstream &fileStream);
 
 };
 
