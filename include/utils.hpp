@@ -35,20 +35,17 @@ public:
 	bool	is_reserved_word(std::string query_string);
 };
 
-class config_block {
+
+class location {
 public:
 	// Constructor
-	config_block();
+	location();
 	// Destructor
-	~config_block();
+	~location();
 	// Assignment operator
-	config_block &operator=(const config_block &);
+	location &operator=(const location &);
+
 public:
-	std::vector<int>					_listen;
-	std::vector<std::string>			_server_name; // "host" do http request !
-	int									_client_body_buffer_size; // max size for the client body, defaults to 8 000
-	std::map<int, std::string>			_error_page; // error page redirections
-	// location ?
 	std::map<std::string, bool>			_allowed_methods;
 	std::string							_redirection;
 	std::string							_root;
@@ -59,7 +56,26 @@ public:
 	std::string							_upload_path;
 
 public:
-	void print();
+	void print_location();
+};
+
+class config_block_file {
+public:
+	// Constructor
+	config_block_file();
+	// Destructor
+	~config_block_file();
+	// Assignment operator
+	config_block_file &operator=(const config_block_file &);
+public:
+	std::vector<int>					_listen;
+	std::vector<std::string>			_server_name; // "host" do http request !
+	int									_client_body_buffer_size; // max size for the client body, defaults to 8 000
+	std::map<int, std::string>			_error_page; // error page redirections
+	std::map<std::string, location>		_location; // map with n-location configs
+
+public:
+	void print_block_file();
 
 };
 
@@ -67,10 +83,15 @@ public:
 // Objeto config block tem que ter um vector / map de locations
 // Alterar rotina de impressao
 
+// Rotina para ler arquivo e colocar em estrutura temporaria
 
-// Ler arquivo por blocks config_blocks
+// Rotina para traduzir da estrutura temporaria para a estrutura final
+
+
+
+// Ler arquivo por blocks config_block_files
 // No final de cada block, explodir para um map com chave server_name;listen
-	// Varrer vector de config_block e para cada block fazer produto cartesiano
+	// Varrer vector de config_block_file e para cada block fazer produto cartesiano
 	// de server_name e listen
 		// gerar chave
 		// copiar bloco para map

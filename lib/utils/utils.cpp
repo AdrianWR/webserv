@@ -78,60 +78,86 @@ bool	reserved_words_c::is_reserved_word(std::string query_string)
 	return true;
 }
 
-// config_block class:
-config_block::config_block() {
-	_listen.push_back(80);
-	_root = "/";
-	_server_name.push_back("default_server"); 
-	_error_page[404] = "./errors/404.html";
-	_client_body_buffer_size = 8; // max size for the client body, defaults to 8 000
-	_cgi_param["a"] = "A";
-	_cgi_pass = "";
+
+// location Class
+location::location() {
 	_allowed_methods["GET"] = true;
 	_allowed_methods["POST"] = true;
 	_allowed_methods["DELETE"] = true;
-	_index.push_back("index.html");
-	_autoindex = false;
 	_redirection = "/";
-	_upload_path = "/";
+	_root = "/";
+	_autoindex = false;
+	_index.push_back("index.html");
+	_cgi_param["a"] = "A";
+	_cgi_pass = "";
+	_upload_path = "./upload/";
 }
 
-config_block::~config_block() {}
+location::~location() {}
 
-config_block  &config_block::operator=(const config_block &rhs) {
+location  &location::operator=(const location &rhs) {
   if (this != &rhs) {
-	_listen = rhs._listen;
+	_allowed_methods = rhs._allowed_methods;
+	_redirection = rhs._redirection;
 	_root = rhs._root;
-	_server_name = rhs._server_name;
-	_error_page = rhs._error_page;
-	_client_body_buffer_size = rhs._client_body_buffer_size;
+	_autoindex = rhs._autoindex;
+	_index = rhs._index;
 	_cgi_param = rhs._cgi_param;
 	_cgi_pass = rhs._cgi_pass;
-	_allowed_methods = rhs._allowed_methods;
-	_index = rhs._index;
-	_autoindex = rhs._autoindex;
-	_redirection = rhs._redirection;
 	_upload_path = rhs._upload_path;
   }
   return *this;
 }
 
-void	config_block::print() {
-	std::cout << "-------------------------------------------------------\n";
-	std::cout << "server_name:"		<< "\t\t" << _server_name[0] << std::endl;
-	std::cout << "listen:"			<< "\t\t\t" << _listen[0] << std::endl;
-	std::cout << "root:"			<< "\t\t" << _root << std::endl;
-	std::cout << "error_page:"		<< "\t\t" << _error_page[404] << std::endl;
-	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
-	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
-	std::cout << "cgi param:"		<< "\t\t" << _cgi_param["a"] << std::endl;
+void	location::print_location() {
+	std::cout << "loc: .......................\n";
 	std::cout << "get_allowed:"		<< "\t\t" << _allowed_methods["GET"] << std::endl;
 	std::cout << "post_allowed:"	<< "\t\t" << _allowed_methods["POST"] << std::endl;
 	std::cout << "delete_allowed:"	<< "\t\t" << _allowed_methods["DELETE"] << std::endl;
-	std::cout << "index:"			<< "\t\t\t" << _index[0] << std::endl;
-	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
 	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
+	std::cout << "root:"			<< "\t\t" << _root << std::endl;
+	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
+	std::cout << "index:"			<< "\t\t\t" << _index[0] << std::endl;
+	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
+	std::cout << "cgi param:"		<< "\t\t" << _cgi_param["a"] << std::endl;
 	std::cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
+}
+
+// config_block_file class:
+config_block_file::config_block_file() {
+	_listen.push_back(80);
+	_server_name.push_back("default_server"); 
+	_error_page[404] = "./errors/404.html";
+	_client_body_buffer_size = 8; // max size for the client body, defaults to 8 000
+	_location["."] = location();
+}
+
+config_block_file::~config_block_file() {}
+
+config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
+  if (this != &rhs) {
+	_listen = rhs._listen;
+	_server_name = rhs._server_name;
+	_error_page = rhs._error_page;
+	_client_body_buffer_size = rhs._client_body_buffer_size;
+	_location = rhs._location;
+  }
+  return *this;
+}
+
+void	config_block_file::print_block_file() {
+	std::cout << "-------------------------------------------------------\n";
+	std::cout << "server_name:"		<< "\t\t" << _server_name[0] << std::endl;
+	std::cout << "listen:"			<< "\t\t\t" << _listen[0] << std::endl;
+	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
+	std::cout << "error page:"		<< "\t\t" << _error_page[404] << std::endl;
+	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
+	std::map<std::string, location>::iterator i;
+	for (i = _location.begin(); i != _location.end(); i++)
+	{
+		std::cout << "location:" << "\t\t" << i->first << std::endl;
+		i->second.print_location();
+	};
 	std::cout << "-------------------------------------------------------\n";
 }
 

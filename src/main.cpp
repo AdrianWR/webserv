@@ -25,9 +25,9 @@ int main(void) {
 	file_parser.teste();
 	file_parser.le_arquivo("./www/conf/conf1");
 
-	config_block	block;
-	block = config_block();
-	block.print();
+	config_block_file	block;
+	block = config_block_file();
+	block.print_block_file();
 
 	reserved_words_c rw;
 	std::cout << "server_name: " << rw.is_reserved_word("server_name") << std::endl;
