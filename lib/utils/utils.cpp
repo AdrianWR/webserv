@@ -31,6 +31,42 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 	std::cout << " " << buffer << "|" << std::endl;
 }
 
+void file_parser_c::parse_location(std::fstream &fs, std::string location_key) {
+	reserved_words_c	r = reserved_words_c();
+	std::string			buffer = "";
+	std::string			last_rword = "";
+	location			loc;
+
+	loc = location();
+	std::cout << "Entering parse location ...\n";
+	std::cout << "location key: " << location_key << std::endl;
+
+	while (fs >> buffer) {
+		if (r.is_reserved_word(buffer)) {
+			last_rword = buffer;
+			fs >> buffer;
+		};
+		// redirection
+		if (!last_rword.compare("redirection")) {
+			loc._redirection = buffer;
+			std::cout << "redirection: " << loc._redirection << std::endl;
+		}
+//				std::map<std::string, bool>			_allowed_methods;
+//				std::string							_redirection;
+//				std::string							_root;
+//				bool								_autoindex;
+//				std::vector<std::string>			_index;
+//				std::map<std::string, std::string>	_cgi_param;
+//				std::string							_cgi_pass;
+//				std::string							_upload_path;
+	
+	
+	}
+	// poe no map
+	std::cout << "Saindo parse location ... \n";
+
+}
+
 void file_parser_c::le_arquivo(std::string arquivo){
 	reserved_words_c	r = reserved_words_c();
     std::fstream		fileStream;
@@ -38,7 +74,6 @@ void file_parser_c::le_arquivo(std::string arquivo){
 	std::string			last_rword = "";
 	config_block_file	config_temp;
 	int					temp_port;
-	(void) temp_port;
 
 	config_temp = config_block_file();
 
@@ -81,6 +116,16 @@ void file_parser_c::le_arquivo(std::string arquivo){
 			config_temp._error_page[key] = buffer;
 			std::cout << "k: " << key << "   v:" << config_temp._error_page[key] << std::endl;
 		}
+		// location
+		else if (!last_rword.compare("location")) {
+				// pega key do location
+				std::string location_key = buffer;
+				fileStream >> buffer;
+					std::cout << "xxx: |" << location_key << "|" << std::endl;
+				parse_location(fileStream, location_key);
+
+
+		}
 		else {std::cout << "nada\n";};
 	}
 
@@ -104,6 +149,7 @@ reserved_words_c::reserved_words_c(){
 	list.insert("server_name");
 	list.insert("error_page");
 	list.insert("client_body_buffer_size");
+	list.insert("location");
 	list.insert("cgi_pass");
 	list.insert("cgi_param");
 	list.insert("get_allowed");

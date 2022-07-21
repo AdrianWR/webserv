@@ -25,6 +25,7 @@ public:
 	void teste();
 
 	void le_arquivo(std::string arquivo);
+	void parse_location(std::fstream &fs, std::string location_key);
 	void printa_linha(std::fstream &fileStream);
 
 };
