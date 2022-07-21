@@ -74,18 +74,24 @@ void file_parser_c::le_arquivo(std::string arquivo){
 			std::cout << "lv: " << config_temp._listen[config_temp._listen.size()-1] << std::endl;
 		}
 		// error_page
-		else if (!last_rword.compare("erro_page")) {
-			std::string key;
-			fileStream >> key;
+		else if (!last_rword.compare("error_page")) {
+			int	key;
+			std::istringstream(buffer) >> key; 
 			fileStream >> buffer;
 			config_temp._error_page[key] = buffer;
-			std::cout << "k: " << key << "   v:" << buffer << std::endl;
+			std::cout << "k: " << key << "   v:" << config_temp._error_page[key] << std::endl;
 		}
 		else {std::cout << "nada\n";};
 	}
 
 	// Debug print temporario
 	std::cout << "temp:\n";
+	// Remove defaults from containers
+	if (config_temp._listen.front() == -1)
+		config_temp._listen.erase(config_temp._listen.begin());
+	if (!config_temp._server_name.front().compare("default_server"))
+		config_temp._server_name.erase(config_temp._server_name.begin());
+
 	config_temp.print_block_file();
 
 }
@@ -163,7 +169,7 @@ void	location::print_location() {
 
 // config_block_file class:
 config_block_file::config_block_file() {
-	_listen.push_back(80);
+	_listen.push_back(-1);
 	_server_name.push_back("default_server"); 
 	_error_page[404] = "./errors/404.html";
 	_client_body_buffer_size = 8; // max size for the client body, defaults to 8 000
@@ -185,16 +191,24 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
 
 void	config_block_file::print_block_file() {
 	std::cout << "-------------------------------------------------------\n";
-	std::vector<std::string>::iterator j;
-	for (j = _server_name.begin(); j != _server_name.end(); j++) {
-		std::cout << "server_name:"		<< "\t\t" << (*j) << std::endl;
-	};
+
 	std::vector<int>::iterator k;
 	for (k = _listen.begin(); k != _listen.end(); k++) {
 		std::cout << "listen:"			<< "\t\t\t" << (*k) << std::endl;
 	};
+
+	std::vector<std::string>::iterator j;
+	for (j = _server_name.begin(); j != _server_name.end(); j++) {
+		std::cout << "server_name:"		<< "\t\t" << (*j) << std::endl;
+	};
+
 	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
-	std::cout << "error page:"		<< "\t\t" << _error_page[404] << std::endl;
+
+	std::map<int, std::string>::iterator e;
+	for (e = _error_page.begin(); e != _error_page.end(); e++) {
+		std::cout << "error_page:" << "\t\t\t" << e->second << std::endl;
+	};
+
 	std::map<std::string, location>::iterator i;
 	for (i = _location.begin(); i != _location.end(); i++)
 	{

@@ -4,5 +4,7 @@ sample_server_X {
 	server_name www.site1 www.site1.com site1
 	client_body_buffer_size 8000
 	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+	error_page 500 ./error/500.html
 
 }
