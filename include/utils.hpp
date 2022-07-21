@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <set>
 #include <vector>
 #include <map>
@@ -78,10 +79,6 @@ public:
 	void print_block_file();
 
 };
-
-// Fazer um objeto location
-// Objeto config block tem que ter um vector / map de locations
-// Alterar rotina de impressao
 
 // Rotina para ler arquivo e colocar em estrutura temporaria
 

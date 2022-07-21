@@ -32,8 +32,11 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 }
 
 void file_parser_c::le_arquivo(std::string arquivo){
-    std::fstream	fileStream;
-	std::string		buffer = "";
+    std::fstream		fileStream;
+	std::string			buffer = "";
+	config_block_file	config_temp;
+
+	config_temp = config_block_file();
 
 	fileStream.open(arquivo.c_str());
 	if (!fileStream.is_open()) {
@@ -45,12 +48,22 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 	while (fileStream >> buffer)
 	{
-		if (!buffer.compare("{")) {
-			printa_linha(fileStream);
+		// client_body_buffer_size
+		if (!buffer.compare("client_body_buffer_size")) {
+			fileStream >> buffer;
+			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
 		}
-		else
-			std::cout << "|" << buffer << "|" << std::endl;
+		// 
+		if (!buffer.compare("client_body_buffer_size")) {
+			fileStream >> buffer;
+			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
+		}
 	}
+
+	// Debug print temporario
+	std::cout << "temp:\n";
+	config_temp.print_block_file();
+
 }
 
 // reserved_words class:
@@ -151,7 +164,6 @@ void	config_block_file::print_block_file() {
 	std::cout << "listen:"			<< "\t\t\t" << _listen[0] << std::endl;
 	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
 	std::cout << "error page:"		<< "\t\t" << _error_page[404] << std::endl;
-	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
 	std::map<std::string, location>::iterator i;
 	for (i = _location.begin(); i != _location.end(); i++)
 	{
