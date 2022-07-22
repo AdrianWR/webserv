@@ -70,6 +70,7 @@ public:
 	// Assignment operator
 	config_block_file &operator=(const config_block_file &);
 public:
+	std::string							_block_name; // name of block in config file
 	std::vector<int>					_listen;
 	std::vector<std::string>			_server_name; // "host" do http request !
 	int									_client_body_buffer_size; // max size for the client body, defaults to 8 000
@@ -96,6 +97,7 @@ public:
 	void teste();
 
 	void le_arquivo(std::string arquivo);
+	config_block_file parse_config_block_file(std::fstream &fileStream, std::string &buffer);
 	void parse_location(std::fstream &fs, std::string location_key, config_block_file  &cb);
 	void printa_linha(std::fstream &fileStream);
 

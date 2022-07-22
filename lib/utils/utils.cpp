@@ -31,7 +31,6 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 	std::cout << " " << buffer << "|" << std::endl;
 }
 
-
 void file_parser_c::parse_location(std::fstream &fs, std::string location_key, config_block_file &cb) {
 	reserved_words_c	r = reserved_words_c();
 	std::string			buffer = "";
@@ -106,16 +105,90 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key, c
 	std::cout << "Saindo parse location ... \n";
 }
 
+
+config_block_file parse_config_block_file(std::fstream &fileStream, std::string &buffer) {
+//		parse block
+//			le nome do server_block
+//			while nao chega no fecha {
+//				funcoes parse
+//			fim do while qdo chega no {
+//			retorna objeto server_block
+	(void) fileStream;
+	(void) buffer;
+	config_block_file	stub;
+	stub = config_block_file();
+	return stub;
+//	while (buffer.compare("}"))
+//	{
+//		if (r.is_reserved_word(buffer)) {
+//			last_rword = buffer;
+//			fileStream >> buffer;
+//		};
+//		// client_body_buffer_size
+//		if (!last_rword.compare("client_body_buffer_size")) {
+//			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
+//		}
+//		// server_name
+//		else if (!last_rword.compare("server_name")) {
+//			config_temp._server_name.push_back(buffer);
+//		}
+//		// listen
+//		else if (!last_rword.compare("listen")) {
+//			std::istringstream(buffer) >> temp_port; 
+//			config_temp._listen.push_back(temp_port);
+//		}
+//		// error_page
+//		else if (!last_rword.compare("error_page")) {
+//			int	key;
+//			std::istringstream(buffer) >> key; 
+//			fileStream >> buffer;
+//			config_temp._error_page[key] = buffer;
+//		}
+//		// location
+//		else if (!last_rword.compare("location")) {
+//				// pega key do location
+//				std::string location_key = buffer;
+//				fileStream >> buffer;
+//				parse_location(fileStream, location_key, config_temp);
+//		}
+//		else {std::cout << "nada\n";};
+//	}
+//
+//	// Debug print temporario
+//	std::cout << "temp:\n";
+//	// Remove defaults from containers
+//	if (config_temp._listen.front() == -1)
+//		config_temp._listen.erase(config_temp._listen.begin());
+//	if (!config_temp._server_name.front().compare("none"))
+//		config_temp._server_name.erase(config_temp._server_name.begin());
+
+}
+
 void file_parser_c::le_arquivo(std::string arquivo){
+//parse file ok
+//	inicializa vetor de server_blocks ok
+//	while nao acabou o arquivo: ok
+//		inicializa um objeto server_block ok
+//
+//		parse block
+//			le nome do server_block
+//			while nao chega no fecha {
+//				funcoes parse
+//			fim do while qdo chega no {
+//			retorna objeto server_block
+
+//		coloca objeto em vector de server blocks ok
+//	fim do while qdo chegar no eof ok
+
 	reserved_words_c	r = reserved_words_c();
     std::fstream		fileStream;
 	std::string			buffer = "";
 	std::string			last_rword = "";
-	config_block_file	config_temp;
+	config_block_file	stub;
 	int					temp_port;
+	std::vector<config_block_file>	config_block_file_vector;
 
-	config_temp = config_block_file();
-
+	(void) temp_port;
 	fileStream.open(arquivo.c_str());
 	if (!fileStream.is_open()) {
 		std::cout << "Erro abrir arquivo\n";
@@ -124,58 +197,23 @@ void file_parser_c::le_arquivo(std::string arquivo){
 	else
 		std::cout << "Arquivo aberto\n";
 
-	while (fileStream >> buffer)
-	{
-		if (r.is_reserved_word(buffer)) {
-			last_rword = buffer;
-			fileStream >> buffer;
-		};
-		// client_body_buffer_size
-		if (!last_rword.compare("client_body_buffer_size")) {
-			std::istringstream(buffer) >> config_temp._client_body_buffer_size;
-		}
-		// server_name
-		else if (!last_rword.compare("server_name")) {
-			config_temp._server_name.push_back(buffer);
-		}
-		// listen
-		else if (!last_rword.compare("listen")) {
-			std::istringstream(buffer) >> temp_port; 
-			config_temp._listen.push_back(temp_port);
-		}
-		// error_page
-		else if (!last_rword.compare("error_page")) {
-			int	key;
-			std::istringstream(buffer) >> key; 
-			fileStream >> buffer;
-			config_temp._error_page[key] = buffer;
-		}
-		// location
-		else if (!last_rword.compare("location")) {
-				// pega key do location
-				std::string location_key = buffer;
-				fileStream >> buffer;
-				parse_location(fileStream, location_key, config_temp);
+	// file loop
+	while (fileStream >> buffer) {
 
-		}
-		else {std::cout << "nada\n";};
+		stub = config_block_file();
+		//stub = parse_config_block_file(fileStream, buffer);
+		std::cout << "parse_config_block: " << buffer << std::endl;
+		config_block_file_vector.push_back(stub);
 	}
+	
 
-	// Debug print temporario
-	std::cout << "temp:\n";
-	// Remove defaults from containers
-	if (config_temp._listen.front() == -1)
-		config_temp._listen.erase(config_temp._listen.begin());
-	if (!config_temp._server_name.front().compare("none"))
-		config_temp._server_name.erase(config_temp._server_name.begin());
 
-	config_temp.print_block_file();
+	stub.print_block_file();
 
 }
 
 // reserved_words class:
 reserved_words_c::reserved_words_c(){
-	list.insert("}");
 	list.insert("listen");
 	list.insert("root");
 	list.insert("server_name");
@@ -248,6 +286,7 @@ void	location::print_location() {
 
 // config_block_file class:
 config_block_file::config_block_file() {
+	_block_name = "paulo";
 	_listen.push_back(-1);
 	_server_name.push_back("none"); 
 	_error_page[404] = "./errors/404.html";
@@ -259,6 +298,7 @@ config_block_file::~config_block_file() {}
 
 config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
   if (this != &rhs) {
+	_block_name = rhs._block_name;
 	_listen = rhs._listen;
 	_server_name = rhs._server_name;
 	_error_page = rhs._error_page;
@@ -270,6 +310,7 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
 
 void	config_block_file::print_block_file() {
 	std::cout << "-------------------------------------------------------\n";
+	std::cout << "block_name: " << _block_name << std::endl;
 	std::cout << "listen: \n";			print_vector(_listen);
 	std::cout << "server_name: \n";		print_vector(_server_name);
 	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
