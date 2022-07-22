@@ -10,6 +10,26 @@
 #include <map>
 
 
+template <typename T>
+void print_vector(std::vector<T> v) {
+	typename std::vector<T>::iterator	it;
+
+	int i = 0;
+
+	for (it = v.begin(); it != v.end(); it++) {
+		std::cout << "[" << i << "]\t|" << (*it) << "|" << std::endl;
+		i++;
+	}
+}
+
+template <typename A, typename B>
+void print_map(std::map <A,B> m) {
+	typename std::map<A,B>::iterator it;
+	for (it = m.begin(); it != m.end(); it++) {
+		std::cout << "|" << it->first << " : "<< it->second << "|" << std::endl;
+	}
+}
+
 class reserved_words_c {
 public:
 	reserved_words_c();

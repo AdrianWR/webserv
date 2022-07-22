@@ -31,6 +31,7 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 	std::cout << " " << buffer << "|" << std::endl;
 }
 
+
 void file_parser_c::parse_location(std::fstream &fs, std::string location_key, config_block_file &cb) {
 	reserved_words_c	r = reserved_words_c();
 	std::string			buffer = "";
@@ -239,15 +240,9 @@ void	location::print_location() {
 	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
 	std::cout << "root:"			<< "\t\t" << _root << std::endl;
 	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
-	std::vector<std::string>::iterator k;
-	for (k = _index.begin(); k != _index.end(); k++) {
-		std::cout << "index:" << "\t\t\t" << (*k) << std::endl;
-	};
+	std::cout << "index: \n";		print_vector(_index);
 	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
-	std::map<std::string, std::string>::iterator i;
-	for (i = _cgi_param.begin(); i != _cgi_param.end(); i++) {
-		std::cout << "cgi_param:" << "\t\t\t" << i->first << ":"<< i->second << std::endl;
-	};
+	std::cout << "cgi_param:\n";	print_map(_cgi_param);
 	std::cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
 }
 
@@ -275,24 +270,10 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
 
 void	config_block_file::print_block_file() {
 	std::cout << "-------------------------------------------------------\n";
-
-	std::vector<int>::iterator k;
-	for (k = _listen.begin(); k != _listen.end(); k++) {
-		std::cout << "listen:"			<< "\t\t\t" << (*k) << std::endl;
-	};
-
-	std::vector<std::string>::iterator j;
-	for (j = _server_name.begin(); j != _server_name.end(); j++) {
-		std::cout << "server_name:"		<< "\t\t" << (*j) << std::endl;
-	};
-
+	std::cout << "listen: \n";			print_vector(_listen);
+	std::cout << "server_name: \n";		print_vector(_server_name);
 	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
-
-	std::map<int, std::string>::iterator e;
-	for (e = _error_page.begin(); e != _error_page.end(); e++) {
-		std::cout << "error_page:" << "\t\t\t" << e->first << ":"<< e->second << std::endl;
-	};
-
+	std::cout << "error_page:\n"; print_map(_error_page);
 	std::map<std::string, location>::iterator i;
 	for (i = _location.begin(); i != _location.end(); i++)
 	{
