@@ -1,0 +1,32 @@
+sample_server_Z1 {
+
+	listen 80 81 8080 8081
+	server_name www.site1 www.site1.com site1
+	client_body_buffer_size 8000
+	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+	error_page 500 ./error/500.html
+}
+
+
+
+sample_server_Z2 {
+
+	listen 80 82 
+	server_name www.site2 www.site2.com site2
+	client_body_buffer_size 4000
+	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+}
+
+sample_server_Z3 {
+
+	listen 83 8083
+	server_name www.site3 www.site3.com site3
+	client_body_buffer_size 10000
+	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+	error_page 500 ./error/500.html
+	error_page 600 ./error/600.html
+	error_page 500 ./error/500.html
+}

@@ -21,7 +21,7 @@ bool is_in(int i, std::set <int> s) {
 int main(void) {
 
 	file_parser_c	file_parser;
-	file_parser.le_arquivo("./www/conf/conf3");
+	file_parser.le_arquivo("./www/conf/conf4");
 
 	return 0;
 
