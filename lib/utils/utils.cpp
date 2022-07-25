@@ -155,7 +155,6 @@ config_block_file file_parser_c::parse_config_block_file(std::fstream &fileStrea
 		stub._listen.erase(stub._listen.begin());
 	if (!stub._server_name.front().compare("none"))
 		stub._server_name.erase(stub._server_name.begin());
-
 	// return
 	return (stub);
 }
@@ -164,16 +163,6 @@ void file_parser_c::generate_config_map() {
 	config_block_file	stub;
 	std::string			key;
 
-// para cada elemento do vector
-// stub = elemento
-	// pega vetor de listen
-	// pega vetor de server_names
-	// for listen
-		// for server_names
-			// monta chave -> server_name:listen
-			// acrescenta stub ao mapa
-			// altera listen do stub
-			// altera index do stub
 	if (_config_vector.size() == 0)
 		return;
 	for (size_t i = 0; i < _config_vector.size(); i ++) {
@@ -181,19 +170,21 @@ void file_parser_c::generate_config_map() {
 		for (size_t j = 0; j < stub._listen.size(); j ++) {
 			for (size_t k = 0; k < stub._server_name.size(); k++) {
 				key = stub._server_name[k] + ":" + IntToString(stub._listen[j]);
-				std::cout << key << std::endl;
+				_config_map[key] = stub;
+				_config_map[key]._listen.clear();
+				_config_map[key]._listen.push_back(stub._listen[j]);
+				_config_map[key]._server_name.clear();
+				_config_map[key]._server_name.push_back(stub._server_name[k]);
 			}
 		}
 	
 	} // for config_vector
-
 }
 
 void file_parser_c::le_arquivo(std::string arquivo){
 	config_block_file	stub;
     std::fstream		fileStream;
 	std::string			buffer = "";
-	std::vector<config_block_file>	config_block_file_vector;
 
 	fileStream.open(arquivo.c_str());
 	if (!fileStream.is_open()) {
@@ -205,18 +196,21 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 	// file loop
 	while (fileStream >> buffer) {
-//		std::cout << "parse_config_block: " << buffer << std::endl;
 		stub = config_block_file();
 		stub = parse_config_block_file(fileStream, buffer);
-		config_block_file_vector.push_back(stub);
+		_config_vector.push_back(stub);
 	}
-	// printar o vetor de stubs
-	for (unsigned int i = 0; i < config_block_file_vector.size(); i++ ) {
-		std::cout << "[" << i <<"]\n";
-		config_block_file_vector[i].print_block_file();
-	}
-	_config_vector = config_block_file_vector;
+//	// printa o vetor de stubs
+//	for (unsigned int i = 0; i < _config_vector.size(); i++ ) {
+//		std::cout << "[" << i <<"]\n";
+//		_config_vector[i].print_block_file();
+//	}
 	generate_config_map();
+	// printa o map de stubs
+	for (map_of_blocks::iterator it = _config_map.begin(); it != _config_map.end(); it ++) {
+		std::cout << it->first << ":\n";
+		(it->second).print_block_file();
+	}
 }
 
 // reserved_words class:
