@@ -9,7 +9,6 @@
 #include <vector>
 #include <map>
 
-
 std::string IntToString(int a);
 
 template <typename T>
@@ -24,11 +23,28 @@ void print_vector(std::vector<T> v) {
 	}
 }
 
+template <typename T>
+void print_vectorc(std::vector<T> v) {
+	for (unsigned int i = 0; i < v.size(); i++ ) {
+		std::cout << "[" << i <<"]\n";
+		v[i].print_block_file();
+	}
+}
+
 template <typename A, typename B>
 void print_map(std::map <A,B> m) {
 	typename std::map<A,B>::iterator it;
 	for (it = m.begin(); it != m.end(); it++) {
 		std::cout << "|" << it->first << " : "<< it->second << "|" << std::endl;
+	}
+}
+
+template <typename A, typename B>
+void print_mapc(std::map <A,B> m) {
+	typename std::map<A,B>::iterator it;
+	for (it = m.begin(); it != m.end(); it++) {
+		std::cout << it->first << ":\n";
+		(it->second).print_block_file();
 	}
 }
 
@@ -109,27 +125,6 @@ public:
 	void generate_config_map();
 
 };
-
-// Rotina para ler arquivo e colocar em estrutura temporaria
-
-// Rotina para traduzir da estrutura temporaria para a estrutura final
-
-
-
-// Ler arquivo por blocks config_block_files
-// No final de cada block, explodir para um map com chave server_name;listen
-	// Varrer vector de config_block_file e para cada block fazer produto cartesiano
-	// de server_name e listen
-		// gerar chave
-		// copiar bloco para map
-		// acertar listen e server name para ter um so no bloco do map
-
-	
-
-
-
-
-
 
 
 

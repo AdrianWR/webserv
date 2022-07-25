@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+// utility function
 std::string IntToString(int a)
 {
     std::ostringstream temp;
@@ -94,10 +95,6 @@ location file_parser_c::parse_location(std::fstream &fs, std::string buffer) {
 			fs >> buffer;
 			loc._cgi_param[key] = buffer;
 		}
-		// }
-		else if (!last_rword.compare("}")) {
-//			std::cout << "fim_parse_location_block" << std::endl;
-		}
 		fs >> buffer;
 	}
 	return (loc);
@@ -177,7 +174,6 @@ void file_parser_c::generate_config_map() {
 				_config_map[key]._server_name.push_back(stub._server_name[k]);
 			}
 		}
-	
 	} // for config_vector
 }
 
@@ -200,17 +196,9 @@ void file_parser_c::le_arquivo(std::string arquivo){
 		stub = parse_config_block_file(fileStream, buffer);
 		_config_vector.push_back(stub);
 	}
-//	// printa o vetor de stubs
-//	for (unsigned int i = 0; i < _config_vector.size(); i++ ) {
-//		std::cout << "[" << i <<"]\n";
-//		_config_vector[i].print_block_file();
-//	}
+	//print_vectorc(_config_vector);
 	generate_config_map();
-	// printa o map de stubs
-	for (map_of_blocks::iterator it = _config_map.begin(); it != _config_map.end(); it ++) {
-		std::cout << it->first << ":\n";
-		(it->second).print_block_file();
-	}
+	print_mapc(_config_map);
 }
 
 // reserved_words class:
@@ -239,7 +227,6 @@ bool	reserved_words_c::is_reserved_word(std::string query_string)
 		return false;
 	return true;
 }
-
 
 // location Class
 location::location() {
