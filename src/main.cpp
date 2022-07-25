@@ -21,17 +21,7 @@ bool is_in(int i, std::set <int> s) {
 int main(void) {
 
 	file_parser_c	file_parser;
-	std::cout << "Rodei\n";
-	file_parser.teste();
-	file_parser.le_arquivo("./www/conf/conf1");
-
-	config_block	block;
-	block = config_block();
-	block.print();
-
-	reserved_words_c rw;
-	std::cout << "server_name: " << rw.is_reserved_word("server_name") << std::endl;
-	std::cout << "paulo: " << rw.is_reserved_word("paulo") << std::endl;
+	file_parser.le_arquivo("./www/conf/conf4");
 
 	return 0;
 
