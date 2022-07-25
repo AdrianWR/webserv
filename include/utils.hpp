@@ -10,6 +10,8 @@
 #include <map>
 
 
+std::string IntToString(int a);
+
 template <typename T>
 void print_vector(std::vector<T> v) {
 	typename std::vector<T>::iterator	it;
@@ -84,6 +86,9 @@ public:
 
 class file_parser_c {
 public:
+	typedef	std::map<std::string, config_block_file>	map_of_blocks;
+	typedef std::vector<config_block_file>				vector_of_blocks;
+public:
 	// Construtor
 	file_parser_c();
 	// Destrutor
@@ -92,7 +97,8 @@ public:
 	file_parser_c &operator=(const file_parser_c &);
 
 	// Atributos
-
+	vector_of_blocks	_config_vector;
+	map_of_blocks		_config_map;
 	// Metodos
 	void teste();
 
@@ -100,6 +106,7 @@ public:
 	config_block_file parse_config_block_file(std::fstream &fileStream, std::string &buffer);
 	location parse_location(std::fstream &fs, std::string buffer);
 	void printa_linha(std::fstream &fileStream);
+	void generate_config_map();
 
 };
 

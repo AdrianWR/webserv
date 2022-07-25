@@ -1,5 +1,13 @@
 #include "utils.hpp"
 
+std::string IntToString(int a)
+{
+    std::ostringstream temp;
+
+	temp << a;
+	return temp.str();
+}
+
 // file_parser_c class:
 // Construtor
 file_parser_c::file_parser_c(){
@@ -152,6 +160,35 @@ config_block_file file_parser_c::parse_config_block_file(std::fstream &fileStrea
 	return (stub);
 }
 
+void file_parser_c::generate_config_map() {
+	config_block_file	stub;
+	std::string			key;
+
+// para cada elemento do vector
+// stub = elemento
+	// pega vetor de listen
+	// pega vetor de server_names
+	// for listen
+		// for server_names
+			// monta chave -> server_name:listen
+			// acrescenta stub ao mapa
+			// altera listen do stub
+			// altera index do stub
+	if (_config_vector.size() == 0)
+		return;
+	for (size_t i = 0; i < _config_vector.size(); i ++) {
+		stub = _config_vector[i];
+		for (size_t j = 0; j < stub._listen.size(); j ++) {
+			for (size_t k = 0; k < stub._server_name.size(); k++) {
+				key = stub._server_name[k] + ":" + IntToString(stub._listen[j]);
+				std::cout << key << std::endl;
+			}
+		}
+	
+	} // for config_vector
+
+}
+
 void file_parser_c::le_arquivo(std::string arquivo){
 	config_block_file	stub;
     std::fstream		fileStream;
@@ -160,7 +197,7 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 	fileStream.open(arquivo.c_str());
 	if (!fileStream.is_open()) {
-		std::cout << "Erro abrir arquivo\n";
+		std::cout << "Erro ao abrir arquivo\n";
 		return;
 	}
 	else
@@ -178,6 +215,8 @@ void file_parser_c::le_arquivo(std::string arquivo){
 		std::cout << "[" << i <<"]\n";
 		config_block_file_vector[i].print_block_file();
 	}
+	_config_vector = config_block_file_vector;
+	generate_config_map();
 }
 
 // reserved_words class:
