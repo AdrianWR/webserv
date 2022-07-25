@@ -31,17 +31,13 @@ void file_parser_c::printa_linha(std::fstream &fileStream) {
 	std::cout << " " << buffer << "|" << std::endl;
 }
 
-void file_parser_c::parse_location(std::fstream &fs, std::string location_key, config_block_file &cb) {
+location file_parser_c::parse_location(std::fstream &fs, std::string buffer) {
 	reserved_words_c	r = reserved_words_c();
-	std::string			buffer = "";
 	std::string			last_rword = "";
 	location			loc;
 
 	loc = location();
-	std::cout << "Entering parse location ...\n";
-	std::cout << "location key: " << location_key << std::endl;
-
-	while (fs >> buffer) {
+	while (buffer.compare("}") != 0) {
 		if (r.is_reserved_word(buffer)) {
 			last_rword = buffer;
 			fs >> buffer;
@@ -92,26 +88,21 @@ void file_parser_c::parse_location(std::fstream &fs, std::string location_key, c
 		}
 		// }
 		else if (!last_rword.compare("}")) {
-			cb._location[location_key] = loc;
-			std::cout << "fim_parse_location_block" << std::endl;
+//			std::cout << "fim_parse_location_block" << std::endl;
 		}
+		fs >> buffer;
 	}
-	// Remove defaults from containers
-//	if (!loc._index.front().compare("none")) {
-//		std::cout << "KKKKKKKKKKKKKKKKKKK\n";
-//		loc._index.erase(loc._index.begin());
-//	}
-//	loc._cgi_param["none"].erase();
-	std::cout << "Saindo parse location ... \n";
+	return (loc);
 }
-
 
 config_block_file file_parser_c::parse_config_block_file(std::fstream &fileStream, std::string &buffer) {
 
 	int					temp_port;
 	config_block_file	stub;
 	std::string			last_rword = "";
+	std::string			location_key = "";
 	reserved_words_c	r = reserved_words_c();
+	location			stub_loc;
 
 	stub = config_block_file();
 	stub._block_name = buffer;
@@ -143,14 +134,11 @@ config_block_file file_parser_c::parse_config_block_file(std::fstream &fileStrea
 		}
 		// location
 		else if (!last_rword.compare("location")) {
-//				// pega key do location
-//				std::string location_key = buffer;
-//				fileStream >> buffer;
-//				parse_location(fileStream, location_key, stub);
-				std::cout << "parsing location: " << buffer << std::endl;
+				std::string location_key = buffer;
+//				std::cout << "parsing location: " << buffer << std::endl;
+				stub_loc = parse_location(fileStream, buffer);
+				stub._location[location_key] = stub_loc;
 		}
-		else {std::cout << "nada\n";};
-
 		fileStream >> buffer;
 	} // end while
 
@@ -165,21 +153,6 @@ config_block_file file_parser_c::parse_config_block_file(std::fstream &fileStrea
 }
 
 void file_parser_c::le_arquivo(std::string arquivo){
-//parse file ok
-//	inicializa vetor de server_blocks ok
-//	while nao acabou o arquivo: ok
-//		inicializa um objeto server_block ok
-//
-//		parse block
-//			le nome do server_block
-//			while nao chega no fecha {
-//				funcoes parse
-//			fim do while qdo chega no {
-//			retorna objeto server_block
-
-//		coloca objeto em vector de server blocks ok
-//	fim do while qdo chegar no eof ok
-
 	config_block_file	stub;
     std::fstream		fileStream;
 	std::string			buffer = "";
@@ -195,13 +168,16 @@ void file_parser_c::le_arquivo(std::string arquivo){
 
 	// file loop
 	while (fileStream >> buffer) {
-		std::cout << "parse_config_block: " << buffer << std::endl;
+//		std::cout << "parse_config_block: " << buffer << std::endl;
 		stub = config_block_file();
 		stub = parse_config_block_file(fileStream, buffer);
-			std::cout << "returned stub: "; stub.print_block_file();
 		config_block_file_vector.push_back(stub);
 	}
 	// printar o vetor de stubs
+	for (unsigned int i = 0; i < config_block_file_vector.size(); i++ ) {
+		std::cout << "[" << i <<"]\n";
+		config_block_file_vector[i].print_block_file();
+	}
 }
 
 // reserved_words class:

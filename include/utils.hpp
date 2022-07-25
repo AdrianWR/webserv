@@ -98,7 +98,7 @@ public:
 
 	void le_arquivo(std::string arquivo);
 	config_block_file parse_config_block_file(std::fstream &fileStream, std::string &buffer);
-	void parse_location(std::fstream &fs, std::string location_key, config_block_file  &cb);
+	location parse_location(std::fstream &fs, std::string buffer);
 	void printa_linha(std::fstream &fileStream);
 
 };
