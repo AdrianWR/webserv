@@ -239,12 +239,11 @@ location  &location::operator=(const location &rhs) {
 }
 
 void	location::print_location() {
-	std::cout << "loc: .......................\n";
 	std::cout << "get_allowed:"		<< "\t\t" << _allowed_methods["GET"] << std::endl;
 	std::cout << "post_allowed:"	<< "\t\t" << _allowed_methods["POST"] << std::endl;
 	std::cout << "delete_allowed:"	<< "\t\t" << _allowed_methods["DELETE"] << std::endl;
 	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
-	std::cout << "root:"			<< "\t\t" << _root << std::endl;
+	std::cout << "root:"			<< "\t\t\t" << _root << std::endl;
 	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
 	std::cout << "index: \n";		print_vector(_index);
 	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
@@ -277,7 +276,7 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
 }
 
 void	config_block_file::print_block_file() {
-	std::cout << "-------------------------------------------------------\n";
+	std::cout << "=======================================================\n";
 	std::cout << "block_name: " << _block_name << std::endl;
 	std::cout << "listen: \n";			print_vector(_listen);
 	std::cout << "server_name: \n";		print_vector(_server_name);
@@ -286,10 +285,11 @@ void	config_block_file::print_block_file() {
 	std::map<std::string, location>::iterator i;
 	for (i = _location.begin(); i != _location.end(); i++)
 	{
+		std::cout << "------------------------------\n";
 		std::cout << "location:" << "\t\t" << i->first << std::endl;
 		i->second.print_location();
 	};
-	std::cout << "-------------------------------------------------------\n";
+	std::cout << "=======================================================\n";
 }
 
 

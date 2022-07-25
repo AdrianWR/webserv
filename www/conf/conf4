@@ -38,6 +38,32 @@ sample_server_Z1 {
 
 sample_server_Z2 {
 
+	location /images {
+		redirection www.buscape.com
+		root /var/www
+		upload_path /uploads
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p1 dez
+		cgi_pass	pass
+		autoindex	true
+		index	index.htm 
+		allowed_methods	GET		true
+		cgi_param p2 vinte
+	}
+	location /sounds {
+		redirection www.yahoo.com
+		root /var/www
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p10 dez
+		cgi_param p20 vinte
+		upload_path /uploads_sounds
+		cgi_pass	pass
+		autoindex	true
+		index joao e maria 
+		allowed_methods	GET		false
+	}
 	listen 80 82 
 	server_name www.site2 www.site2.com site2
 	client_body_buffer_size 4000
@@ -47,12 +73,12 @@ sample_server_Z2 {
 
 sample_server_Z3 {
 
-	listen 83 8083
-	server_name www.site3 www.site3.com site3
-	client_body_buffer_size 10000
 	error_page 404 ./error/404.html
 	error_page 403 ./error/403.html
 	error_page 500 ./error/500.html
+	listen 83 8083
+	server_name www.site3 www.site3.com site3
+	client_body_buffer_size 10000
 	error_page 600 ./error/600.html
 	error_page 500 ./error/500.html
 }
