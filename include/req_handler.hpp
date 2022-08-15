@@ -11,6 +11,4 @@ public:
 	// Destructor
 	~req_handler();
 	// Assignment operator
-	req_handler &operator=(const req_handler &);
-};
 #endif
