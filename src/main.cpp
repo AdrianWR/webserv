@@ -25,8 +25,7 @@ int main(void) {
 	file_parser.le_arquivo("./www/conf/conf4");
 
 	std::cout << "rh: \n";
-	rh	r;
-	r = rh();
+	req_handler	rh;
 
 	return 0;
 

@@ -4,24 +4,13 @@
 #include <iostream>
 #include <string>
 
-class rh {
+class req_handler {
 public:
 	// Constructor
-	rh();
+	req_handler();
 	// Destructor
-	~rh();
+	~req_handler();
 	// Assignment operator
-	rh &operator=(const rh &);
-
-public:
-//	std::map<std::string, bool>			_allowed_methods;
-//	std::string							_redirection;
-//	std::string							_root;
-//	bool								_autoindex;
-//	std::vector<std::string>			_index;
-//	std::map<std::string, std::string>	_cgi_param;
-//	std::string							_cgi_pass;
-//	std::string							_upload_path;
-
+	req_handler &operator=(const req_handler &);
 };
 #endif
