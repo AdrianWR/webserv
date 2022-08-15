@@ -2,6 +2,7 @@
 #include "server.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
+#include "req_handler.hpp"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
@@ -22,6 +23,10 @@ int main(void) {
 
 	file_parser_c	file_parser;
 	file_parser.le_arquivo("./www/conf/conf4");
+
+	std::cout << "rh: \n";
+	rh	r;
+	r = rh();
 
 	return 0;
 
