@@ -1,5 +1,4 @@
 #include "req_handler.hpp"
-#include "utils.hpp"
 
 // Construtor
 req_handler::req_handler(){

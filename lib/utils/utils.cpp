@@ -258,17 +258,17 @@ location  &location::operator=(const location &rhs) {
   return *this;
 }
 
-void	location::print_location() {
-	std::cout << "get_allowed:"		<< "\t\t" << _allowed_methods["GET"] << std::endl;
-	std::cout << "post_allowed:"	<< "\t\t" << _allowed_methods["POST"] << std::endl;
-	std::cout << "delete_allowed:"	<< "\t\t" << _allowed_methods["DELETE"] << std::endl;
-	std::cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
-	std::cout << "root:"			<< "\t\t\t" << _root << std::endl;
-	std::cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
-	std::cout << "index: \n";		print_vector(_index);
-	std::cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
-	std::cout << "cgi_param:\n";	print_map(_cgi_param);
-	std::cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
+void	location::print_location(std::ofstream &cout) {
+	cout << "get_allowed:"		<< "\t\t" << _allowed_methods["GET"] << std::endl;
+	cout << "post_allowed:"	<< "\t\t" << _allowed_methods["POST"] << std::endl;
+	cout << "delete_allowed:"	<< "\t\t" << _allowed_methods["DELETE"] << std::endl;
+	cout << "redirection:"		<< "\t\t" << _redirection << std::endl;
+	cout << "root:"			<< "\t\t\t" << _root << std::endl;
+	cout << "autoindex:"		<< "\t\t" << _autoindex << std::endl;
+	cout << "index: \n";		print_vector(_index, cout);
+	cout << "cgi pass:"		<< "\t\t" << _cgi_pass << std::endl;
+	cout << "cgi_param:\n";	print_map(_cgi_param, cout);
+	cout << "upload_path::"	<< "\t\t" << _upload_path << std::endl;
 }
 
 // config_block_file class:
@@ -295,20 +295,20 @@ config_block_file  &config_block_file::operator=(const config_block_file &rhs) {
   return *this;
 }
 
-void	config_block_file::print_block_file() {
-	std::cout << "=======================================================\n";
-	std::cout << "block_name: " << _block_name << std::endl;
-	std::cout << "listen: \n";			print_vector(_listen);
-	std::cout << "server_name: \n";		print_vector(_server_name);
-	std::cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
-	std::cout << "error_page:\n"; print_map(_error_page);
+void	config_block_file::print_block_file(std::ofstream &cout) {
+	cout << "=======================================================\n";
+	cout << "block_name: " << _block_name << std::endl;
+	cout << "listen: \n";			print_vector(_listen, cout);
+	cout << "server_name: \n";		print_vector(_server_name, cout);
+	cout << "client_body_buffer_size:"		<< "\t\t" << _client_body_buffer_size << std::endl;
+	cout << "error_page:\n"; print_map(_error_page, cout);
 	std::map<std::string, location>::iterator i;
 	for (i = _location.begin(); i != _location.end(); i++)
 	{
-		std::cout << "------------------------------\n";
-		std::cout << "location:" << "\t\t" << i->first << std::endl;
-		i->second.print_location();
+		cout << "------------------------------\n";
+		cout << "location:" << "\t\t" << i->first << std::endl;
+		i->second.print_location(cout);
 	};
-	std::cout << "=======================================================\n";
+	cout << "=======================================================\n";
 }
 

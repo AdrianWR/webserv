@@ -1,9 +1,9 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <sstream>
 #include <set>
 #include <vector>
@@ -12,13 +12,13 @@
 std::string IntToString(int a);
 
 template <typename T>
-void print_vector(std::vector<T> v) {
+void print_vector(std::vector<T> v, std::ofstream &cout) {
 	typename std::vector<T>::iterator	it;
 
 	int i = 0;
 
 	for (it = v.begin(); it != v.end(); it++) {
-		std::cout << "[" << i << "]\t|" << (*it) << "|" << std::endl;
+		cout << "[" << i << "]\t|" << (*it) << "|" << std::endl;
 		i++;
 	}
 }
@@ -27,25 +27,28 @@ template <typename T>
 void print_vectorc(std::vector<T> v) {
 	for (unsigned int i = 0; i < v.size(); i++ ) {
 		std::cout << "[" << i <<"]\n";
-		v[i].print_block_file();
+		v[i].print_block_file(std::cout);
 	}
 }
 
 template <typename A, typename B>
-void print_map(std::map <A,B> m) {
+void print_map(std::map <A,B> m, std::ofstream &cout) {
 	typename std::map<A,B>::iterator it;
 	for (it = m.begin(); it != m.end(); it++) {
-		std::cout << "|" << it->first << " : "<< it->second << "|" << std::endl;
+		cout << "|" << it->first << " : "<< it->second << "|" << std::endl;
 	}
 }
 
 template <typename A, typename B>
 void print_mapc(std::map <A,B> m) {
 	typename std::map<A,B>::iterator it;
+	std::ofstream cout("parsed_config", std::ofstream::trunc);
+
 	for (it = m.begin(); it != m.end(); it++) {
-		std::cout << it->first << ":\n";
-		(it->second).print_block_file();
+		cout << it->first << ":\n";
+		(it->second).print_block_file(cout);
 	}
+	cout.close();
 }
 
 class reserved_words_c {
@@ -76,7 +79,7 @@ public:
 	std::string							_upload_path;
 
 public:
-	void print_location();
+	void print_location(std::ofstream &cout);
 };
 
 class config_block_file {
@@ -96,7 +99,7 @@ public:
 	std::map<std::string, location>		_location; // map with n-location configs
 
 public:
-	void print_block_file();
+	void print_block_file(std::ofstream &cout);
 
 };
 
