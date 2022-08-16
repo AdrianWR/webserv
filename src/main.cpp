@@ -26,6 +26,7 @@ int main(void) {
 
 	std::cout << "rh: \n";
 	req_handler	rh(file_parser);
+	rh.handler();	// function input should be a http request
 
 	return 0;
 

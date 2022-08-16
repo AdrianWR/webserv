@@ -18,9 +18,18 @@ public:
 	~req_handler();
 	// Assignment operator
 	req_handler &operator=(const req_handler &s);
+
+public:
+	void handler();
+
 };
 #endif
 
+
+// Pega config ok
+	// Construtor recebe um objeto file_parser_c ?
+
+// Recebe um http request object
 // Do request, pega:
 	// 1a linha:
 		// Metodo (GET)
@@ -29,11 +38,6 @@ public:
 		// port
 		// host
 			// vao formar chave para config
-
-// Pega config ok
-	// Construtor recebe um objeto file_parser_c ?
-
-// Recebe um http request object
 
 // Checa client_body_size se houver
 	// ok ou
@@ -69,5 +73,3 @@ public:
 	// devolve output
 
 // Monta http response
-
-
