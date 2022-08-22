@@ -273,7 +273,7 @@ void	location::print_location(std::ofstream &cout) {
 
 // config_block_file class:
 config_block_file::config_block_file() {
-	_block_name = "paulo";
+	_block_name = "empty";
 	_listen.push_back(-1);
 	_server_name.push_back("none"); 
 	_error_page[404] = "./errors/404.html";
