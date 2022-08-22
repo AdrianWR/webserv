@@ -90,8 +90,21 @@ void req_handler::handler() {
 	std::string loc = extract_location_from_url(url);
 	std::cout << "location: " << loc << "\n";
 
-
 	// Se tiver redirection, devolve redirection e sai.
+	location loc_config = server_config._location[loc];
+	//debug prints
+		std::ofstream f2("teste2", std::ofstream::trunc);
+		loc_config.print_location(f2);
+	if (loc_config._redirection.compare("/") != 0) {
+		std::cout << "TEM REDIRECTION !!!\n";
+		std::cout << loc_config._redirection << "\n";
+		std::exit(4);
+	}
+	else {
+		std::cout << "NAO TEM REDIRECTION !!!\n";
+	};
+		
+	
 
 // Monta caminho fisico:
 	// pega location
