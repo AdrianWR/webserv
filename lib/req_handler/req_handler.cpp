@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "req_handler.hpp"
 
 // Construtor
@@ -20,6 +21,19 @@ req_handler &req_handler::operator=(const req_handler &s) {
   return *this;
 }
 
+
+std::string req_handler::extract_location_from_url (std::string url) {
+	size_t pos1 = url.find("/");
+	std::string	s = url.substr(pos1 + 1);
+	size_t pos2 = s.find("/");
+	std::string location = "/" + s.substr(0, pos2);
+	// debug prints
+//		std::cout << "pos1: " << pos1 << " " << s << std::endl;
+//		std::cout << "pos2: " << pos2 << " " << location << std::endl;
+
+	return location;
+}
+
 void req_handler::handler() {
 
 	// Pega config ok
@@ -38,7 +52,7 @@ void req_handler::handler() {
 	std::string url =		"www.site1.com/images/photo1.png";
 	std::string port =		"81";
 	std::string host =		"www.site1.com";
-//	int client_body_size =	1000;
+	int client_body_buffer_size =	1000;
 
 	// Pega configs estrutura de configs:
 	std::string conf_key = host + ":" + port;
@@ -46,25 +60,37 @@ void req_handler::handler() {
 	config_block_file	server_config;
 	server_config = _parsed_config_map[conf_key];
 		//debug prints
-		//std::ofstream f("teste", std::ofstream::trunc);
-		//server_config.print_block_file(f);
+		std::ofstream f("teste", std::ofstream::trunc);
+		server_config.print_block_file(f);
 	if (server_config._block_name.compare("empty") == 0) {
 		std::cout << "EMPTY !!!!\n";
+		std::exit(2);
 	}
 	else {
 		std::cout << "NOT EMPTY !!!!\n";
 	};
 
-
-
-	
-
-	// Checa client_body_size se houver
-	
-		// ok ou
-		// erro
+	// FROM NOW ON SERVER CONFIG ON MEMORY
+		// Checa client_body_size se houver
+		if (client_body_buffer_size > server_config._client_body_buffer_size) 
+		{
+			// erro
+			std::cout << "BODY SIZE MAIOR QUE PERMITIDO\n";
+			std::exit(3);
+		};
 
 // Pega location
+	// Funcao extract_location_from_url:
+		// Se nao tiver / eh /
+		// Se tiver /
+			// pega index da 2a barra
+				// se nao tiver pega index do fim
+			// pega da 1a / ate index
+			// se nao tiver prox barra pega ate fim
+	std::string loc = extract_location_from_url(url);
+	std::cout << "location: " << loc << "\n";
+
+
 	// Se tiver redirection, devolve redirection e sai.
 
 // Monta caminho fisico:

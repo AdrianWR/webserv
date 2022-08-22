@@ -22,6 +22,9 @@ public:
 public:
 	void handler();
 
+private:
+	std::string extract_location_from_url (std::string url);
+
 public:
 	file_parser_c::map_of_blocks		_parsed_config_map;
 };
