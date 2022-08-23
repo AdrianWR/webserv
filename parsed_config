@@ -1,0 +1,912 @@
+site1:80:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|80|
+server_name: 
+[0]	|site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site1:8080:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8080|
+server_name: 
+[0]	|site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site1:8081:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8081|
+server_name: 
+[0]	|site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site1:81:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|81|
+server_name: 
+[0]	|site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site2:80:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|80|
+server_name: 
+[0]	|site2|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site2:82:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|82|
+server_name: 
+[0]	|site2|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+site3:8083:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|8083|
+server_name: 
+[0]	|site3|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
+site3:83:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|83|
+server_name: 
+[0]	|site3|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
+www.site1.com:80:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|80|
+server_name: 
+[0]	|www.site1.com|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1.com:8080:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8080|
+server_name: 
+[0]	|www.site1.com|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1.com:8081:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8081|
+server_name: 
+[0]	|www.site1.com|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1.com:81:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|81|
+server_name: 
+[0]	|www.site1.com|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1:80:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|80|
+server_name: 
+[0]	|www.site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1:8080:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8080|
+server_name: 
+[0]	|www.site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1:8081:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8081|
+server_name: 
+[0]	|www.site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site1:81:
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|81|
+server_name: 
+[0]	|www.site1|
+client_body_buffer_size:		8000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		/
+root:			/www/site1/
+autoindex:		0
+index: 
+[0]	|index.htm|
+[1]	|index.html|
+[2]	|index.php|
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site2.com:80:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|80|
+server_name: 
+[0]	|www.site2.com|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site2.com:82:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|82|
+server_name: 
+[0]	|www.site2.com|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site2:80:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|80|
+server_name: 
+[0]	|www.site2|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site2:82:
+=======================================================
+block_name: sample_server_Z2
+listen: 
+[0]	|82|
+server_name: 
+[0]	|www.site2|
+client_body_buffer_size:		4000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.buscape.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|index.htm|
+cgi pass:		pass
+cgi_param:
+|p1 : dez|
+|p2 : vinte|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.yahoo.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|joao|
+[1]	|e|
+[2]	|maria|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================
+www.site3.com:8083:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|8083|
+server_name: 
+[0]	|www.site3.com|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
+www.site3.com:83:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|83|
+server_name: 
+[0]	|www.site3.com|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
+www.site3:8083:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|8083|
+server_name: 
+[0]	|www.site3|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
+www.site3:83:
+=======================================================
+block_name: sample_server_Z3
+listen: 
+[0]	|83|
+server_name: 
+[0]	|www.site3|
+client_body_buffer_size:		10000
+error_page:
+|403 : ./error/403.html|
+|404 : ./error/404.html|
+|500 : ./error/500.html|
+|600 : ./error/600.html|
+=======================================================
