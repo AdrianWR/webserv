@@ -36,6 +36,13 @@ std::string req_handler::extract_location_from_url (std::string url) {
 	return location;
 }
 
+std::string	generate_path(std::string url, std::string location, std::string root) {
+
+	std::string str = url.replace(url.find(location),location.length(),root);
+	return str.substr(str.find("/"));
+
+}
+
 void req_handler::handler() {
 
 	// Pega config ok
@@ -108,10 +115,14 @@ void req_handler::handler() {
 	};
 		
 
-// Monta caminho fisico:
-	// pega location
-	// pega root
-	// troca location por root no url
+	// Monta caminho fisico:
+		// pega location
+		// pega root
+		// troca location por root no url
+
+	std::string path = generate_path(url, loc, loc_config._root);
+	std::cout << "path: " << path << std::endl;
+
 
 // Se get permitido:
 // 1) Se nao tiver extensao
