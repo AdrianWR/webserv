@@ -57,7 +57,7 @@ std::string file_to_string(std::string file_path)
 	}
 	else
 	{
-		std::cout << "Unable to open file"; 
+		std::cout << "Unable to open file\n"; 
 		return "";
 	}
 	// Se arquivo nao existe
@@ -80,7 +80,7 @@ void req_handler::handler() {
 			// host
 				// vao formar chave para config
 	std::string method =	"GET";
-	std::string url =		"www.site1.com/images/index.html";
+	std::string url =		"www.site1.com/images/";
 //	std::string url =		"www.site1.com/images/photo1.png";
 //	std::string url =		"www.site1.com/images/";
 	std::string port =		"81";
@@ -145,37 +145,72 @@ void req_handler::handler() {
 	{
 		std::cout << "GET ALLOWED !!!!\n";
 
+		// 0) Se for cgi
+		if (path.find(".cgi") != std::string::npos) {
+			std::cout << "Executa cgi ...\n";
+			// Monta environment
+			// Monta args
+			// executa (fork etc)
+			// devolve output
+		};
+
 		// 1) Se tiver extensao
-			// Tenta pegar arquivo.
 				// Se existir, devolve
 				// se nao existir, erro
 		if (path.find(".") != std::string::npos)
 		{
+			// Tenta pegar arquivo.
 			std::string full_path = "." + path;
-			std::string output = file_to_string("./www/site1/siter1.html");
-			std::cout << "***********************************\n";
-			std::cout << " HTTP RESPONSE \n";
-			std::cout << "***********************************\n";
-			std::cout << output << std::endl;
-			std::cout << "***********************************\n";
-		};
-
-	// 2) Se nao tiver extensao
-		// Se tiver index
-			// loop
-				// monta caminho com um dos index
-				// devolve
+//			std::string output = file_to_string("./www/site1/site1.html");
+			std::string output = file_to_string(full_path);
+			if (output.size() > 0 )
+			{
+				std::cout << "***********************************\n";
+				std::cout << " HTTP RESPONSE \n";
+				std::cout << "***********************************\n";
+				std::cout << output << std::endl;
+				std::cout << "***********************************\n";
+			}
+			else
+			{
+				std::cout << "Nao acho arquivo ! Erro 404\n";
+			};
+		}
+		else
+		{
+		// 2) Se nao tiver extensao
+			if (loc_config._index.size() > 0) {
+			// Se tiver index
+				std::cout << "tem index\n";
+				// loop
+				for (size_t i = 0; i < loc_config._index.size(); i++) {
+					// monta caminho com um dos index
+					std::string full_path = "." + path + loc_config._index[i];
+					// devolve
+					std::string output = file_to_string(full_path);
+					if (output.size() > 0) {
+						std::cout << "|" << full_path << "|: ";
+						std::cout << "|" << output << "|" << std::endl;
+						break;
+					};
+				};
+			}
+			else {
 			// se nao houver
 				// se autoindex on executa autoindex
-				// se nao devolve erro
+				if (loc_config._autoindex == true) {
+					std::cout << "Executando autoindex ...\n";
+				}
+				else {
+					// se nao devolve erro
+					std::cout << "Erro 404 !\n\n";
+				};
+			};
+		};
 
-	// 3) Se for cgi
-		// Monta environment
-		// Monta args
-		// executa (fork etc)
-		// devolve output
 	}
-	else {
+	else
+	{
 		std::cout << "GET NOT ALLOWED !!!";
 		std::exit(5);
 	};
