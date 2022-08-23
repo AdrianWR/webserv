@@ -10,7 +10,6 @@
 // Pega config
 	// Construtor recebe um objeto file_parser_c ?
 
-
 // Checa client_body_size se houver
 	// ok ou
 	// erro

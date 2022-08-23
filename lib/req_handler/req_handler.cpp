@@ -24,12 +24,14 @@ req_handler &req_handler::operator=(const req_handler &s) {
 
 std::string req_handler::extract_location_from_url (std::string url) {
 	size_t pos1 = url.find("/");
-	std::string	s = url.substr(pos1 + 1);
-	size_t pos2 = s.find("/");
-	std::string location = "/" + s.substr(0, pos2);
+	size_t pos2 = url.find_last_of("/");
+	std::string	s = url.substr(pos1 + 1, pos2 - pos1 - 1);
+	if (pos1 == pos2) s = "";
+	std::string location = "/" + s;
+//	std::string location = "/" + s.substr(0, pos2);
 	// debug prints
-//		std::cout << "pos1: " << pos1 << " " << s << std::endl;
-//		std::cout << "pos2: " << pos2 << " " << location << std::endl;
+		std::cout << "pos1: " << pos1 << " " << s << std::endl;
+		std::cout << "pos2: " << pos2 << " " << location << std::endl;
 
 	return location;
 }
@@ -50,6 +52,7 @@ void req_handler::handler() {
 				// vao formar chave para config
 	std::string method =	"GET";
 	std::string url =		"www.site1.com/images/photo1.png";
+//	std::string url =		"www.site1.com/images/";
 	std::string port =		"81";
 	std::string host =		"www.site1.com";
 	int client_body_buffer_size =	1000;
@@ -62,9 +65,9 @@ void req_handler::handler() {
 		//debug prints
 		std::ofstream f("teste", std::ofstream::trunc);
 		server_config.print_block_file(f);
-	if (server_config._block_name.compare("empty") == 0) {
+	if (server_config._block_name.compare("empty") == 0) { // REFATORAR!
 		std::cout << "EMPTY !!!!\n";
-		std::exit(2);
+		std::exit(2); // Nao tem config, nao fazer nada
 	}
 	else {
 		std::cout << "NOT EMPTY !!!!\n";
@@ -76,7 +79,7 @@ void req_handler::handler() {
 		{
 			// erro
 			std::cout << "BODY SIZE MAIOR QUE PERMITIDO\n";
-			std::exit(3);
+			std::exit(3); // Retorna um erro
 		};
 
 // Pega location
@@ -98,13 +101,12 @@ void req_handler::handler() {
 	if (loc_config._redirection.compare("/") != 0) {
 		std::cout << "TEM REDIRECTION !!!\n";
 		std::cout << loc_config._redirection << "\n";
-		std::exit(4);
+		std::exit(4); // Retorna um redirection
 	}
 	else {
 		std::cout << "NAO TEM REDIRECTION !!!\n";
 	};
 		
-	
 
 // Monta caminho fisico:
 	// pega location
