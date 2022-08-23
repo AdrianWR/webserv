@@ -7,7 +7,7 @@ sample_server_Z1 {
 	error_page 403 ./error/403.html
 	error_page 500 ./error/500.html
 	location /images {
-		root /var/www
+		root /www/site1/
 		upload_path /uploads
 		cgi_pass	pass
 		autoindex	false

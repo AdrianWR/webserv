@@ -2,7 +2,9 @@
 #define REQ_HANDLER_HPP
 
 #include "utils.hpp"
+#include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -24,6 +26,7 @@ public:
 
 private:
 	std::string extract_location_from_url (std::string url);
+	std::string	generate_path(std::string url, std::string location, std::string root);
 
 public:
 	file_parser_c::map_of_blocks		_parsed_config_map;

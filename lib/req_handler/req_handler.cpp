@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include "req_handler.hpp"
 
 // Construtor
@@ -36,11 +35,34 @@ std::string req_handler::extract_location_from_url (std::string url) {
 	return location;
 }
 
-std::string	generate_path(std::string url, std::string location, std::string root) {
+std::string	req_handler::generate_path(std::string url, std::string location, std::string root) {
 
 	std::string str = url.replace(url.find(location),location.length(),root);
 	return str.substr(str.find("/"));
 
+}
+
+std::string file_to_string(std::string file_path)
+{
+	std::string			line;
+	std::stringstream	buffer;
+	std::ifstream		myfile(file_path.c_str());
+
+	// Se arquivo existe, serve arquivo
+	if (myfile.is_open())
+	{
+		while (getline(myfile,line)) { buffer << line; };
+		myfile.close();
+		return buffer.str();
+	}
+	else
+	{
+		std::cout << "Unable to open file"; 
+		return "";
+	}
+	// Se arquivo nao existe
+		// Se autoindex == on, serve executa autoindex.php
+		// Se nao ,erro
 }
 
 void req_handler::handler() {
@@ -58,7 +80,8 @@ void req_handler::handler() {
 			// host
 				// vao formar chave para config
 	std::string method =	"GET";
-	std::string url =		"www.site1.com/images/photo1.png";
+	std::string url =		"www.site1.com/images/index.html";
+//	std::string url =		"www.site1.com/images/photo1.png";
 //	std::string url =		"www.site1.com/images/";
 	std::string port =		"81";
 	std::string host =		"www.site1.com";
@@ -124,26 +147,45 @@ void req_handler::handler() {
 	std::cout << "path: " << path << std::endl;
 
 
-// Se get permitido:
-// 1) Se nao tiver extensao
-	// Se tiver index
-		// loop
-			// monta caminho com um dos index
-			// devolve
-		// se nao houver
-			// se autoindex on executa autoindex
-			// se nao devolve erro
+	// Se get permitido:
+	if (loc_config._allowed_methods["GET"] == 1)
+	{
+		std::cout << "GET ALLOWED !!!!\n";
 
-// 2) Se tiver extensao
-// Tenta pegar arquivo.
-	// Se existir, devolve
-	// se nao existir, erro
+	// 1) Se tiver extensao
+		// Tenta pegar arquivo.
+			// Se existir, devolve
+			// se nao existir, erro
+	if (path.find(".") != std::string::npos)
+	{
+		std::string full_path = "." + path;
+		std::string output = file_to_string("./www/site1/siter1.html");
+		std::cout << "***********************************\n";
+		std::cout << " HTTP RESPONSE \n";
+		std::cout << "***********************************\n";
+		std::cout << output << std::endl;
+		std::cout << "***********************************\n";
+	};
 
-// 3) Se for cgi
-	// Monta environment
-	// Monta args
-	// executa (fork etc)
-	// devolve output
+	// 2) Se nao tiver extensao
+		// Se tiver index
+			// loop
+				// monta caminho com um dos index
+				// devolve
+			// se nao houver
+				// se autoindex on executa autoindex
+				// se nao devolve erro
 
-// Monta http response
+	// 3) Se for cgi
+		// Monta environment
+		// Monta args
+		// executa (fork etc)
+		// devolve output
+	}
+	else {
+		std::cout << "GET NOT ALLOWED !!!";
+		std::exit(5);
+	};
+
+	// Monta http response
 }
