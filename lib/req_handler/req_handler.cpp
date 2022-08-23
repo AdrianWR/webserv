@@ -87,7 +87,7 @@ void req_handler::handler() {
 	std::string host =		"www.site1.com";
 	int client_body_buffer_size =	1000;
 
-	// Pega configs estrutura de configs:
+	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
 
 	config_block_file	server_config;
@@ -112,22 +112,17 @@ void req_handler::handler() {
 			std::exit(3); // Retorna um erro
 		};
 
-// Pega location
-	// Funcao extract_location_from_url:
-		// Se nao tiver / eh /
-		// Se tiver /
-			// pega index da 2a barra
-				// se nao tiver pega index do fim
-			// pega da 1a / ate index
-			// se nao tiver prox barra pega ate fim
+	// Pega location
+		// Funcao extract_location_from_url:
 	std::string loc = extract_location_from_url(url);
 	std::cout << "location: " << loc << "\n";
 
-	// Se tiver redirection, devolve redirection e sai.
+	// Carrega configs da location an memoria
 	location loc_config = server_config._location[loc];
 	//debug prints
 		std::ofstream f2("teste2", std::ofstream::trunc);
 		loc_config.print_location(f2);
+	// Se tiver redirection, devolve redirection e sai.
 	if (loc_config._redirection.compare("/") != 0) {
 		std::cout << "TEM REDIRECTION !!!\n";
 		std::cout << loc_config._redirection << "\n";
@@ -136,7 +131,6 @@ void req_handler::handler() {
 	else {
 		std::cout << "NAO TEM REDIRECTION !!!\n";
 	};
-		
 
 	// Monta caminho fisico:
 		// pega location
@@ -146,26 +140,25 @@ void req_handler::handler() {
 	std::string path = generate_path(url, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 
-
 	// Se get permitido:
 	if (loc_config._allowed_methods["GET"] == 1)
 	{
 		std::cout << "GET ALLOWED !!!!\n";
 
-	// 1) Se tiver extensao
-		// Tenta pegar arquivo.
-			// Se existir, devolve
-			// se nao existir, erro
-	if (path.find(".") != std::string::npos)
-	{
-		std::string full_path = "." + path;
-		std::string output = file_to_string("./www/site1/siter1.html");
-		std::cout << "***********************************\n";
-		std::cout << " HTTP RESPONSE \n";
-		std::cout << "***********************************\n";
-		std::cout << output << std::endl;
-		std::cout << "***********************************\n";
-	};
+		// 1) Se tiver extensao
+			// Tenta pegar arquivo.
+				// Se existir, devolve
+				// se nao existir, erro
+		if (path.find(".") != std::string::npos)
+		{
+			std::string full_path = "." + path;
+			std::string output = file_to_string("./www/site1/siter1.html");
+			std::cout << "***********************************\n";
+			std::cout << " HTTP RESPONSE \n";
+			std::cout << "***********************************\n";
+			std::cout << output << std::endl;
+			std::cout << "***********************************\n";
+		};
 
 	// 2) Se nao tiver extensao
 		// Se tiver index
