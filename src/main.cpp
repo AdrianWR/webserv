@@ -1,8 +1,8 @@
 #include "log.hpp"
+#include "req_handler.hpp"
 #include "server.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
-#include "req_handler.hpp"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
@@ -13,22 +13,22 @@ void sigint_handler(int sig) {
   exit(0);
 }
 
-bool is_in(int i, std::set <int> s) {
-		if (s.find(i) == s.end())
-			return false;
-		return true;
-	}
+bool is_in(int i, std::set<int> s) {
+  if (s.find(i) == s.end())
+    return false;
+  return true;
+}
 
 int main(void) {
 
-	file_parser_c	file_parser;
-	file_parser.le_arquivo("./www/conf/conf4");
+  Config config;
+  config.parse_file("./www/conf/conf4");
 
-	std::cout << "rh: \n";
-	req_handler	rh(file_parser);
-	rh.handler();	// function input should be a http request
+  // std::cout << "rh: \n";
+  // req_handler rh(config);
+  // rh.handler(); // function input should be a http request
 
-	return 0;
+  // return 0;
 
   struct sigaction sigIntHandler;
 
@@ -41,9 +41,8 @@ int main(void) {
 
   LOG(INFO) << "Starting new webserver on port 8080";
   try {
-    // s.server();
     HttpServer s;
-    s.run();
+    s.run(config);
   } catch (std::exception &e) {
     LOG(ERROR) << e.what();
   }

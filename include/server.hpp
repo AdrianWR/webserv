@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include "socket.hpp"
+#include "utils.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -28,6 +29,7 @@ public:
 class HttpServer {
 
 public:
+  typedef std::vector<TCPServerSocket> socketVector;
   typedef std::vector<struct pollfd> pollFdVector;
   typedef pollFdVector::iterator pollFdVectorIterator;
 
@@ -58,8 +60,9 @@ public:
   HttpServer(const std::string &config_file);
 
   void setup(const std::string &config_file);
+  socketVector _initSockets(Config config);
   void addServerBlock(const ServerBlock &serverBlock);
-  void run();
+  void run(Config config);
 };
 
 #endif

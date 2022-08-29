@@ -2,6 +2,7 @@
 #include "http.hpp"
 #include "log.hpp"
 #include "socket.hpp"
+#include "utils.hpp"
 #include <cstring>
 #include <poll.h>
 
@@ -47,16 +48,32 @@ void HttpServer::_handleConnection(int &fd) {
   }
 }
 
-void HttpServer::run() {
+HttpServer::socketVector HttpServer::_initSockets(Config config) {
+  HttpServer::socketVector sockets;
 
-  TCPServerSocket s1("localhost", 8080);
-  TCPServerSocket s2("localhost", 8081);
+  Config::map_of_blocks m = config._config_map;
+
+  Config::map_of_blocks::const_iterator it;
+  for (it = m.begin(); it != m.end(); it++) {
+    ConfigBlock cb = it->second;
+    TCPServerSocket *s = new TCPServerSocket(cb._server_name[0], cb._listen[0]);
+    sockets.push_back(*s);
+  }
+  return sockets;
+}
+
+void HttpServer::run(Config config) {
+
+  HttpServer::socketVector sockets = _initSockets(config);
+  // TCPServerSocket s1("localhost", 8080);
+  // TCPServerSocket s2("localhost", 8081);
 
   pollFdVector fds;
 
-  fds.push_back(s1.getPollfd());
-  fds.push_back(s2.getPollfd());
-
+  socketVector::iterator it;
+  for (it = sockets.begin(); it != sockets.end(); it++) {
+    fds.push_back(it->getPollfd());
+  }
   std::size_t listeners_size = fds.size();
 
   LOG(INFO) << "Initializing server FDs polling";
