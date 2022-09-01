@@ -29,7 +29,7 @@ public:
 class HttpServer {
 
 public:
-  typedef std::vector<TCPServerSocket> socketVector;
+  typedef std::vector<TCPServerSocket *> SocketsVector;
   typedef std::vector<struct pollfd> pollFdVector;
   typedef pollFdVector::iterator pollFdVectorIterator;
 
@@ -60,7 +60,7 @@ public:
   HttpServer(const std::string &config_file);
 
   void setup(const std::string &config_file);
-  socketVector _initSockets(Config config);
+  SocketsVector _initSockets(Config config);
   void addServerBlock(const ServerBlock &serverBlock);
   void run(Config config);
 };

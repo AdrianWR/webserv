@@ -48,31 +48,31 @@ void HttpServer::_handleConnection(int &fd) {
   }
 }
 
-HttpServer::socketVector HttpServer::_initSockets(Config config) {
-  HttpServer::socketVector sockets;
+HttpServer::SocketsVector HttpServer::_initSockets(Config config) {
+  Config::PortSet ports = config.getAvailablePorts();
 
-  Config::map_of_blocks m = config._config_map;
+  HttpServer::SocketsVector sockets;
+  TCPServerSocket *s;
 
-  Config::map_of_blocks::const_iterator it;
-  for (it = m.begin(); it != m.end(); it++) {
-    ConfigBlock cb = it->second;
-    TCPServerSocket *s = new TCPServerSocket(cb._server_name[0], cb._listen[0]);
-    sockets.push_back(*s);
+  Config::PortSet::const_iterator it;
+  for (it = ports.begin(); it != ports.end(); it++) {
+    s = new TCPServerSocket(*it);
+    sockets.push_back(s);
   }
+
   return sockets;
 }
 
 void HttpServer::run(Config config) {
 
-  HttpServer::socketVector sockets = _initSockets(config);
-  // TCPServerSocket s1("localhost", 8080);
-  // TCPServerSocket s2("localhost", 8081);
+  HttpServer::SocketsVector sockets = _initSockets(config);
+  // Config::PortSet ports = config.getAvailablePorts();
+  // HttpServer::SocketsVector sockets(ports.begin(), ports.end());
 
   pollFdVector fds;
-
-  socketVector::iterator it;
+  SocketsVector::iterator it;
   for (it = sockets.begin(); it != sockets.end(); it++) {
-    fds.push_back(it->getPollfd());
+    fds.push_back((*it)->getPollfd());
   }
   std::size_t listeners_size = fds.size();
 

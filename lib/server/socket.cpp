@@ -4,17 +4,14 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-Socket::Socket()
-    : listener_sockfd(-1), host(""), _port(0), _mode(NON_BLOCKING) {}
+Socket::Socket() : listener_sockfd(-1), _port(0), _mode(NON_BLOCKING) {}
 
 Socket::Socket(const Socket &s)
-    : listener_sockfd(s.listener_sockfd), host(s.host), _port(s._port),
-      _mode(s._mode) {}
+    : listener_sockfd(s.listener_sockfd), _port(s._port), _mode(s._mode) {}
 
 Socket &Socket::operator=(const Socket &s) {
   if (this != &s) {
     listener_sockfd = s.listener_sockfd;
-    host = s.host;
     _port = s._port;
     _mode = s._mode;
   }
@@ -25,15 +22,13 @@ Socket &Socket::operator=(const Socket &s) {
  * @brief Creates a new internet socket file descriptor and sets it to the
  * specified blocking mode.
  *
- * @param host The hostname of the server to connect to. (e.g. "localhost")
  * @param port The port of the server to connect to. (e.g. 8080)
  * @param mode The blocking mode to set the socket to. Defaults to NON_BLOCKING.
  * @return int The file descriptor of the new socket.
  * @throws SocketException If the socket could not be created.
  **/
-Socket::Socket(const std::string &host, const unsigned short &port,
-               enum BlockingMode mode)
-    : host(host), _port(port), _mode(mode) {
+Socket::Socket(const unsigned short &port, enum BlockingMode mode)
+    : _port(port), _mode(mode) {
   listener_sockfd = Socket::_socket(AF_INET, SOCK_STREAM, 0);
 }
 

@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include "log.hpp"
 
 // utility function
 std::string IntToString(int a) {
@@ -122,6 +123,7 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
     else if (!last_rword.compare("listen")) {
       std::istringstream(buffer) >> temp_port;
       stub._listen.push_back(temp_port);
+      _available_ports.insert(static_cast<short>(temp_port));
     }
     // error_page
     else if (!last_rword.compare("error_page")) {
@@ -186,10 +188,9 @@ void Config::parse_file(std::string file) {
 
   fileStream.open(file.c_str());
   if (!fileStream.is_open()) {
-    std::cout << "Erro ao abrir arquivo\n";
+    LOG(ERROR) << "Failed to open file " << file;
     return;
-  } else
-    std::cout << "Arquivo aberto\n";
+  }
 
   // file loop
   while (fileStream >> buffer) {
@@ -326,3 +327,5 @@ void ConfigBlock::print_block_file(std::ofstream &cout) {
   };
   cout << "=======================================================\n";
 }
+
+std::set<short> Config::getAvailablePorts(void) { return _available_ports; }

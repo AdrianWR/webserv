@@ -104,9 +104,12 @@ class Config {
 public:
   typedef std::map<std::string, ConfigBlock> map_of_blocks;
   typedef std::vector<ConfigBlock> vector_of_blocks;
+  typedef short PortType;
+  typedef std::set<PortType> PortSet;
 
 private:
   vector_of_blocks _config_vector;
+  std::set<short> _available_ports;
 
 public:
   // Construtor
@@ -126,6 +129,7 @@ public:
   LocationBlock parse_location(std::fstream &fs, std::string buffer);
   void printa_linha(std::fstream &fileStream);
   void generate_config_map();
+  std::set<short> getAvailablePorts(void);
 };
 
 #endif

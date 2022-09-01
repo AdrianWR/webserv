@@ -40,7 +40,6 @@ protected:
 public:
   int listener_sockfd;
   bool is_valid;
-  std::string host;
   unsigned short int _port;
   enum BlockingMode _mode;
 
@@ -50,8 +49,7 @@ public:
   Socket &operator=(const Socket &);
   virtual ~Socket();
 
-  Socket(const std::string &host, const unsigned short &port,
-         enum BlockingMode mode = NON_BLOCKING);
+  Socket(const unsigned short &port, enum BlockingMode mode = NON_BLOCKING);
 
   void setNonBlocking(const bool);
   bool isReady() const;
@@ -71,7 +69,7 @@ public:
   TCPServerSocket();
   TCPServerSocket(const TCPServerSocket &);
   TCPServerSocket &operator=(const TCPServerSocket &);
-  TCPServerSocket(const std::string &host, const unsigned short &port,
+  TCPServerSocket(const unsigned short &port,
                   enum BlockingMode mode = NON_BLOCKING);
   ~TCPServerSocket();
 

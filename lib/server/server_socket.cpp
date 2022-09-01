@@ -14,7 +14,6 @@ TCPServerSocket::TCPServerSocket(const TCPServerSocket &s) : Socket(s) {}
 TCPServerSocket &TCPServerSocket::operator=(const TCPServerSocket &s) {
   if (this != &s) {
     listener_sockfd = s.listener_sockfd;
-    host = s.host;
     _port = s._port;
     _mode = s._mode;
   }
@@ -26,16 +25,14 @@ TCPServerSocket &TCPServerSocket::operator=(const TCPServerSocket &s) {
  * specified blocking mode. The socket created should be a server socket, ready
  * to accept incoming connections.
  *
- * @param host The hostname of the server to connect to. (e.g. "localhost")
  * @param port The port of the server to connect to. (e.g. 8080)
  * @param mode The blocking mode to set the socket to. Defaults to NON_BLOCKING.
  * @return int The file descriptor of the new socket.
  * @throws SocketException If the socket could not be created.
  **/
-TCPServerSocket::TCPServerSocket(const std::string &host,
-                                 const unsigned short &port,
+TCPServerSocket::TCPServerSocket(const unsigned short &port,
                                  enum BlockingMode mode)
-    : Socket(host, port, mode) {
+    : Socket(port, mode) {
   _setsockopt(listener_sockfd);
   _bind(listener_sockfd, port);
   _listen(listener_sockfd);
