@@ -49,7 +49,7 @@ private:
 
   std::vector<ServerBlock> _servers;
 
-  void _handleConnection(int &it);
+  void _handleConnection(int &it, Config &config);
 
 public:
   HttpServer();

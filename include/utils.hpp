@@ -109,7 +109,7 @@ public:
 
 private:
   vector_of_blocks _config_vector;
-  std::set<short> _available_ports;
+  PortSet _available_ports;
 
 public:
   // Construtor

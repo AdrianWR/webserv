@@ -154,4 +154,9 @@ public:
   HttpResponse(const char *content);
 };
 
+class HttpHandler {
+  // HttpResponse generateResponse(HttpRequest h, map_of_configs ff);
+  // httpresponse.raw_data()
+};
+
 #endif

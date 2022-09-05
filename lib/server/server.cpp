@@ -24,7 +24,7 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
   _servers.push_back(serverBlock);
 }
 
-void HttpServer::_handleConnection(int &fd) {
+void HttpServer::_handleConnection(int &fd, Config &config) {
   char buffer[BUFFER_SIZE];
 
   int bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
@@ -38,7 +38,11 @@ void HttpServer::_handleConnection(int &fd) {
     HttpRequest request;
     HttpRequest::HeaderMap headers = request.parse(buffer);
 
-    headers = request.getHeaders();
+    (void)config;
+    // HttpResponse response = HttpHandler::generateResponse(request,
+    // config);
+
+    // headers = request.getHeaders();
     std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
                        "text/plain\nContent-Length: 12\n\nHello world!";
 
@@ -95,7 +99,7 @@ void HttpServer::run(Config config) {
     // Check for new clients to handle
     for (std::size_t i = listeners_size; i < fds.size(); i++) {
       if (fds[i].fd > 0 && fds[i].revents & POLLIN) {
-        _handleConnection(fds[i].fd);
+        _handleConnection(fds[i].fd, config);
       } else if (fds[i].fd == -1) {
         fds.erase(fds.begin() + i);
       }
