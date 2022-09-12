@@ -1,6 +1,7 @@
 #ifndef HTTP_HPP
 #define HTTP_HPP
 
+#include "utils.hpp"
 #include <map>
 #include <string>
 
@@ -147,15 +148,16 @@ public:
 
 class HttpResponse : public BaseHttp {
 public:
-  HttpResponse(){};
-  ~HttpResponse(){};
+  HttpResponse();
+  ~HttpResponse();
   HttpResponse(const HttpResponse &);
   HttpResponse &operator=(const HttpResponse &);
   HttpResponse(const char *content);
 };
 
 class HttpHandler {
-  // HttpResponse generateResponse(HttpRequest h, map_of_configs ff);
+public:
+  static HttpResponse generateResponse(HttpRequest &h, Config &config);
   // httpresponse.raw_data()
 };
 

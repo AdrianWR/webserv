@@ -7,7 +7,7 @@ req_handler::req_handler() {
 req_handler::req_handler(Config fp) {
   std::cout << "receiving file parser as fp" << std::endl;
   std::cout << "####################################\n";
-  _parsed_config_map = fp._config_map;
+  _parsed_config_map = fp.getBlockMap();
   //	print_mapc(_parsed_config_map);
 }
 // Destrutor

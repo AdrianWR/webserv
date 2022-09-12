@@ -39,8 +39,8 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
     HttpRequest::HeaderMap headers = request.parse(buffer);
 
     (void)config;
-    // HttpResponse response = HttpHandler::generateResponse(request,
-    // config);
+    HttpResponse response = HttpHandler::generateResponse(request, config);
+    (void)response;
 
     // headers = request.getHeaders();
     std::string buff = "HTTP/1.1 200 OK\nContent-Type: "

@@ -30,6 +30,6 @@ private:
                             std::string root);
 
 public:
-  Config::map_of_blocks _parsed_config_map;
+  Config::BlockMap _parsed_config_map;
 };
 #endif

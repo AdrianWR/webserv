@@ -103,7 +103,7 @@ public:
 
 class Config {
 public:
-  typedef std::map<std::string, ConfigBlock> map_of_blocks;
+  typedef std::map<std::string, ConfigBlock> BlockMap;
   typedef std::vector<ConfigBlock> vector_of_blocks;
   typedef short PortType;
   typedef std::set<PortType> PortSet;
@@ -111,6 +111,7 @@ public:
 private:
   vector_of_blocks _config_vector;
   PortSet _available_ports;
+  BlockMap _config_map;
 
 public:
   // Construtor
@@ -121,7 +122,6 @@ public:
   Config &operator=(const Config &);
 
   // Atributos
-  map_of_blocks _config_map;
 
   // Methods
   void parse_file(std::string file);
@@ -130,7 +130,10 @@ public:
   LocationBlock parse_location(std::fstream &fs, std::string buffer);
   void printa_linha(std::fstream &fileStream);
   void generate_config_map();
-  std::set<short> getAvailablePorts(void);
+
+  // Getters
+  PortSet getAvailablePorts(void);
+  BlockMap getBlockMap(void);
 };
 
 class AutoIndexGenerator {

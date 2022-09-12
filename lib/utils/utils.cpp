@@ -9,11 +9,12 @@ std::string IntToString(int a) {
   return temp.str();
 }
 
-// file_parser_c class:
 // Construtor
-Config::Config() { std::cout << "file parser constructor" << std::endl; }
+Config::Config() {}
+
 // Destrutor
-Config::~Config() { std::cout << "file parser destructor" << std::endl; }
+Config::~Config() {}
+
 // Asssignment
 Config &Config::operator=(const Config &s) {
   if (this != &s)
@@ -21,9 +22,7 @@ Config &Config::operator=(const Config &s) {
   return *this;
 }
 
-// Atributos
-
-// Metodos
+// Methodss
 
 void Config::printa_linha(std::fstream &fileStream) {
   std::string buffer;
@@ -385,4 +384,6 @@ std::string AutoIndexGenerator::getLink(std::string const &dirEntry,
   return ss.str();
 }
 
-std::set<short> Config::getAvailablePorts(void) { return _available_ports; }
+Config::PortSet Config::getAvailablePorts(void) { return _available_ports; }
+
+Config::BlockMap Config::getBlockMap(void) { return _config_map; }
