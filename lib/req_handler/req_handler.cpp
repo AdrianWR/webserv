@@ -92,7 +92,7 @@ void req_handler::handler() {
   ConfigBlock server_config;
   server_config = _parsed_config_map[conf_key];
   // debug prints
-  std::ofstream f("teste", std::ofstream::trunc);
+  std::ofstream f("server_config.txt", std::ofstream::trunc);
   server_config.print_block_file(f);
   if (server_config._block_name.compare("empty") == 0) { // REFATORAR!
     std::cout << "EMPTY !!!!\n";
@@ -117,7 +117,7 @@ void req_handler::handler() {
   // Carrega configs da location an memoria
   LocationBlock loc_config = server_config._location[loc];
   // debug prints
-  std::ofstream f2("teste2", std::ofstream::trunc);
+  std::ofstream f2("location_config.txt", std::ofstream::trunc);
   loc_config.print_location(f2);
   // Se tiver redirection, devolve redirection e sai.
   if (loc_config._redirection.compare("/") != 0) {

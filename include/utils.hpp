@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <dirent.h>
 
 std::string IntToString(int a);
 
@@ -39,7 +40,7 @@ void print_map(std::map<A, B> m, std::ofstream &cout) {
 
 template <typename A, typename B> void print_mapc(std::map<A, B> m) {
   typename std::map<A, B>::iterator it;
-  std::ofstream cout("parsed_config", std::ofstream::trunc);
+  std::ofstream cout("config_map.txt", std::ofstream::trunc);
 
   for (it = m.begin(); it != m.end(); it++) {
     cout << it->first << ":\n";
@@ -130,6 +131,20 @@ public:
   void printa_linha(std::fstream &fileStream);
   void generate_config_map();
   std::set<short> getAvailablePorts(void);
+};
+
+class AutoIndexGenerator {
+    public:
+        AutoIndexGenerator(void);
+        AutoIndexGenerator(AutoIndexGenerator const &src);
+        virtual ~AutoIndexGenerator(void);
+
+        AutoIndexGenerator   &operator=(AutoIndexGenerator const &src);
+
+        static std::string  getPage(const char *path, std::string const &host, int port);
+    private:
+        static std::string  getLink(std::string const &dirEntry, std::string const &dirName, std::string const &host, int port);
+
 };
 
 #endif
