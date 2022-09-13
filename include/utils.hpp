@@ -100,7 +100,7 @@ public:
 public:
   void print_block_file(std::ofstream &cout);
   bool check_listen_and_server_name(void);
-//  void add_default_location)ConfigBlock cb);
+  void add_default_location();
 };
 
 class Config {

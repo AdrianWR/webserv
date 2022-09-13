@@ -200,7 +200,7 @@ void Config::parse_file(std::string file) {
 		LOG(ERROR) << "Config must have at least 'listen' and 'server_name' directives !";
 	};
 	// se stub nano tem location -> colocar um location default
-	//
+	stub.add_default_location();
     _config_vector.push_back(stub);
   }
   // print_vectorc(_config_vector);
@@ -240,13 +240,13 @@ LocationBlock::LocationBlock() {
   _allowed_methods["GET"] = true;
   _allowed_methods["POST"] = true;
   _allowed_methods["DELETE"] = true;
-  _redirection = "/";
-  _root = "/";
-  _autoindex = false;
+  _redirection = "";
+  _root = "/www/";
+  _autoindex = true;
   //	_index.push_back("none");
   //	_cgi_param["none"] = "none";
   _cgi_pass = "";
-  _upload_path = "./upload/";
+  _upload_path = "./www/upload/";
 }
 
 LocationBlock::~LocationBlock() {}
@@ -340,7 +340,13 @@ bool ConfigBlock::check_listen_and_server_name(){
 	return true;
 }
 
-//  void add_default_location)ConfigBlock cb);
+void ConfigBlock::add_default_location() {
+	if (_location.size() == 0) {
+		LocationBlock lb;
+		_location["/"] = lb;
+	};
+}
+
 AutoIndexGenerator::AutoIndexGenerator(void) { return; }
 
 AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src) {
