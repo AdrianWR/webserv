@@ -11,7 +11,7 @@ HttpResponse HttpHandler::generateResponse(HttpRequest &h, Config &config) {
 
   try {
     ConfigBlock block = blocks.at(headers["host"]);
-  } catch (std::out_of_range) {
+  } catch (std::out_of_range const&) {
     throw BaseHttp::HttpException("Invalid host configuration");
     LOG(DEBUG) << "Invalid host configuration";
   }

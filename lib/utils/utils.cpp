@@ -195,10 +195,17 @@ void Config::parse_file(std::string file) {
   while (fileStream >> buffer) {
     stub = ConfigBlock();
     stub = parse_config_block_file(fileStream, buffer);
+	// se stub nao tem listen ou server name -> erro
+	if (!stub.check_listen_and_server_name()){
+		LOG(ERROR) << "Config must have at least 'listen' and 'server_name' directives !";
+	};
+	// se stub nano tem location -> colocar um location default
+	//
     _config_vector.push_back(stub);
   }
   // print_vectorc(_config_vector);
   generate_config_map();
+  // Output config map to a file config_map.txt for easy checking
   print_mapc(_config_map);
 }
 
@@ -327,6 +334,13 @@ void ConfigBlock::print_block_file(std::ofstream &cout) {
   cout << "=======================================================\n";
 }
 
+bool ConfigBlock::check_listen_and_server_name(){
+	if (_listen.front() == -1) return false;
+	if (!_server_name.front().compare("none")) return false;
+	return true;
+}
+
+//  void add_default_location)ConfigBlock cb);
 AutoIndexGenerator::AutoIndexGenerator(void) { return; }
 
 AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src) {
