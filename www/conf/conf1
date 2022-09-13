@@ -1,4 +1,5 @@
 sample_server {
 	listen 8080
 	server_name www.site1.com
+	#server_name www.site2.com
 }

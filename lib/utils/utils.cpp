@@ -106,6 +106,13 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
   stub = ConfigBlock();
   stub._block_name = buffer;
   while (buffer.compare("}") != 0) {
+	// Check comment
+	if (buffer[0] == '#') {
+		while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)  {
+			  fileStream >> buffer;
+		};
+	};
+	// If is reserved word then cursor is at the begining of line
     if (r.is_reserved_word(buffer)) {
       last_rword = buffer;
       fileStream >> buffer;
