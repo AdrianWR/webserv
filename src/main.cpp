@@ -23,7 +23,7 @@ int main(void) {
 
 	// Read config file
 	Config config;
-	config.parse_file("./www/conf/conf1");
+	config.parse_file("./www/conf/conf4");
 	
 	// Test autoindex generation
 	std::cout << "Pagina de auto_index:\n";
@@ -36,7 +36,7 @@ int main(void) {
 	// Run req_handler
 	std::cout << "rh: \n";
 	req_handler rh(config);
-//rh.handler(); // function input should be a http request
+	rh.handler(); // function input should be a http request
 	return 0;
 
   struct sigaction sigIntHandler;

@@ -96,7 +96,7 @@ public:
   std::string _block_name; // name of block in config file
   std::vector<int> _listen;
   std::vector<std::string> _server_name; // "host" do http request !
-  int _client_body_buffer_size; // max size for the client body, defaults to 8
+  int _client_max_body_size; // max size for the client body, defaults to 8
                                 // 000
   std::map<int, std::string> _error_page;         // error page redirections
   std::map<std::string, LocationBlock> _location; // map with n-location configs

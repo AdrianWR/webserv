@@ -117,9 +117,9 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
       last_rword = buffer;
       fileStream >> buffer;
     };
-    // client_body_buffer_size
-    if (!last_rword.compare("client_body_buffer_size")) {
-      std::istringstream(buffer) >> stub._client_body_buffer_size;
+    // client_max_body_size
+    if (!last_rword.compare("client_max_body_size")) {
+      std::istringstream(buffer) >> stub._client_max_body_size;
     }
     // server_name
     else if (!last_rword.compare("server_name")) {
@@ -226,7 +226,7 @@ reserved_words_c::reserved_words_c() {
   list.insert("root");
   list.insert("server_name");
   list.insert("error_page");
-  list.insert("client_body_buffer_size");
+  list.insert("client_max_body_size");
   list.insert("location");
   list.insert("cgi_pass");
   list.insert("cgi_param");
@@ -305,7 +305,7 @@ ConfigBlock::ConfigBlock() {
   _listen.push_back(-1);
   _server_name.push_back("none");
   _error_page[404] = "./errors/404.html";
-  _client_body_buffer_size =
+  _client_max_body_size =
       8; // max size for the client body, defaults to 8 000
   //	_location["none"] = location();
 }
@@ -318,7 +318,7 @@ ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
     _listen = rhs._listen;
     _server_name = rhs._server_name;
     _error_page = rhs._error_page;
-    _client_body_buffer_size = rhs._client_body_buffer_size;
+    _client_max_body_size = rhs._client_max_body_size;
     _location = rhs._location;
   }
   return *this;
@@ -331,8 +331,8 @@ void ConfigBlock::print_block_file(std::ofstream &cout) {
   print_vector(_listen, cout);
   cout << "server_name: \n";
   print_vector(_server_name, cout);
-  cout << "client_body_buffer_size:"
-       << "\t\t" << _client_body_buffer_size << std::endl;
+  cout << "client_max_body_size:"
+       << "\t\t" << _client_max_body_size << std::endl;
   cout << "error_page:\n";
   print_map(_error_page, cout);
   std::map<std::string, LocationBlock>::iterator i;
