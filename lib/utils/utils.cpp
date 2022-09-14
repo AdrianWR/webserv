@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include "log.hpp"
 
 // utility function
 std::string IntToString(int a) {
@@ -112,6 +111,7 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
 			  fileStream >> buffer;
 		};
 	};
+	if (buffer.compare("}") == 0) break;
 	// If is reserved word then cursor is at the begining of line
     if (r.is_reserved_word(buffer)) {
       last_rword = buffer;
@@ -188,32 +188,36 @@ void Config::generate_config_map() {
  * @note: The returned map is a copy of the internal map.
  */
 void Config::parse_file(std::string file) {
-  ConfigBlock stub;
-  std::fstream fileStream;
-  std::string buffer = "";
+	ConfigBlock stub;
+	std::fstream fileStream;
+	std::string buffer = "";
 
-  fileStream.open(file.c_str());
-  if (!fileStream.is_open()) {
-    LOG(ERROR) << "Failed to open file " << file;
-    return;
-  }
+	fileStream.open(file.c_str());
+	if (!fileStream.is_open()) {
+		LOG(ERROR) << "Failed to open file " << file;
+	return;
+	}
 
-  // file loop
-  while (fileStream >> buffer) {
-    stub = ConfigBlock();
-    stub = parse_config_block_file(fileStream, buffer);
-	// se stub nao tem listen ou server name -> erro
-	if (!stub.check_listen_and_server_name()){
-		LOG(ERROR) << "Config must have at least 'listen' and 'server_name' directives !";
-	};
-	// se stub nano tem location -> colocar um location default
-	stub.add_default_location();
-    _config_vector.push_back(stub);
-  }
-  // print_vectorc(_config_vector);
-  generate_config_map();
-  // Output config map to a file config_map.txt for easy checking
-  print_mapc(_config_map);
+	// file loop
+	while (fileStream >> buffer) {
+		stub = ConfigBlock();
+		stub = parse_config_block_file(fileStream, buffer);
+		// se stub nao tem listen ou server name -> erro
+		if (!stub.check_listen_and_server_name()){
+			LOG(ERROR) << "Config must have at least 'listen' and 'server_name' directives !";
+		};
+		// se stub nano tem location -> colocar um location default
+		stub.add_default_location();
+		_config_vector.push_back(stub);
+	}
+//	std::cout << "Vector: \n";
+//	print_vectorc(_config_vector);
+//	if (_config_vector.empty()){
+//		LOG(ERROR) << "Empty config !";
+//	}
+	generate_config_map();
+	// Output config map to a file config_map.txt for easy checking
+	print_mapc(_config_map);
 }
 
 // reserved_words class:

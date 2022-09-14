@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "log.hpp"
+
 class req_handler {
 public:
   // Constructor

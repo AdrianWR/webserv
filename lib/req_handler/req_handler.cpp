@@ -1,6 +1,32 @@
 #include "req_handler.hpp"
 
-// Construtor
+// **********************************************************
+// Utility functions
+// **********************************************************
+std::string file_to_string(std::string file_path) {
+  std::string line;
+  std::stringstream buffer;
+  std::ifstream myfile(file_path.c_str());
+
+  // Se arquivo existe, serve arquivo
+  if (myfile.is_open()) {
+    while (getline(myfile, line)) {
+      buffer << line;
+    };
+    myfile.close();
+    return buffer.str();
+  } else {
+    std::cout << "Unable to open file\n";
+    return "";
+  }
+  // Se arquivo nao existe
+  // Se autoindex == on, serve executa autoindex.php
+  // Se nao ,erro
+}
+
+// **********************************************************
+// Req_handler class
+// **********************************************************
 req_handler::req_handler() {
   std::cout << "req_handler constructor" << std::endl;
 }
@@ -10,11 +36,11 @@ req_handler::req_handler(Config fp) {
   _parsed_config_map = fp.getBlockMap();
   //	print_mapc(_parsed_config_map);
 }
-// Destrutor
+
 req_handler::~req_handler() {
   std::cout << "req_handler destructor" << std::endl;
 }
-// Asssignment
+
 req_handler &req_handler::operator=(const req_handler &s) {
   if (this != &s)
     return *this;
@@ -43,26 +69,6 @@ std::string req_handler::generate_path(std::string url, std::string location,
   return str.substr(str.find("/"));
 }
 
-std::string file_to_string(std::string file_path) {
-  std::string line;
-  std::stringstream buffer;
-  std::ifstream myfile(file_path.c_str());
-
-  // Se arquivo existe, serve arquivo
-  if (myfile.is_open()) {
-    while (getline(myfile, line)) {
-      buffer << line;
-    };
-    myfile.close();
-    return buffer.str();
-  } else {
-    std::cout << "Unable to open file\n";
-    return "";
-  }
-  // Se arquivo nao existe
-  // Se autoindex == on, serve executa autoindex.php
-  // Se nao ,erro
-}
 
 void req_handler::handler() {
 
@@ -88,15 +94,14 @@ void req_handler::handler() {
 
   // Pega configs na estrutura de configs:
   std::string conf_key = host + ":" + port;
-
-  ConfigBlock server_config;
-  server_config = _parsed_config_map[conf_key];
+  ConfigBlock server_config = _parsed_config_map[conf_key];
   // debug prints
   std::ofstream f("server_config.txt", std::ofstream::trunc);
   server_config.print_block_file(f);
   if (server_config._block_name.compare("empty") == 0) { // REFATORAR!
-    std::cout << "EMPTY !!!!\n";
-    std::exit(2); // Nao tem config, nao fazer nada
+    LOG(ERROR) << "Empty config !!";
+//    std::cout << "EMPTY !!!!\n";
+//    std::exit(2); // Nao tem config, nao fazer nada
   } else {
     std::cout << "NOT EMPTY !!!!\n";
   };

@@ -10,6 +10,8 @@
 #include <vector>
 #include <dirent.h>
 
+#include "log.hpp"
+
 std::string IntToString(int a);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
@@ -24,9 +26,11 @@ template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
 }
 
 template <typename T> void print_vectorc(std::vector<T> v) {
+  std::ofstream cout("config_vector.txt", std::ofstream::trunc);
+
   for (unsigned int i = 0; i < v.size(); i++) {
     std::cout << "[" << i << "]\n";
-    v[i].print_block_file(std::cout);
+    v[i].print_block_file(cout);
   }
 }
 
