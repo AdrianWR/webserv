@@ -33,7 +33,7 @@ void Config::printa_linha(std::fstream &fileStream) {
 }
 
 LocationBlock Config::parse_location(std::fstream &fs, std::string buffer) {
-  reserved_words_c r = reserved_words_c();
+  ReservedWords r = ReservedWords();
   std::string last_rword = "";
   LocationBlock loc;
 
@@ -94,17 +94,16 @@ LocationBlock Config::parse_location(std::fstream &fs, std::string buffer) {
 
 ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
                                             std::string &buffer) {
+	int temp_port;
+	ConfigBlock stub;
+	std::string last_rword = "";
+	std::string location_key = "";
+	ReservedWords r = ReservedWords();
+	LocationBlock stub_loc;
 
-  int temp_port;
-  ConfigBlock stub;
-  std::string last_rword = "";
-  std::string location_key = "";
-  reserved_words_c r = reserved_words_c();
-  LocationBlock stub_loc;
-
-  stub = ConfigBlock();
-  stub._block_name = buffer;
-  while (buffer.compare("}") != 0) {
+	stub = ConfigBlock();
+	stub._block_name = buffer;
+	while (buffer.compare("}") != 0) {
 	// Check comment
 	if (buffer[0] == '#') {
 		while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)  {
@@ -113,49 +112,55 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
 	};
 	if (buffer.compare("}") == 0) break;
 	// If is reserved word then cursor is at the begining of line
-    if (r.is_reserved_word(buffer)) {
-      last_rword = buffer;
-      fileStream >> buffer;
-    };
-    // client_max_body_size
-    if (!last_rword.compare("client_max_body_size")) {
-      std::istringstream(buffer) >> stub._client_max_body_size;
-    }
-    // server_name
-    else if (!last_rword.compare("server_name")) {
-      stub._server_name.push_back(buffer);
-    }
-    // listen
-    else if (!last_rword.compare("listen")) {
-      std::istringstream(buffer) >> temp_port;
-      stub._listen.push_back(temp_port);
-      _available_ports.insert(static_cast<short>(temp_port));
-    }
-    // error_page
-    else if (!last_rword.compare("error_page")) {
-      int key;
-      std::istringstream(buffer) >> key;
-      fileStream >> buffer;
-      stub._error_page[key] = buffer;
-    }
-    // location
-    else if (!last_rword.compare("location")) {
-      std::string location_key = buffer;
-      //				std::cout << "parsing location: " <<
-      // buffer << std::endl;
-      stub_loc = parse_location(fileStream, buffer);
-      stub._location[location_key] = stub_loc;
-    }
-    fileStream >> buffer;
-  } // end while
+	if (r.is_reserved_word(buffer)) {
+		last_rword = buffer;
+		fileStream >> buffer;
+	};
+	// client_max_body_size
+	if (!last_rword.compare("client_max_body_size")) {
+	std::istringstream(buffer) >> stub._client_max_body_size;
+	}
+	// server_name
+	else if (!last_rword.compare("server_name")) {
+	  stub._server_name.push_back(buffer);
+	}
+	// listen
+	else if (!last_rword.compare("listen")) {
+		std::istringstream(buffer) >> temp_port;
+		stub._listen.push_back(temp_port);
+		_available_ports.insert(static_cast<short>(temp_port));
+	}
+	// error_page
+	else if (!last_rword.compare("error_page")) {
+		int key;
+		std::istringstream(buffer) >> key;
+		fileStream >> buffer;
+		stub._error_page[key] = buffer;
+	}
+	// location
+	else if (!last_rword.compare("location")) {
+		std::string location_key = buffer;
+		stub_loc = parse_location(fileStream, buffer);
+		stub._location[location_key] = stub_loc;
+	}
+	fileStream >> buffer;
+} // end while
 
-  // Remove defaults from containers
-  if (stub._listen.front() == -1)
-    stub._listen.erase(stub._listen.begin());
-  if (!stub._server_name.front().compare("none"))
-    stub._server_name.erase(stub._server_name.begin());
-  // return
-  return (stub);
+	// Remove defaults from containers
+	if (stub._listen.front() == -1)
+		stub._listen.erase(stub._listen.begin());
+	if (!stub._server_name.front().compare("none"))
+		stub._server_name.erase(stub._server_name.begin());
+	// Se location vazio ou se nao tem location /, adiciona location default
+	if (stub._location.find("/") == stub._location.end()) {
+		stub.add_default_location();
+		std::cout << "Nao tem location /\n";
+	}
+	else {
+		std::cout << "Tem location / \n";
+	};
+	// return
+	return (stub);
 }
 
 void Config::generate_config_map() {
@@ -204,12 +209,12 @@ void Config::parse_file(std::string file) {
 		stub = parse_config_block_file(fileStream, buffer);
 		// se stub nao tem listen ou server name -> erro
 		if (!stub.check_listen_and_server_name()){
-			LOG(ERROR) << "Config must have at least 'listen' and 'server_name' directives !";
+			LOG(ERROR) << "Missing 'listen' and 'server_name' directives !";
 		};
 		// se stub nano tem location -> colocar um location default
-		stub.add_default_location();
+		//stub.add_default_location();
 		_config_vector.push_back(stub);
-	}
+	};
 //	std::cout << "Vector: \n";
 //	print_vectorc(_config_vector);
 //	if (_config_vector.empty()){
@@ -221,7 +226,7 @@ void Config::parse_file(std::string file) {
 }
 
 // reserved_words class:
-reserved_words_c::reserved_words_c() {
+ReservedWords::ReservedWords() {
   list.insert("listen");
   list.insert("root");
   list.insert("server_name");
@@ -240,7 +245,7 @@ reserved_words_c::reserved_words_c() {
   list.insert("allowed_methods");
 }
 
-bool reserved_words_c::is_reserved_word(std::string query_string) {
+bool ReservedWords::is_reserved_word(std::string query_string) {
   if (list.find(query_string) == list.end())
     return false;
   return true;
@@ -325,24 +330,24 @@ ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
 }
 
 void ConfigBlock::print_block_file(std::ofstream &cout) {
-  cout << "=======================================================\n";
-  cout << "block_name: " << _block_name << std::endl;
-  cout << "listen: \n";
-  print_vector(_listen, cout);
-  cout << "server_name: \n";
-  print_vector(_server_name, cout);
-  cout << "client_max_body_size:"
-       << "\t\t" << _client_max_body_size << std::endl;
-  cout << "error_page:\n";
-  print_map(_error_page, cout);
-  std::map<std::string, LocationBlock>::iterator i;
-  for (i = _location.begin(); i != _location.end(); i++) {
-    cout << "------------------------------\n";
-    cout << "location:"
-         << "\t\t" << i->first << std::endl;
-    i->second.print_location(cout);
-  };
-  cout << "=======================================================\n";
+	cout << "=======================================================\n";
+	cout << "block_name: " << _block_name << std::endl;
+	cout << "listen: \n";
+	print_vector(_listen, cout);
+	cout << "server_name: \n";
+	print_vector(_server_name, cout);
+	cout << "client_max_body_size:"
+	   << "\t\t" << _client_max_body_size << std::endl;
+	cout << "error_page:\n";
+	print_map(_error_page, cout);
+	std::map<std::string, LocationBlock>::iterator i;
+	for (i = _location.begin(); i != _location.end(); i++) {
+		cout << "------------------------------\n";
+		cout << "location:"
+			 << "\t\t" << i->first << std::endl;
+		i->second.print_location(cout);
+	};
+	cout << "=======================================================\n";
 }
 
 bool ConfigBlock::check_listen_and_server_name(){
@@ -352,10 +357,8 @@ bool ConfigBlock::check_listen_and_server_name(){
 }
 
 void ConfigBlock::add_default_location() {
-	if (_location.size() == 0) {
-		LocationBlock lb;
-		_location["/"] = lb;
-	};
+	LocationBlock lb;
+	_location["/"] = lb;
 }
 
 AutoIndexGenerator::AutoIndexGenerator(void) { return; }

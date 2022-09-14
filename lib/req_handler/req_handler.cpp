@@ -91,6 +91,7 @@ void req_handler::handler() {
 	std::string port = "81";
 	std::string host = "www.site1.com";
 	int client_max_body_size = 1000;
+	(void) client_max_body_size;
 
 	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
@@ -99,10 +100,10 @@ void req_handler::handler() {
 	std::ofstream f("server_config.txt", std::ofstream::trunc);
 	server_config.print_block_file(f);
 	// Se nao houver config para o server retorna sem fazer nada
-	if (server_config._block_name.compare("empty") == 0) {
-		LOG(ERROR) << "Empty server config !!";
-		return;
-	};
+//	if (server_config._block_name.compare("empty") == 0) {
+//		LOG(ERROR) << "Empty server config !!";
+//		return;
+//	};
 
 	// FROM NOW ON SERVER CONFIG ON MEMORY
 	

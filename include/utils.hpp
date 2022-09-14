@@ -12,6 +12,10 @@
 
 #include "log.hpp"
 
+// *****************************************************88
+// Auxiliary Functions
+// *****************************************************88
+
 std::string IntToString(int a);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
@@ -53,13 +57,19 @@ template <typename A, typename B> void print_mapc(std::map<A, B> m) {
   cout.close();
 }
 
-class reserved_words_c {
+// *****************************************************88
+// Class ReservedWords 
+// *****************************************************88
+class ReservedWords {
 public:
-  reserved_words_c();
+  ReservedWords();
   std::set<std::string> list;
   bool is_reserved_word(std::string query_string);
 };
 
+// *****************************************************88
+// Class LocationBlock 
+// *****************************************************88
 class LocationBlock {
 public:
   // Constructor
@@ -83,6 +93,9 @@ public:
   void print_location(std::ofstream &cout);
 };
 
+// *****************************************************88
+// Class ConfigBlock 
+// *****************************************************88
 class ConfigBlock {
 public:
   // Constructor
@@ -107,6 +120,9 @@ public:
   void add_default_location();
 };
 
+// *****************************************************88
+// Class Config 
+// *****************************************************88
 class Config {
 public:
   typedef std::map<std::string, ConfigBlock> BlockMap;
@@ -142,6 +158,9 @@ public:
   BlockMap getBlockMap(void);
 };
 
+// *****************************************************88
+// Class AutoIndexGeerator 
+// *****************************************************88
 class AutoIndexGenerator {
     public:
         AutoIndexGenerator(void);
