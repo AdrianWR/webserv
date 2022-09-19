@@ -98,6 +98,9 @@ public:
 // *****************************************************88
 class ConfigBlock {
 public:
+	typedef std::map<std::string, LocationBlock> MapOfLocations;
+
+public:
   // Constructor
   ConfigBlock();
   // Destructor

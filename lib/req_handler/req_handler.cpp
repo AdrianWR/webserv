@@ -62,6 +62,37 @@ std::string req_handler::extract_location_from_url(std::string url) {
   return location;
 }
 
+std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
+	ConfigBlock::MapOfLocations::iterator	it;
+	std::string key;
+	bool match;
+	size_t p;
+
+	size_t pos1 = uri.find("/");
+	std::string s = uri.substr(pos1);
+		std::cout << "uri: " << uri << "\n";
+		std::cout << "s: " << s << "\n";
+	match = false;
+
+	for (it = sc._location.begin(); it != sc._location.end(); it++) {
+		key = it->first;
+		if (key != "/") {
+			std::cout << "key: " << key << std::endl;
+			p = s.find(key);
+			std::cout << "p: " << p << "\n";
+			if (p < s.size()) {
+				match = true;
+				std::cout << match << "\n";
+				break;
+			}
+		};
+	}
+	if (!match) {
+		key = "/";
+	}
+	return key;
+}
+
 std::string req_handler::generate_path(std::string url, std::string location,
                                        std::string root) {
 
@@ -85,10 +116,10 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	std::string method = "GET";
-	std::string url = "www.site1.com/images/";
+	std::string uri = "www.site1.com/images/";
 	//	std::string url =		"www.site1.com/images/photo1.png";
 	//	std::string url =		"www.site1.com/images/";
-	std::string port = "81";
+	std::string port = "8081";
 	std::string host = "www.site1.com";
 	int client_max_body_size = 1000;
 	(void) client_max_body_size;
@@ -118,7 +149,8 @@ void req_handler::handler() {
 
 	// Pega location
 	// Funcao extract_location_from_url:
-	std::string loc = extract_location_from_url(url);
+//	std::string loc = extract_location_from_url(url);
+	std::string loc = extract_location(server_config, uri);
 	std::cout << "location: " << loc << "\n";
 
 	// Carrega configs da location na memoria
@@ -140,7 +172,7 @@ void req_handler::handler() {
 	// pega root
 	// troca location por root no url
 
-	std::string path = generate_path(url, loc, loc_config._root);
+	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 
 	// Se get permitido:
