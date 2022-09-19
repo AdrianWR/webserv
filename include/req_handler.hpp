@@ -27,7 +27,6 @@ public:
   void handler();
 
 private:
-  std::string extract_location_from_url(std::string url);
   std::string extract_location (ConfigBlock sc, std::string uri);
   std::string generate_path(std::string url, std::string location,
                             std::string root);

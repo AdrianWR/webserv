@@ -47,21 +47,6 @@ req_handler &req_handler::operator=(const req_handler &s) {
   return *this;
 }
 
-std::string req_handler::extract_location_from_url(std::string url) {
-  size_t pos1 = url.find("/");
-  size_t pos2 = url.find_last_of("/");
-  std::string s = url.substr(pos1 + 1, pos2 - pos1 - 1);
-  if (pos1 == pos2)
-    s = "";
-  std::string location = "/" + s;
-  //	std::string location = "/" + s.substr(0, pos2);
-  // debug prints
-  std::cout << "pos1: " << pos1 << " " << s << std::endl;
-  std::cout << "pos2: " << pos2 << " " << location << std::endl;
-
-  return location;
-}
-
 std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
 	ConfigBlock::MapOfLocations::iterator	it;
 	std::string key;
@@ -144,22 +129,23 @@ void req_handler::handler() {
 	// Pega location
 	// Funcao extract_location_from_url:
 //	std::string loc = extract_location_from_url(url);
-	std::string a1;
-	a1 = extract_location(server_config, "www.site.com/aaa/images/");
-	std::cout << "exctracted: " << a1 << "\n";
-	a1 = extract_location(server_config, "www.site.com/images/aaa/bbb/");
-	std::cout << "exctracted: " << a1 << "\n";
-	a1 = extract_location(server_config, "www.site.com/images1/aaa/bbb/");
-	std::cout << "exctracted: " << a1 << "\n";
+//	std::string a1;
+//	a1 = extract_location(server_config, "www.site.com/aaa/images/");
+//	std::cout << "exctracted: " << a1 << "\n";
+//	a1 = extract_location(server_config, "www.site.com/images/aaa/bbb/");
+//	std::cout << "exctracted: " << a1 << "\n";
+//	a1 = extract_location(server_config, "www.site.com/images1/aaa/bbb/");
+//	std::cout << "exctracted: " << a1 << "\n";
 
 	std::string loc = extract_location(server_config, uri);
-	std::cout << "location: " << loc << "\n";
+		std::cout << "location: " << loc << "\n";
 
 	// Carrega configs da location na memoria
 	LocationBlock loc_config = server_config._location[loc];
-	// debug prints
-	std::ofstream f2("location_config.txt", std::ofstream::trunc);
-	loc_config.print_location(f2);
+		// debug prints
+		std::ofstream f2("location_config.txt", std::ofstream::trunc);
+		loc_config.print_location(f2);
+	
 	// Se tiver redirection, devolve redirection e sai.
 	if (loc_config._redirection.compare("/") != 0) {
 		std::cout << "TEM REDIRECTION !!!\n";
