@@ -147,7 +147,7 @@ void req_handler::handler() {
 		loc_config.print_location(f2);
 	
 	// Se tiver redirection, devolve redirection e sai.
-	if (loc_config._redirection.compare("/") != 0) {
+	if (loc_config._redirection != "") {
 		std::cout << "TEM REDIRECTION !!!\n";
 		std::cout << loc_config._redirection << "\n";
 		std::exit(4); // Retorna um redirection
@@ -156,10 +156,9 @@ void req_handler::handler() {
 	};
 
 	// Monta caminho fisico:
-	// pega location
-	// pega root
-	// troca location por root no url
-
+		// pega location
+		// pega root
+		// troca location por root no url
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 
@@ -174,10 +173,16 @@ void req_handler::handler() {
 			// executa (fork etc)
 			// devolve output
 		};
-	// 1) Se tiver extensao
+		
+	// 1) Se for arquivoi:termina sem / (tiver extensao)
 		// Se existir, devolve
 		// se nao existir, erro
-		if (path.find(".") != std::string::npos) {
+//		if (path.find(".") != std::string::npos) {
+		std::cout << "path: " << path << "\n";
+		std::cout << "pos: " << path.find_last_of("/") << "\n";
+		std::cout << "size: " << path.size() << "\n";
+
+		if (path.find_last_of("/") == path.size() + 1) {
 			// Tenta pegar arquivo.
 			std::string full_path = "." + path;
 			//			std::string output =
