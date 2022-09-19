@@ -70,19 +70,13 @@ std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
 
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
-		std::cout << "uri: " << uri << "\n";
-		std::cout << "s: " << s << "\n";
 	match = false;
-
 	for (it = sc._location.begin(); it != sc._location.end(); it++) {
 		key = it->first;
 		if (key != "/") {
-			std::cout << "key: " << key << std::endl;
-			p = s.find(key);
-			std::cout << "p: " << p << "\n";
-			if (p < s.size()) {
+			p = s.find(key + "/");
+			if (p == 0) {
 				match = true;
-				std::cout << match << "\n";
 				break;
 			}
 		};
@@ -150,6 +144,14 @@ void req_handler::handler() {
 	// Pega location
 	// Funcao extract_location_from_url:
 //	std::string loc = extract_location_from_url(url);
+	std::string a1;
+	a1 = extract_location(server_config, "www.site.com/aaa/images/");
+	std::cout << "exctracted: " << a1 << "\n";
+	a1 = extract_location(server_config, "www.site.com/images/aaa/bbb/");
+	std::cout << "exctracted: " << a1 << "\n";
+	a1 = extract_location(server_config, "www.site.com/images1/aaa/bbb/");
+	std::cout << "exctracted: " << a1 << "\n";
+
 	std::string loc = extract_location(server_config, uri);
 	std::cout << "location: " << loc << "\n";
 
