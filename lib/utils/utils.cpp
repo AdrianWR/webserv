@@ -49,6 +49,12 @@ LocationBlock Config::parse_location(std::fstream &fs, std::string buffer) {
 
   loc = LocationBlock();
   while (buffer.compare("}") != 0) {
+	// Check comment
+	if (buffer[0] == '#') {
+		while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)  {
+			  fs >> buffer;
+		};
+	};
     if (r.is_reserved_word(buffer)) {
       last_rword = buffer;
       fs >> buffer;

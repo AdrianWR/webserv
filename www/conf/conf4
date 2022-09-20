@@ -10,6 +10,7 @@ sample_server_Z1 {
 		root /www/site1
 		upload_path /uploads
 		cgi_pass	pass
+		#index	index.htm index.html index.php
 		autoindex	true
 		allowed_methods	GET		true
 		allowed_methods	POST	false

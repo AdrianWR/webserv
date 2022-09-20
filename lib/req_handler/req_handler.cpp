@@ -74,9 +74,11 @@ std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
 
 std::string req_handler::generate_path(std::string uri, std::string location,
                                        std::string root) {
-
-  std::string str = uri.replace(uri.find(location), location.length(), root);
-  return str.substr(str.find("/"));
+	// pega location
+	// pega root
+	// troca location por root no url
+	std::string str = uri.replace(uri.find(location), location.length(), root);
+	return str.substr(str.find("/"));
 }
 
 void req_handler::check_redirection(LocationBlock loc_config ) {
@@ -89,7 +91,7 @@ void req_handler::check_redirection(LocationBlock loc_config ) {
 	};
 }
 
-void req_handler::check_method(LocationBlock loc_config) {
+void req_handler::check_method_GET(LocationBlock loc_config) {
 	if (loc_config._allowed_methods["GET"] == 0) {
 		std::cout << "Error 405 Method not Allowed\n";
 		exit(5);
@@ -181,9 +183,6 @@ void req_handler::fetch_dir(std::string path,
 
 void req_handler::handler() {
 
-	// Pega config ok
-	// Construtor recebe um objeto file_parser_c
-
 	// Recebe um http request object
 	// Do request, pega:
 	// 1a linha:
@@ -230,6 +229,7 @@ void req_handler::handler() {
 //	a1 = extract_location(server_config, "www.site.com/images1/aaa/bbb/");
 //	std::cout << "exctracted: " << a1 << "\n";
 
+	// Extract location
 	std::string loc = extract_location(server_config, uri);
 		std::cout << "location: " << loc << "\n";
 
@@ -243,25 +243,11 @@ void req_handler::handler() {
 	check_redirection(loc_config);
 
 	// Monta caminho fisico:
-		// pega location
-		// pega root
-		// troca location por root no url
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
-	//
-	// check_method
-	// debug comentario atrapalhando linha debaixo (index vs autoindex no conf4)
-	// DONE
-	// funcao para arquivo (fetch_file)
-	// funcao para diretorio (fetch_directory)
-	// funcao para cgi (fetch_cgi)
-	// refatorar if do GET para sair e retornar msg de erro se metodo nao permitido
-	// usar funcao de auto-index
-	// funcao uri_asks_for
-	// check_redirection
-	//
-	// Se get nao permitido:
-	check_method(loc_config);
+	
+	// Checa se GET Permitido neste location
+	check_method_GET(loc_config);
 	// Se get permitido:
 	std::cout << "GET ALLOWED !!!!\n";
 	// 0) Se for cgi
