@@ -89,6 +89,13 @@ void req_handler::check_redirection(LocationBlock loc_config ) {
 	};
 }
 
+void req_handler::check_method(LocationBlock loc_config) {
+	if (loc_config._allowed_methods["GET"] == 0) {
+		std::cout << "Error 405 Method not Allowed\n";
+		exit(5);
+	};
+}
+
 std::string req_handler::what_is_asked(std::string path) {
 	if (path.find(".cgi") != std::string::npos) {
 		std::cout << "ask for cgi\n";
@@ -242,7 +249,6 @@ void req_handler::handler() {
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 	//
-	// check_redirection
 	// check_method
 	// debug comentario atrapalhando linha debaixo (index vs autoindex no conf4)
 	// DONE
@@ -252,12 +258,10 @@ void req_handler::handler() {
 	// refatorar if do GET para sair e retornar msg de erro se metodo nao permitido
 	// usar funcao de auto-index
 	// funcao uri_asks_for
+	// check_redirection
 	//
 	// Se get nao permitido:
-	if (loc_config._allowed_methods["GET"] == 0) {
-		std::cout << "Error 405 Method not Allowed\n";
-		exit(5);
-	}
+	check_method(loc_config);
 	// Se get permitido:
 	std::cout << "GET ALLOWED !!!!\n";
 	// 0) Se for cgi

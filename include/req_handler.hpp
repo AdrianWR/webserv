@@ -31,6 +31,7 @@ private:
   std::string generate_path(std::string url, std::string location,
                             std::string root);
   void check_redirection(LocationBlock loc_config );
+  void check_method(LocationBlock loc_config);
   std::string what_is_asked(std::string path);
   void fetch_file(std::string path);
   void fetch_cgi(std::string path);
