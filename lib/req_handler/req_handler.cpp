@@ -94,6 +94,21 @@ std::string req_handler::what_is_asked(std::string path) {
 	}
 }
 
+void req_handler::fetch_file(std::string path) {
+	// Tenta pegar arquivo.
+	std::string full_path = "." + path;
+	std::string output = file_to_string(full_path);
+	if (output.size() > 0) {
+		std::cout << "***********************************\n";
+		std::cout << " HTTP RESPONSE \n";
+		std::cout << "***********************************\n";
+		std::cout << output << std::endl;
+		std::cout << "***********************************\n";
+	} else {
+		std::cout << "Nao achou arquivo ! Erro 404\n";
+	};
+}
+
 void req_handler::handler() {
 
 	// Pega config ok
@@ -109,7 +124,8 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	std::string method = "GET";
-	std::string uri = "www.site1.com/images/";
+	std::string uri = "www.site1.com/images/site1.html";
+	//std::string uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	std::string port = "8081";
@@ -204,18 +220,7 @@ void req_handler::handler() {
 // 1) Se for arquivoi:termina sem /
 	if (what_is_asked(path) == "file") {
 		std::cout << "FILE ...\n";
-		// Tenta pegar arquivo.
-		std::string full_path = "." + path;
-		std::string output = file_to_string(full_path);
-		if (output.size() > 0) {
-			std::cout << "***********************************\n";
-			std::cout << " HTTP RESPONSE \n";
-			std::cout << "***********************************\n";
-			std::cout << output << std::endl;
-			std::cout << "***********************************\n";
-		} else {
-			std::cout << "Nao achou arquivo ! Erro 404\n";
-		};
+		fetch_file(path);
 	}
 	if (what_is_asked(path) == "dir") {
 		std::cout << "DIR ...\n";
@@ -252,6 +257,5 @@ void req_handler::handler() {
 			};
 		};
 	};
-};
 	// Monta http response
 }

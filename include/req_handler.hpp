@@ -31,6 +31,7 @@ private:
   std::string generate_path(std::string url, std::string location,
                             std::string root);
   std::string what_is_asked(std::string path);
+  void fetch_file(std::string path);
 
 public:
   Config::BlockMap _parsed_config_map;
