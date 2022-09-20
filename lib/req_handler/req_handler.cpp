@@ -79,6 +79,16 @@ std::string req_handler::generate_path(std::string uri, std::string location,
   return str.substr(str.find("/"));
 }
 
+void req_handler::check_redirection(LocationBlock loc_config ) {
+	if (loc_config._redirection != "") {
+		std::cout << "TEM REDIRECTION !!!\n";
+		std::cout << loc_config._redirection << "\n";
+		std::exit(4); // Retorna um redirection
+	} else {
+		std::cout << "NAO TEM REDIRECTION !!!\n";
+	};
+}
+
 std::string req_handler::what_is_asked(std::string path) {
 	if (path.find(".cgi") != std::string::npos) {
 		std::cout << "ask for cgi\n";
@@ -94,6 +104,14 @@ std::string req_handler::what_is_asked(std::string path) {
 	}
 }
 
+void req_handler::fetch_cgi(std::string path) {
+	(void) path;
+		// Monta environment
+		// Monta args
+		// executa (fork etc)
+		// devolve output
+}
+
 void req_handler::fetch_file(std::string path) {
 	// Tenta pegar arquivo.
 	std::string full_path = "." + path;
@@ -106,6 +124,51 @@ void req_handler::fetch_file(std::string path) {
 		std::cout << "***********************************\n";
 	} else {
 		std::cout << "Nao achou arquivo ! Erro 404\n";
+	};
+}
+
+void req_handler::try_index_page(std::string path, LocationBlock loc_config) {
+	// loop
+	for (size_t i = 0; i < loc_config._index.size(); i++) {
+		// monta caminho com um dos index
+		std::string full_path = "." + path + loc_config._index[i];
+			std::cout << "full_path: " << full_path << std::endl;
+		// devolve
+		std::string output = file_to_string(full_path);
+		if (output.size() > 0) {
+			std::cout << "|" << full_path << "|: ";
+			std::cout << "|" << output << "|" << std::endl;
+		break;
+		};
+	};
+}
+
+void req_handler::try_autoindex(LocationBlock loc_config,
+								std::string host,
+								std::string port) {
+	// se autoindex on executa autoindex
+	if (loc_config._autoindex == true) {
+		std::cout << "Executando autoindex ...\n";
+		AutoIndexGenerator auto_index;
+		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
+		std::cout << "======================\n";
+		std::cout << ai_page << std::endl;
+		std::cout << "======================\n";
+	} else {
+	// se nao devolve erro
+		std::cout << "Erro 404 !\n\n";
+	};
+}
+
+void req_handler::fetch_dir(std::string path,
+							LocationBlock loc_config,
+							std::string host,
+							std::string port) {
+	if (loc_config._index.size() > 0) {// Se tiver index
+		std::cout << "tem index\n";
+		try_index_page(path, loc_config);
+	} else { // se nao houver
+		try_autoindex(loc_config, host, port);
 	};
 }
 
@@ -124,8 +187,8 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	std::string method = "GET";
-	std::string uri = "www.site1.com/images/site1.html";
-	//std::string uri = "www.site1.com/images/";
+//	std::string uri = "www.site1.com/images/site1.html";
+	std::string uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	std::string port = "8081";
@@ -136,15 +199,10 @@ void req_handler::handler() {
 	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
 	ConfigBlock server_config = _parsed_config_map[conf_key];
-	// debug prints
-	std::ofstream f("server_config.txt", std::ofstream::trunc);
-	server_config.print_block_file(f);
-	// Se nao houver config para o server retorna sem fazer nada
-//	if (server_config._block_name.compare("empty") == 0) {
-//		LOG(ERROR) << "Empty server config !!";
-//		return;
-//	};
-
+		// debug prints
+		std::ofstream f("server_config.txt", std::ofstream::trunc);
+		server_config.print_block_file(f);
+		
 	// FROM NOW ON SERVER CONFIG ON MEMORY
 	
 	// SO PARA POST ???
@@ -157,8 +215,6 @@ void req_handler::handler() {
 //	};
 
 	// Pega location
-	// Funcao extract_location_from_url:
-//	std::string loc = extract_location_from_url(url);
 //	std::string a1;
 //	a1 = extract_location(server_config, "www.site.com/aaa/images/");
 //	std::cout << "exctracted: " << a1 << "\n";
@@ -177,13 +233,7 @@ void req_handler::handler() {
 		loc_config.print_location(f2);
 	
 	// Se tiver redirection, devolve redirection e sai.
-	if (loc_config._redirection != "") {
-		std::cout << "TEM REDIRECTION !!!\n";
-		std::cout << loc_config._redirection << "\n";
-		std::exit(4); // Retorna um redirection
-	} else {
-		std::cout << "NAO TEM REDIRECTION !!!\n";
-	};
+	check_redirection(loc_config);
 
 	// Monta caminho fisico:
 		// pega location
@@ -192,11 +242,13 @@ void req_handler::handler() {
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 	//
+	// check_redirection
+	// check_method
+	// debug comentario atrapalhando linha debaixo (index vs autoindex no conf4)
+	// DONE
 	// funcao para arquivo (fetch_file)
 	// funcao para diretorio (fetch_directory)
 	// funcao para cgi (fetch_cgi)
-	// debug comentario atrapalhando linha debaixo (index vs autoindex no conf4)
-	// DONE
 	// refatorar if do GET para sair e retornar msg de erro se metodo nao permitido
 	// usar funcao de auto-index
 	// funcao uri_asks_for
@@ -211,51 +263,17 @@ void req_handler::handler() {
 	// 0) Se for cgi
 	if (what_is_asked(path) == "cgi") {
 		std::cout << "CGI ...\n";
-		// Monta environment
-		// Monta args
-		// executa (fork etc)
-		// devolve output
+		fetch_cgi(path);
 	};
-	
-// 1) Se for arquivoi:termina sem /
+	// 1) Se for arquivoi:termina sem /
 	if (what_is_asked(path) == "file") {
 		std::cout << "FILE ...\n";
 		fetch_file(path);
 	}
+	// 2) Se for diretorio (termina em /)
 	if (what_is_asked(path) == "dir") {
 		std::cout << "DIR ...\n";
-  // 2) Se nao tiver extensao
-		if (loc_config._index.size() > 0) {
-			// Se tiver index
-			std::cout << "tem index\n";
-				// loop
-			for (size_t i = 0; i < loc_config._index.size(); i++) {
-				// monta caminho com um dos index
-				std::string full_path = "." + path + loc_config._index[i];
-					std::cout << "full_path: " << full_path << std::endl;
-				// devolve
-				std::string output = file_to_string(full_path);
-				if (output.size() > 0) {
-					std::cout << "|" << full_path << "|: ";
-					std::cout << "|" << output << "|" << std::endl;
-				break;
-				};
-			};
-		} else {
-			// se nao houver
-			// se autoindex on executa autoindex
-			if (loc_config._autoindex == true) {
-				std::cout << "Executando autoindex ...\n";
-				AutoIndexGenerator auto_index;
-				std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
-				std::cout << "======================\n";
-				std::cout << ai_page << std::endl;
-				std::cout << "======================\n";
-			} else {
-			// se nao devolve erro
-				std::cout << "Erro 404 !\n\n";
-			};
-		};
+		fetch_dir(path, loc_config, host, port);
 	};
 	// Monta http response
 }
