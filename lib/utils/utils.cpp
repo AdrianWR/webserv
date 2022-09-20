@@ -8,6 +8,16 @@ std::string IntToString(int a) {
   return temp.str();
 }
 
+size_t StringToInt(std::string s) {
+  std::stringstream temp;
+  size_t i;
+
+  temp << s;
+  temp >> i;
+
+  return i;
+}
+
 // Construtor
 Config::Config() {}
 

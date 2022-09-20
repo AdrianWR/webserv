@@ -7,11 +7,10 @@ sample_server_Z1 {
 	error_page 403 ./error/403.html
 	error_page 500 ./error/500.html
 	location /images {
-		root /www/site1/
+		root /www/site1
 		upload_path /uploads
 		cgi_pass	pass
-		autoindex	false
-		index	index.htm index.html index.php
+		autoindex	true
 		allowed_methods	GET		true
 		allowed_methods	POST	false
 		allowed_methods	DELETE	false
@@ -25,6 +24,7 @@ sample_server_Z1 {
 		cgi_pass	pass
 		autoindex	true
 		index nada vazio vacuo 
+		#index	index.htm index.html index.php
 		allowed_methods	GET		false
 		allowed_methods	POST	true
 		allowed_methods	DELETE	true

@@ -72,10 +72,10 @@ std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
 	return key;
 }
 
-std::string req_handler::generate_path(std::string url, std::string location,
+std::string req_handler::generate_path(std::string uri, std::string location,
                                        std::string root) {
 
-  std::string str = url.replace(url.find(location), location.length(), root);
+  std::string str = uri.replace(uri.find(location), location.length(), root);
   return str.substr(str.find("/"));
 }
 
@@ -176,82 +176,82 @@ void req_handler::handler() {
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
 	//
-	// bug path
 	// funcao para arquivo (fetch_file)
 	// funcao para diretorio (fetch_directory)
 	// funcao para cgi (fetch_cgi)
+	// debug comentario atrapalhando linha debaixo (index vs autoindex no conf4)
+	// DONE
 	// refatorar if do GET para sair e retornar msg de erro se metodo nao permitido
-	// funcao uri_asks_for
 	// usar funcao de auto-index
+	// funcao uri_asks_for
 	//
+	// Se get nao permitido:
+	if (loc_config._allowed_methods["GET"] == 0) {
+		std::cout << "Error 405 Method not Allowed\n";
+		exit(5);
+	}
 	// Se get permitido:
-	if (loc_config._allowed_methods["GET"] == 1) {
-		std::cout << "GET ALLOWED !!!!\n";
-		// 0) Se for cgi
-		if (what_is_asked(path) == "cgi") {
-			std::cout << "Executa cgi ...\n";
-			// Monta environment
-			// Monta args
-			// executa (fork etc)
-			// devolve output
-		};
-		
-	// 1) Se for arquivoi:termina sem / (tiver extensao)
-		// Se existir, devolve
-		// se nao existir, erro
-//		if (path.find(".") != std::string::npos) {
-		std::cout << "path: " << path << "\n";
-		std::cout << "pos: " << path.find_last_of("/") << "\n";
-		std::cout << "size: " << path.size() << "\n";
-
-		if (what_is_asked(path) == "file") {
-			// Tenta pegar arquivo.
-			std::string full_path = "." + path;
-			//			std::string output =
-			// file_to_string("./www/site1/site1.html");
-			std::string output = file_to_string(full_path);
-			if (output.size() > 0) {
-				std::cout << "***********************************\n";
-				std::cout << " HTTP RESPONSE \n";
-				std::cout << "***********************************\n";
-				std::cout << output << std::endl;
-				std::cout << "***********************************\n";
-			} else {
-				std::cout << "Nao acho arquivo ! Erro 404\n";
-			};
-//		} else{
-		}
-		if (what_is_asked(path) == "file") {
-	  // 2) Se nao tiver extensao
-			if (loc_config._index.size() > 0) {
-				// Se tiver index
-				std::cout << "tem index\n";
-					// loop
-				for (size_t i = 0; i < loc_config._index.size(); i++) {
-					// monta caminho com um dos index
-					std::string full_path = "." + path + loc_config._index[i];
-					// devolve
-					std::string output = file_to_string(full_path);
-					if (output.size() > 0) {
-						std::cout << "|" << full_path << "|: ";
-						std::cout << "|" << output << "|" << std::endl;
-					break;
-					};
-				};
-			} else {
-				// se nao houver
-				// se autoindex on executa autoindex
-				if (loc_config._autoindex == true) {
-					std::cout << "Executando autoindex ...\n";
-				} else {
-				// se nao devolve erro
-					std::cout << "Erro 404 !\n\n";
-				};
-			};
-		};
-	} else {
-		std::cout << "GET NOT ALLOWED !!!";
-		std::exit(5);
+	std::cout << "GET ALLOWED !!!!\n";
+	// 0) Se for cgi
+	if (what_is_asked(path) == "cgi") {
+		std::cout << "CGI ...\n";
+		// Monta environment
+		// Monta args
+		// executa (fork etc)
+		// devolve output
 	};
+	
+// 1) Se for arquivoi:termina sem /
+	if (what_is_asked(path) == "file") {
+		std::cout << "FILE ...\n";
+		// Tenta pegar arquivo.
+		std::string full_path = "." + path;
+		std::string output = file_to_string(full_path);
+		if (output.size() > 0) {
+			std::cout << "***********************************\n";
+			std::cout << " HTTP RESPONSE \n";
+			std::cout << "***********************************\n";
+			std::cout << output << std::endl;
+			std::cout << "***********************************\n";
+		} else {
+			std::cout << "Nao achou arquivo ! Erro 404\n";
+		};
+	}
+	if (what_is_asked(path) == "dir") {
+		std::cout << "DIR ...\n";
+  // 2) Se nao tiver extensao
+		if (loc_config._index.size() > 0) {
+			// Se tiver index
+			std::cout << "tem index\n";
+				// loop
+			for (size_t i = 0; i < loc_config._index.size(); i++) {
+				// monta caminho com um dos index
+				std::string full_path = "." + path + loc_config._index[i];
+					std::cout << "full_path: " << full_path << std::endl;
+				// devolve
+				std::string output = file_to_string(full_path);
+				if (output.size() > 0) {
+					std::cout << "|" << full_path << "|: ";
+					std::cout << "|" << output << "|" << std::endl;
+				break;
+				};
+			};
+		} else {
+			// se nao houver
+			// se autoindex on executa autoindex
+			if (loc_config._autoindex == true) {
+				std::cout << "Executando autoindex ...\n";
+				AutoIndexGenerator auto_index;
+				std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
+				std::cout << "======================\n";
+				std::cout << ai_page << std::endl;
+				std::cout << "======================\n";
+			} else {
+			// se nao devolve erro
+				std::cout << "Erro 404 !\n\n";
+			};
+		};
+	};
+};
 	// Monta http response
 }

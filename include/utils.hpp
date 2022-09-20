@@ -10,6 +10,7 @@
 #include <vector>
 #include <dirent.h>
 
+
 #include "log.hpp"
 
 // *****************************************************88
@@ -17,6 +18,7 @@
 // *****************************************************88
 
 std::string IntToString(int a);
+size_t StringToInt(std::string s);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
   typename std::vector<T>::iterator it;
