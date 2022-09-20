@@ -79,6 +79,20 @@ std::string req_handler::generate_path(std::string url, std::string location,
   return str.substr(str.find("/"));
 }
 
+std::string req_handler::what_is_asked(std::string path) {
+	if (path.find(".cgi") != std::string::npos) {
+		std::cout << "ask for cgi\n";
+		return "cgi";
+	}
+	if (path.find_last_of("/") == path.size() - 1){
+		std::cout << "ask for dir\n";
+		return "dir";
+	}
+	else {
+		std::cout << "ask for file\n";
+		return "file";
+	}
+}
 
 void req_handler::handler() {
 
@@ -96,8 +110,8 @@ void req_handler::handler() {
 	// vao formar chave para config
 	std::string method = "GET";
 	std::string uri = "www.site1.com/images/";
-	//	std::string url =		"www.site1.com/images/photo1.png";
-	//	std::string url =		"www.site1.com/images/";
+	//std::string uri =		"www.site1.com/images/photo1.png";
+	//std::string uri =		"www.site1.com/images/algo.cgi";
 	std::string port = "8081";
 	std::string host = "www.site1.com";
 	int client_max_body_size = 1000;
@@ -161,12 +175,20 @@ void req_handler::handler() {
 		// troca location por root no url
 	std::string path = generate_path(uri, loc, loc_config._root);
 	std::cout << "path: " << path << std::endl;
-
+	//
+	// bug path
+	// funcao para arquivo (fetch_file)
+	// funcao para diretorio (fetch_directory)
+	// funcao para cgi (fetch_cgi)
+	// refatorar if do GET para sair e retornar msg de erro se metodo nao permitido
+	// funcao uri_asks_for
+	// usar funcao de auto-index
+	//
 	// Se get permitido:
 	if (loc_config._allowed_methods["GET"] == 1) {
 		std::cout << "GET ALLOWED !!!!\n";
-			// 0) Se for cgi
-		if (path.find(".cgi") != std::string::npos) {
+		// 0) Se for cgi
+		if (what_is_asked(path) == "cgi") {
 			std::cout << "Executa cgi ...\n";
 			// Monta environment
 			// Monta args
@@ -182,7 +204,7 @@ void req_handler::handler() {
 		std::cout << "pos: " << path.find_last_of("/") << "\n";
 		std::cout << "size: " << path.size() << "\n";
 
-		if (path.find_last_of("/") == path.size() + 1) {
+		if (what_is_asked(path) == "file") {
 			// Tenta pegar arquivo.
 			std::string full_path = "." + path;
 			//			std::string output =
@@ -197,7 +219,9 @@ void req_handler::handler() {
 			} else {
 				std::cout << "Nao acho arquivo ! Erro 404\n";
 			};
-		} else {
+//		} else{
+		}
+		if (what_is_asked(path) == "file") {
 	  // 2) Se nao tiver extensao
 			if (loc_config._index.size() > 0) {
 				// Se tiver index
