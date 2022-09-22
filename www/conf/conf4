@@ -12,6 +12,7 @@ sample_server_Z1 {
 	error_page 500 ./www/errors/500.html
 
 	location /images {
+		#redirection www.amazon.com
 		root /www/site1
 		upload_path /uploads
 		cgi_pass	pass

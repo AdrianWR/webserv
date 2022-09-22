@@ -149,13 +149,17 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	return str.substr(str.find("/"));
 }
 
-void req_handler::check_redirection(LocationBlock loc_config ) {
+bool req_handler::check_redirection(LocationBlock loc_config, ConfigBlock sc ) {
+	(void) sc;
 	if (loc_config._redirection != "") {
-		std::cout << "TEM REDIRECTION !!!\n";
-		std::cout << loc_config._redirection << "\n";
-		std::exit(4); // Retorna um redirection
+		// Gera "erro"
+		Error error(301, sc);
+			error.print_error();
+		// Generate HTTP Response
+		return true;
 	} else {
 		std::cout << "NAO TEM REDIRECTION !!!\n";
+		return false;
 	};
 }
 
@@ -307,34 +311,8 @@ void req_handler::handler() {
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
 
-
-	// Rotina de erro
-	// objeto erro
-	//		input: cod do erro
-	//		output: 
-	//			cod
-	//			msg
-	//			body
-	//	dic de erros
-	//	funcao para gerar pag de erro (fetch)
-	//
-	// Se houver erro
-	//	gera codigo de erro
-	//	gera msg de erro
-	//	gera body
-	//		se houver config tenta pegar arquivo
-	//			se falhar string erro padrao
-	//		se nao houver config
-	//			string erro padrao
-	//
-	// Em cada lugar que gera erro:
-	// Constroi objeto erro com codigo
-	//	Objeto prenche campos
-	// Gera response a partir do erro
-	//
-
 	// Se tiver redirection, devolve redirection e sai.
-	check_redirection(loc_config);
+	if (check_redirection(loc_config, server_config)) return;
 
 	// Monta caminho fisico:
 	std::string path = generate_path(uri, loc, loc_config._root);
@@ -360,11 +338,10 @@ void req_handler::handler() {
 		fetch_dir(path, loc_config, host, port);
 	};
 	// Monta http response
-	Error e1(200, server_config);
-	e1.print_error();
-	Error e2(404, server_config);
-	e2.print_error();
-	Error e3(405, server_config);
-	e3.print_error();
-
 }
+
+
+
+
+
+
