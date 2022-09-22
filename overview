@@ -1,0 +1,28 @@
+Parse config ok
+	validacao (?)
+
+Setup dos sockets (a partir da config) ok
+
+Ouvir sockets
+	Multiplex ok
+	Pedacos ?
+	Chunks ?
+	Produz um http request object ?
+
+Handler
+	GET
+		devolve redir ok
+		1.devolve arquivo ok
+		2.devolve dir (autoindex ou erro) ok
+		3.devolve cgi
+			devolve pag de erro se falhar 1 2 3 
+		Strings precisam gerar http response object 
+
+	POST ?
+
+	DELETE ?
+
+Responder socket
+	Devolver http response serializado
+	Fechar conexao ?
+
