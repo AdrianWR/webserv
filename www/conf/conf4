@@ -3,9 +3,14 @@ sample_server_Z1 {
 	listen 8080 8081
 	server_name www.site1.com
 	client_max_body_size 8000
-	error_page 404 ./error/404.html
-	error_page 403 ./error/403.html
-	error_page 500 ./error/500.html
+
+	error_page 301 ./www/errors/301.html
+	error_page 400 ./www/errors/400.html
+	error_page 403 ./www/errors/403.html
+	error_page 404 ./www/errors/404.html
+	error_page 405 ./www/errors/405.html
+	error_page 500 ./www/errors/500.html
+
 	location /images {
 		root /www/site1
 		upload_path /uploads

@@ -36,10 +36,10 @@ Error::Error(size_t c, ConfigBlock sc) {
 	// Init dic
 	error_dic[200] = "OK";
 	error_dic[301] = "Moved Permanently";
+	error_dic[400] = "Bad Request";
 	error_dic[403] = "Forbidden";
 	error_dic[404] = "Not Found";
 	error_dic[405] = "Method Not Allowed";
-	error_dic[400] = "Bad Request";
 	error_dic[500] = "Internal Server Error";
 	
 	// Init Values
@@ -60,16 +60,32 @@ Error &Error::operator=(const Error &s) {
 }
 
 std::string Error::fetch_error_page(size_t code, ConfigBlock sc) {
-	(void) code;
-	(void) sc;
-	body = "ERROR BODY !!!!";
+	std::string page_path;
+//	(void) code;
+//	(void) sc;
+//	body = "ERROR BODY !!!!";
+	
+	// Pega path da pag de erro
+	page_path = sc._error_page[code];
+	if (page_path == "") {
+		body = "No Error Page 1";
+		return body;
+	}
+	// se nao achar arquivo, erro padrao
+	body = file_to_string(page_path);
+	if (body.size() == 0) {
+		body = "No Error Page 2";
+		return body;
+	}
 
 	return body;
 }
 
 void Error::print_error() {
+	std::cout << "----------------------\n";
 	std::cout << code << " : " << msg << std::endl;
 	std::cout << "body: " << body << std::endl;
+	std::cout << "----------------------\n";
 }
 
 
@@ -346,7 +362,9 @@ void req_handler::handler() {
 	// Monta http response
 	Error e1(200, server_config);
 	e1.print_error();
-	Error e2(4004, server_config);
+	Error e2(404, server_config);
 	e2.print_error();
+	Error e3(405, server_config);
+	e3.print_error();
 
 }
