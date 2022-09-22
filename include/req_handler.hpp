@@ -54,20 +54,22 @@ public:
   void handler();
 
 private:
-  std::string extract_location (ConfigBlock sc, std::string uri);
+  std::string extract_location (std::string uri);
   std::string generate_path(std::string url, std::string location,
                             std::string root);
   bool check_redirection(LocationBlock loc_config, ConfigBlock sc);
-  bool check_method_GET(LocationBlock loc_config, ConfigBlock sc);
+  bool check_method_GET();
   std::string what_is_asked(std::string path);
-  void fetch_file(std::string path, ConfigBlock sc);
+  void fetch_file(std::string path);
   void fetch_cgi(std::string path);
-  void try_index_page(std::string path, LocationBlock loc_config);
-  void try_autoindex(LocationBlock loc_config, std::string host, std::string port, ConfigBlock sc);
-  void fetch_dir(std::string path, LocationBlock loc_config, std::string host, std::string port, ConfigBlock sc);
+  void try_index_page(std::string path);
+  void try_autoindex(std::string host, std::string port);
+  void fetch_dir(std::string path, std::string host, std::string port);
 
 public:
   Config::BlockMap _parsed_config_map;
+  ConfigBlock		server_config;
+  LocationBlock		loc_config;
 };
 
 

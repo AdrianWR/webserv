@@ -111,7 +111,7 @@ req_handler &req_handler::operator=(const req_handler &s) {
   return *this;
 }
 
-std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
+std::string req_handler::extract_location (std::string uri) {
 	ConfigBlock::MapOfLocations::iterator	it;
 	std::string key;
 	bool match;
@@ -120,7 +120,7 @@ std::string req_handler::extract_location (ConfigBlock sc, std::string uri) {
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
 	match = false;
-	for (it = sc._location.begin(); it != sc._location.end(); it++) {
+	for (it = server_config._location.begin(); it != server_config._location.end(); it++) {
 		key = it->first;
 		if (key != "/") {
 			p = s.find(key + "/");
@@ -160,10 +160,10 @@ bool req_handler::check_redirection(LocationBlock loc_config, ConfigBlock sc ) {
 	};
 }
 
-bool req_handler::check_method_GET(LocationBlock loc_config, ConfigBlock sc) {
+bool req_handler::check_method_GET() {
 	if (loc_config._allowed_methods["GET"] == 0) {
 		LOG(INFO) << "GET Not Allowed";
-		Error error(405, sc);
+		Error error(405, server_config);
 			error.print_error();
 		// Generate HTTP Response
 		//
@@ -193,7 +193,7 @@ void req_handler::fetch_cgi(std::string path) {
 		// devolve output
 }
 
-void req_handler::fetch_file(std::string path, ConfigBlock sc) {
+void req_handler::fetch_file(std::string path) {
 	// Tenta pegar arquivo.
 	std::string full_path = "." + path;
 	std::string output = file_to_string(full_path);
@@ -205,13 +205,13 @@ void req_handler::fetch_file(std::string path, ConfigBlock sc) {
 		// Generate HTTP Response
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
-		Error error(404, sc);
+		Error error(404, server_config);
 			error.print_error();
 		// Generate HTTP Response
 	};
 }
 
-void req_handler::try_index_page(std::string path, LocationBlock loc_config) {
+void req_handler::try_index_page(std::string path) {
 	// loop
 	for (size_t i = 0; i < loc_config._index.size(); i++) {
 		// monta caminho com um dos index
@@ -229,10 +229,7 @@ void req_handler::try_index_page(std::string path, LocationBlock loc_config) {
 	};
 }
 
-void req_handler::try_autoindex(LocationBlock loc_config,
-								std::string host,
-								std::string port,
-								ConfigBlock sc) {
+void req_handler::try_autoindex(std::string host, std::string port) {
 	// se autoindex on executa autoindex
 	if (loc_config._autoindex == true) {
 		LOG(INFO) << "Autoindex ON";
@@ -245,22 +242,18 @@ void req_handler::try_autoindex(LocationBlock loc_config,
 	} else {
 	// se nao devolve erro
 		LOG(INFO) << "404 No index";
-		Error error(404, sc);
+		Error error(404, server_config);
 			error.print_error();
 		// Generate HTTP Response
 	};
 }
 
-void req_handler::fetch_dir(std::string path,
-							LocationBlock loc_config,
-							std::string host,
-							std::string port,
-							ConfigBlock sc) {
+void req_handler::fetch_dir(std::string path, std::string host, std::string port) {
 	if (loc_config._index.size() > 0) {// Se tiver index
 		LOG(INFO) << "Tem pagina de Index";
-		try_index_page(path, loc_config);
+		try_index_page(path);
 	} else { // se nao houver
-		try_autoindex(loc_config, host, port, sc);
+		try_autoindex(host, port);
 	};
 }
 
@@ -276,7 +269,7 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	std::string method = "GET";
-	std::string uri = "www.site1.com/images/site1.html";
+	std::string uri = "www.site1.com/images/site2.html";
 	//std::string uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
@@ -287,7 +280,7 @@ void req_handler::handler() {
 
 	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
-	ConfigBlock server_config = _parsed_config_map[conf_key];
+	server_config = _parsed_config_map[conf_key];
 	LOG(INFO) << "server_config retrieved from memory ...";
 		// debug prints
 		std::ofstream f("server_config.txt", std::ofstream::trunc);
@@ -314,15 +307,16 @@ void req_handler::handler() {
 //	std::cout << "exctracted: " << a1 << "\n";
 
 	// Extract location
-	std::string loc = extract_location(server_config, uri);
+	std::string loc = extract_location(uri);
 
 	// Carrega configs da location na memoria
-	LocationBlock loc_config = server_config._location[loc];
+	loc_config = server_config._location[loc];
 	LOG(INFO) << "loc_config retrieved from memory: " << loc;
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
 
+	// START OF PARSING
 	// Se tiver redirection, devolve redirection e sai.
 	if (check_redirection(loc_config, server_config)) return;
 
@@ -331,22 +325,22 @@ void req_handler::handler() {
 	LOG(INFO) << "path generated ...";
 	
 	// Checa se GET Permitido neste location
-	if (!check_method_GET(loc_config, server_config)) return;
+	if (!check_method_GET()) return;
 
 	// 0) Se for cgi
 	if (what_is_asked(path) == "cgi") {
-		LOG(INFO) << "CGI ...";
+		LOG(INFO) << "CGI requested ...";
 		fetch_cgi(path);
 	};
 	// 1) Se for arquivoi:termina sem /
 	if (what_is_asked(path) == "file") {
-		LOG(INFO) << "FILE ...";
-		fetch_file(path, server_config);
+		LOG(INFO) << "FILE requested...";
+		fetch_file(path);
 	}
 	// 2) Se for diretorio (termina em /)
 	if (what_is_asked(path) == "dir") {
-		LOG(INFO) << "DIR ...";
-		fetch_dir(path, loc_config, host, port, server_config);
+		LOG(INFO) << "DIR requested...";
+		fetch_dir(path, host, port);
 	};
 	// Monta http response
 }
