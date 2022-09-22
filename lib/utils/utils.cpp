@@ -119,6 +119,7 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
 
 	stub = ConfigBlock();
 	stub._block_name = buffer;
+	LOG(INFO) << "Parsing Block: " << buffer;
 	while (buffer.compare("}") != 0) {
 	// Check comment
 	if (buffer[0] == '#') {
@@ -220,6 +221,7 @@ void Config::parse_file(std::string file) {
 	}
 
 	// file loop
+	LOG(INFO) << "Parsing Config File";
 	while (fileStream >> buffer) {
 		stub = ConfigBlock();
 		stub = parse_config_block_file(fileStream, buffer);

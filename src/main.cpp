@@ -34,7 +34,6 @@ int main(void) {
 //	ai << ai_page;
 
 	// Run req_handler
-	std::cout << "rh: \n";
 	req_handler rh(config);
 	rh.handler(); // function input should be a http request
 	return 0;

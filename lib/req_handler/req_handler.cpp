@@ -89,9 +89,6 @@ void Error::print_error() {
 }
 
 
-
-
-
 // **********************************************************
 // Req_handler class
 // **********************************************************
@@ -99,8 +96,7 @@ req_handler::req_handler() {
   std::cout << "req_handler constructor" << std::endl;
 }
 req_handler::req_handler(Config fp) {
-  std::cout << "receiving file parser as fp" << std::endl;
-  std::cout << "####################################\n";
+	LOG(INFO) << "Initializing req_handler";
   _parsed_config_map = fp.getBlockMap();
   //	print_mapc(_parsed_config_map);
 }
@@ -152,35 +148,39 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 bool req_handler::check_redirection(LocationBlock loc_config, ConfigBlock sc ) {
 	(void) sc;
 	if (loc_config._redirection != "") {
+		LOG(INFO) << "There is redirection ...";
 		// Gera "erro"
 		Error error(301, sc);
 			error.print_error();
 		// Generate HTTP Response
 		return true;
 	} else {
-		std::cout << "NAO TEM REDIRECTION !!!\n";
+		LOG(INFO) << "No Redirection ...";
 		return false;
 	};
 }
 
-void req_handler::check_method_GET(LocationBlock loc_config) {
+bool req_handler::check_method_GET(LocationBlock loc_config, ConfigBlock sc) {
 	if (loc_config._allowed_methods["GET"] == 0) {
-		std::cout << "Error 405 Method not Allowed\n";
-		exit(5);
+		LOG(INFO) << "GET Not Allowed";
+		Error error(405, sc);
+			error.print_error();
+		// Generate HTTP Response
+		//
+		return false;
 	};
+	LOG(INFO) << "GET Allowed";
+	return true;
 }
 
 std::string req_handler::what_is_asked(std::string path) {
 	if (path.find(".cgi") != std::string::npos) {
-		std::cout << "ask for cgi\n";
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
-		std::cout << "ask for dir\n";
 		return "dir";
 	}
 	else {
-		std::cout << "ask for file\n";
 		return "file";
 	}
 }
@@ -193,18 +193,21 @@ void req_handler::fetch_cgi(std::string path) {
 		// devolve output
 }
 
-void req_handler::fetch_file(std::string path) {
+void req_handler::fetch_file(std::string path, ConfigBlock sc) {
 	// Tenta pegar arquivo.
 	std::string full_path = "." + path;
 	std::string output = file_to_string(full_path);
 	if (output.size() > 0) {
-		std::cout << "***********************************\n";
-		std::cout << " HTTP RESPONSE \n";
+		LOG(INFO) << "File fetched ...";
 		std::cout << "***********************************\n";
 		std::cout << output << std::endl;
 		std::cout << "***********************************\n";
+		// Generate HTTP Response
 	} else {
-		std::cout << "Nao achou arquivo ! Erro 404\n";
+		LOG(INFO) << "Error 404 Not Found";
+		Error error(404, sc);
+			error.print_error();
+		// Generate HTTP Response
 	};
 }
 
@@ -216,7 +219,9 @@ void req_handler::try_index_page(std::string path, LocationBlock loc_config) {
 			std::cout << "full_path: " << full_path << std::endl;
 		// devolve
 		std::string output = file_to_string(full_path);
+		// Generate HTTP Response
 		if (output.size() > 0) {
+			LOG(INFO) << "Autoindex:";
 			std::cout << "|" << full_path << "|: ";
 			std::cout << "|" << output << "|" << std::endl;
 		break;
@@ -226,30 +231,36 @@ void req_handler::try_index_page(std::string path, LocationBlock loc_config) {
 
 void req_handler::try_autoindex(LocationBlock loc_config,
 								std::string host,
-								std::string port) {
+								std::string port,
+								ConfigBlock sc) {
 	// se autoindex on executa autoindex
 	if (loc_config._autoindex == true) {
-		std::cout << "Executando autoindex ...\n";
+		LOG(INFO) << "Autoindex ON";
 		AutoIndexGenerator auto_index;
 		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
 		std::cout << "======================\n";
 		std::cout << ai_page << std::endl;
 		std::cout << "======================\n";
+		// Generate HTTP Response
 	} else {
 	// se nao devolve erro
-		std::cout << "Erro 404 !\n\n";
+		LOG(INFO) << "404 No index";
+		Error error(404, sc);
+			error.print_error();
+		// Generate HTTP Response
 	};
 }
 
 void req_handler::fetch_dir(std::string path,
 							LocationBlock loc_config,
 							std::string host,
-							std::string port) {
+							std::string port,
+							ConfigBlock sc) {
 	if (loc_config._index.size() > 0) {// Se tiver index
-		std::cout << "tem index\n";
+		LOG(INFO) << "Tem pagina de Index";
 		try_index_page(path, loc_config);
 	} else { // se nao houver
-		try_autoindex(loc_config, host, port);
+		try_autoindex(loc_config, host, port, sc);
 	};
 }
 
@@ -277,6 +288,7 @@ void req_handler::handler() {
 	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
 	ConfigBlock server_config = _parsed_config_map[conf_key];
+	LOG(INFO) << "server_config retrieved from memory ...";
 		// debug prints
 		std::ofstream f("server_config.txt", std::ofstream::trunc);
 		server_config.print_block_file(f);
@@ -303,10 +315,10 @@ void req_handler::handler() {
 
 	// Extract location
 	std::string loc = extract_location(server_config, uri);
-		std::cout << "location: " << loc << "\n";
 
 	// Carrega configs da location na memoria
 	LocationBlock loc_config = server_config._location[loc];
+	LOG(INFO) << "loc_config retrieved from memory: " << loc;
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
@@ -316,26 +328,25 @@ void req_handler::handler() {
 
 	// Monta caminho fisico:
 	std::string path = generate_path(uri, loc, loc_config._root);
-	std::cout << "path: " << path << std::endl;
+	LOG(INFO) << "path generated ...";
 	
 	// Checa se GET Permitido neste location
-	check_method_GET(loc_config);
-	// Se get permitido:
-	std::cout << "GET ALLOWED !!!!\n";
+	if (!check_method_GET(loc_config, server_config)) return;
+
 	// 0) Se for cgi
 	if (what_is_asked(path) == "cgi") {
-		std::cout << "CGI ...\n";
+		LOG(INFO) << "CGI ...";
 		fetch_cgi(path);
 	};
 	// 1) Se for arquivoi:termina sem /
 	if (what_is_asked(path) == "file") {
-		std::cout << "FILE ...\n";
-		fetch_file(path);
+		LOG(INFO) << "FILE ...";
+		fetch_file(path, server_config);
 	}
 	// 2) Se for diretorio (termina em /)
 	if (what_is_asked(path) == "dir") {
-		std::cout << "DIR ...\n";
-		fetch_dir(path, loc_config, host, port);
+		LOG(INFO) << "DIR ...";
+		fetch_dir(path, loc_config, host, port, server_config);
 	};
 	// Monta http response
 }

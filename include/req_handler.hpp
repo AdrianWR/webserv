@@ -58,13 +58,13 @@ private:
   std::string generate_path(std::string url, std::string location,
                             std::string root);
   bool check_redirection(LocationBlock loc_config, ConfigBlock sc);
-  void check_method_GET(LocationBlock loc_config);
+  bool check_method_GET(LocationBlock loc_config, ConfigBlock sc);
   std::string what_is_asked(std::string path);
-  void fetch_file(std::string path);
+  void fetch_file(std::string path, ConfigBlock sc);
   void fetch_cgi(std::string path);
   void try_index_page(std::string path, LocationBlock loc_config);
-  void try_autoindex(LocationBlock loc_config, std::string host, std::string port);
-  void fetch_dir(std::string path, LocationBlock loc_config, std::string host, std::string port);
+  void try_autoindex(LocationBlock loc_config, std::string host, std::string port, ConfigBlock sc);
+  void fetch_dir(std::string path, LocationBlock loc_config, std::string host, std::string port, ConfigBlock sc);
 
 public:
   Config::BlockMap _parsed_config_map;
