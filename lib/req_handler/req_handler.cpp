@@ -276,8 +276,8 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	std::string method = "GET";
-//	std::string uri = "www.site1.com/images/site1.html";
-	std::string uri = "www.site1.com/images/";
+	std::string uri = "www.site1.com/images/site1.html";
+	//std::string uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	std::string port = "8081";
