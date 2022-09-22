@@ -12,6 +12,33 @@
 
 #include "log.hpp"
 
+// *****************************************************
+// Class Error
+// *****************************************************
+class Error {
+public:
+	Error();
+	Error(size_t c, ConfigBlock sc);
+	~Error();
+	Error &operator=(const Error &s);
+
+public:
+	size_t			code;
+	std::string		msg;
+	std::string		body;
+
+private:
+	std::map<size_t, std::string>	error_dic;
+
+public:
+	std::string fetch_error_page(size_t code, ConfigBlock sc);
+	void print_error();
+};
+
+
+// *****************************************************
+// Class ReqHander
+// *****************************************************
 class req_handler {
 public:
   // Constructor
@@ -42,4 +69,6 @@ private:
 public:
   Config::BlockMap _parsed_config_map;
 };
+
+
 #endif

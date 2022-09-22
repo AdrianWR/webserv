@@ -24,6 +24,58 @@ std::string file_to_string(std::string file_path) {
 	// Se nao ,erro
 }
 
+
+// *****************************************************
+// Class Error
+// *****************************************************
+Error::Error() {
+  std::cout << "Error constructor" << std::endl;
+}
+
+Error::Error(size_t c, ConfigBlock sc) {
+	// Init dic
+	error_dic[200] = "OK";
+	error_dic[301] = "Moved Permanently";
+	error_dic[403] = "Forbidden";
+	error_dic[404] = "Not Found";
+	error_dic[405] = "Method Not Allowed";
+	error_dic[400] = "Bad Request";
+	error_dic[500] = "Internal Server Error";
+	
+	// Init Values
+	code = c;
+	msg = error_dic[code];
+	if (msg == "") { msg = "Undefined Error Code"; };
+	body = fetch_error_page(code, sc);
+}
+
+Error::~Error() {
+  std::cout << "Error destructor" << std::endl;
+}
+
+Error &Error::operator=(const Error &s) {
+  if (this != &s)
+    return *this;
+  return *this;
+}
+
+std::string Error::fetch_error_page(size_t code, ConfigBlock sc) {
+	(void) code;
+	(void) sc;
+	body = "ERROR BODY !!!!";
+
+	return body;
+}
+
+void Error::print_error() {
+	std::cout << code << " : " << msg << std::endl;
+	std::cout << "body: " << body << std::endl;
+}
+
+
+
+
+
 // **********************************************************
 // Req_handler class
 // **********************************************************
@@ -238,7 +290,33 @@ void req_handler::handler() {
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
-	
+
+
+	// Rotina de erro
+	// objeto erro
+	//		input: cod do erro
+	//		output: 
+	//			cod
+	//			msg
+	//			body
+	//	dic de erros
+	//	funcao para gerar pag de erro (fetch)
+	//
+	// Se houver erro
+	//	gera codigo de erro
+	//	gera msg de erro
+	//	gera body
+	//		se houver config tenta pegar arquivo
+	//			se falhar string erro padrao
+	//		se nao houver config
+	//			string erro padrao
+	//
+	// Em cada lugar que gera erro:
+	// Constroi objeto erro com codigo
+	//	Objeto prenche campos
+	// Gera response a partir do erro
+	//
+
 	// Se tiver redirection, devolve redirection e sai.
 	check_redirection(loc_config);
 
@@ -266,4 +344,9 @@ void req_handler::handler() {
 		fetch_dir(path, loc_config, host, port);
 	};
 	// Monta http response
+	Error e1(200, server_config);
+	e1.print_error();
+	Error e2(4004, server_config);
+	e2.print_error();
+
 }
