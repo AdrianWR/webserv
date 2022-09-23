@@ -62,6 +62,8 @@ bool req_handler::check_redirection() {
 		Error error(301, this->server_config);
 			error.print_error();
 		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			std::cout << _http_response.serialize();
 		return true;
 	} else {
 		LOG(INFO) << "No Redirection ...";
