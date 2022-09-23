@@ -1,6 +1,28 @@
 #include "utils.hpp"
 
-// utility function
+// **********************************************************
+// Utility functions
+// **********************************************************
+std::string file_to_string(std::string file_path) {
+	std::string line;
+	std::stringstream buffer;
+	std::ifstream myfile(file_path.c_str());
+
+	// Se arquivo existe, serve arquivo
+	if (myfile.is_open()) {
+		while (getline(myfile, line)) {
+			buffer << line;
+		};
+		myfile.close();
+		return buffer.str();
+	} else {
+	// Substituir por throe de erro 
+	// Erro 500 ?
+	std::cout << "Unable to open file\n";
+	return "";
+	}
+}
+
 std::string IntToString(int a) {
   std::ostringstream temp;
 
@@ -18,20 +40,20 @@ size_t StringToInt(std::string s) {
   return i;
 }
 
-// Construtor
+// **********************************************************
+
+// *****************************************************
+// Class Config
+// *****************************************************
 Config::Config() {}
 
-// Destrutor
 Config::~Config() {}
 
-// Asssignment
 Config &Config::operator=(const Config &s) {
   if (this != &s)
     return *this;
   return *this;
 }
-
-// Methodss
 
 void Config::printa_linha(std::fstream &fileStream) {
   std::string buffer;
@@ -243,7 +265,9 @@ void Config::parse_file(std::string file) {
 	print_mapc(_config_map);
 }
 
-// reserved_words class:
+// *****************************************************
+// Class Config
+// *****************************************************
 ReservedWords::ReservedWords() {
   list.insert("listen");
   list.insert("root");
@@ -269,7 +293,9 @@ bool ReservedWords::is_reserved_word(std::string query_string) {
   return true;
 }
 
-// location Class
+// *****************************************************
+// Class Location
+// *****************************************************
 LocationBlock::LocationBlock() {
   _allowed_methods["GET"] = true;
   _allowed_methods["POST"] = true;
@@ -322,7 +348,9 @@ void LocationBlock::print_location(std::ofstream &cout) {
        << "\t\t" << _upload_path << std::endl;
 }
 
-// config_block_file class:
+// *****************************************************
+// Class ConfigBlock
+// *****************************************************
 ConfigBlock::ConfigBlock() {
   _block_name = "empty";
   _listen.push_back(-1);
@@ -379,6 +407,9 @@ void ConfigBlock::add_default_location() {
 	_location["/"] = lb;
 }
 
+// *****************************************************
+// Class AutoIndexGenerator
+// *****************************************************
 AutoIndexGenerator::AutoIndexGenerator(void) { return; }
 
 AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src) {

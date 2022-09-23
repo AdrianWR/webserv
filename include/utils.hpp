@@ -17,6 +17,8 @@
 // Auxiliary Functions
 // *****************************************************
 
+std::string file_to_string(std::string file_path);
+
 std::string IntToString(int a);
 size_t StringToInt(std::string s);
 
