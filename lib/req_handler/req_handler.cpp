@@ -55,12 +55,11 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	return str.substr(str.find("/"));
 }
 
-bool req_handler::check_redirection(LocationBlock loc_config, ConfigBlock sc ) {
-	(void) sc;
-	if (loc_config._redirection != "") {
+bool req_handler::check_redirection() {
+	if (this->loc_config._redirection != "") {
 		LOG(INFO) << "There is redirection ...";
 		// Gera "erro"
-		Error error(301, sc);
+		Error error(301, this->server_config);
 			error.print_error();
 		// Generate HTTP Response
 		return true;
@@ -189,7 +188,7 @@ void req_handler::load_configs() {
 
 void req_handler::handle_GET () {
 	// Se tiver redirection, devolve redirection e sai.
-	if (check_redirection(this->loc_config, this->server_config)) return;
+	if (check_redirection()) return;
 
 	// Monta caminho fisico:
 	std::string path = generate_path(this->_uri, this->_loc, this->loc_config._root);
