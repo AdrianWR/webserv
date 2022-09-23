@@ -60,10 +60,9 @@ bool req_handler::check_redirection() {
 		LOG(INFO) << "There is redirection ...";
 		// Gera "erro"
 		Error error(301, this->server_config);
-			error.print_error();
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << _http_response.serialize();
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 		return true;
 	} else {
 		LOG(INFO) << "No Redirection ...";
@@ -75,8 +74,9 @@ bool req_handler::check_method_GET() {
 	if (this->loc_config._allowed_methods["GET"] == 0) {
 		LOG(INFO) << "GET Not Allowed";
 		Error error(405, this->server_config);
-			error.print_error();
 		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 		//
 		return false;
 	};
@@ -110,15 +110,15 @@ void req_handler::fetch_file(std::string path) {
 	std::string output = file_to_string(full_path);
 	if (output.size() > 0) {
 		LOG(INFO) << "File fetched ...";
-		std::cout << "***********************************\n";
-		std::cout << output << std::endl;
-		std::cout << "***********************************\n";
 		// Generate HTTP Response
+		_http_response.set(200, "OK", output);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
 		Error error(404, this->server_config);
-			error.print_error();
 		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 	};
 }
 
@@ -130,11 +130,13 @@ void req_handler::try_index_page(std::string path) {
 			std::cout << "full_path: " << full_path << std::endl;
 		// devolve
 		std::string output = file_to_string(full_path);
-		// Generate HTTP Response
 		if (output.size() > 0) {
 			LOG(INFO) << "Autoindex:";
-			std::cout << "|" << full_path << "|: ";
-			std::cout << "|" << output << "|" << std::endl;
+//			std::cout << "|" << full_path << "|: ";
+//			std::cout << "|" << output << "|" << std::endl;
+		// Generate HTTP Response
+		_http_response.set(200, "OK" , output);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 		break;
 		};
 	};
@@ -150,12 +152,15 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 		std::cout << ai_page << std::endl;
 		std::cout << "======================\n";
 		// Generate HTTP Response
+		_http_response.set(200, "OK", ai_page);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 	} else {
 	// se nao devolve erro
 		LOG(INFO) << "404 No index";
 		Error error(404, this->server_config);
-			error.print_error();
 		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
 	};
 }
 
@@ -200,19 +205,19 @@ void req_handler::handle_GET () {
 	if (!check_method_GET()) return;
 
 	// 0) Se for cgi
-	if (what_is_asked(this->_path) == "cgi") {
+	if (what_is_asked(path) == "cgi") {
 		LOG(INFO) << "CGI requested ...";
-		fetch_cgi(this->_path);
+		fetch_cgi(path);
 	};
 	// 1) Se for arquivoi:termina sem /
-	if (what_is_asked(this->_path) == "file") {
+	if (what_is_asked(path) == "file") {
 		LOG(INFO) << "FILE requested...";
-		fetch_file(this->_path);
+		fetch_file(path);
 	}
 	// 2) Se for diretorio (termina em /)
 	if (what_is_asked(path) == "dir") {
 		LOG(INFO) << "DIR requested...";
-		fetch_dir(this->_path, this->_host, this->_port);
+		fetch_dir(path, this->_host, this->_port);
 	};
 	// ================================================================
 }
@@ -233,7 +238,8 @@ void req_handler::handler() {
 	// vao formar chave para config
 	//
 	this->_method = "GET";
-	//std::string uri = "www.site1.com/images/site1.html";
+//	this->_uri = "www.site1.com/images/site1.html";
+//	this->_uri = "www.site1.com/images/site9.html";
 	this->_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
