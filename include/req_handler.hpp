@@ -11,6 +11,8 @@
 #include <vector>
 
 #include "log.hpp"
+#include "error.hpp"
+#include "http_response.hpp"
 
 // *****************************************************
 // Class ReqHander

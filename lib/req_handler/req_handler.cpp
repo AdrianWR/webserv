@@ -1,7 +1,4 @@
 #include "req_handler.hpp"
-#include "error.hpp"
-#include "utils.hpp"
-
 // **********************************************************
 // Class Req_handler
 // **********************************************************
@@ -264,4 +261,8 @@ void req_handler::handler() {
 	// Monta http response (em cada funcao que precisa)
 	// Serializa
 	// Envia
+	HttpResponse rr("200", "OK", "Body");
+	rr._headers["a"] = "b";
+	std::cout << rr.serialize();
+
 }
