@@ -70,9 +70,9 @@ bool req_handler::check_redirection() {
 }
 
 bool req_handler::check_method_GET() {
-	if (loc_config._allowed_methods["GET"] == 0) {
+	if (this->loc_config._allowed_methods["GET"] == 0) {
 		LOG(INFO) << "GET Not Allowed";
-		Error error(405, server_config);
+		Error error(405, this->server_config);
 			error.print_error();
 		// Generate HTTP Response
 		//
@@ -114,7 +114,7 @@ void req_handler::fetch_file(std::string path) {
 		// Generate HTTP Response
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
-		Error error(404, server_config);
+		Error error(404, this->server_config);
 			error.print_error();
 		// Generate HTTP Response
 	};
@@ -122,9 +122,9 @@ void req_handler::fetch_file(std::string path) {
 
 void req_handler::try_index_page(std::string path) {
 	// loop
-	for (size_t i = 0; i < loc_config._index.size(); i++) {
+	for (size_t i = 0; i < this->loc_config._index.size(); i++) {
 		// monta caminho com um dos index
-		std::string full_path = "." + path + loc_config._index[i];
+		std::string full_path = "." + path + this->loc_config._index[i];
 			std::cout << "full_path: " << full_path << std::endl;
 		// devolve
 		std::string output = file_to_string(full_path);
@@ -140,7 +140,7 @@ void req_handler::try_index_page(std::string path) {
 
 void req_handler::try_autoindex(std::string host, std::string port) {
 	// se autoindex on executa autoindex
-	if (loc_config._autoindex == true) {
+	if (this->loc_config._autoindex == true) {
 		LOG(INFO) << "Autoindex ON";
 		AutoIndexGenerator auto_index;
 		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
@@ -151,14 +151,14 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 	} else {
 	// se nao devolve erro
 		LOG(INFO) << "404 No index";
-		Error error(404, server_config);
+		Error error(404, this->server_config);
 			error.print_error();
 		// Generate HTTP Response
 	};
 }
 
 void req_handler::fetch_dir(std::string path, std::string host, std::string port) {
-	if (loc_config._index.size() > 0) {// Se tiver index
+	if (this->loc_config._index.size() > 0) {// Se tiver index
 		LOG(INFO) << "Tem pagina de Index";
 		try_index_page(path);
 	} else { // se nao houver
@@ -246,22 +246,29 @@ void req_handler::handler() {
 	// Load Configs
 	// ================================================================
 	// Populates class atributes with inputs and config values
-	load_configs();
-	// FROM NOW ON SERVER CONFIG ON MEMORY
+	load_configs(); // FROM NOW ON SERVER CONFIG ON MEMORY
 	 
 	// ================================================================
 	// START OF PARSING (one function for each method)
 	//              GET POST DELETE OTHER
 	// ================================================================
-	handle_GET();
+	if (this->_method == "GET") {
+		handle_GET();
+	}
+	if (this->_method == "POST") {
 	// POST
+	}
+	if (this->_method == "DELETE") {
 	// DELETE
-	//
+	}
+	if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE") {
+	// UNKNOWN
+	}
+	
 	// Monta http response (em cada funcao que precisa)
 	// Serializa
 	// Envia
-	HttpResponse rr("200", "OK", "Body");
-	rr._headers["a"] = "b";
-	std::cout << rr.serialize();
-
+	_http_response.set(200, "OK", "Body");
+	_http_response._headers["a"] = "b";
+	std::cout << _http_response.serialize();
 }

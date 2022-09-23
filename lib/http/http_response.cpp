@@ -7,22 +7,22 @@ HttpResponse::HttpResponse () {
 
 	_delimiter = "\r\f";
 	_version = "HTTP/1.1";
-	_code = "";
+	_code = 0;
 	_reason = "";
-	_status_line = _version + " " + _code + " " + _reason;
+	_status_line = _version + " " + IntToString(_code) + " " + _reason;
 	// _header;
 
 	_body = "";
 	// Note: _header starts empty. Need to check if is empty when serializing
 }
 
-HttpResponse::HttpResponse (std::string code, std::string reason, std::string body) {
+HttpResponse::HttpResponse (size_t code, std::string reason, std::string body) {
 
 	_delimiter = "\r\f";
 	_version = "HTTP/1.1";
 	_code = code;
 	_reason = reason;
-	_status_line = _version + " " + _code + " " + _reason;
+	_status_line = _version + " " + IntToString(_code) + " " + _reason;
 	// _header;
 
 	_body = body;
@@ -38,6 +38,18 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &s) {
   if (this != &s)
     return *this;
   return *this;
+}
+
+void HttpResponse::set(size_t code, std::string reason, std::string body) {
+	_delimiter = "\r\f";
+	_version = "HTTP/1.1";
+	_code = code;
+	_reason = reason;
+	_status_line = _version + " " + IntToString(_code) + " " + _reason;
+	// _header;
+
+	_body = body;
+	// Note: _header starts empty. Need to check if is empty when serializing
 }
 
 std::string HttpResponse::serialize () {
