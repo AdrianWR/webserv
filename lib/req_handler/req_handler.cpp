@@ -272,11 +272,4 @@ void req_handler::handler() {
 	if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE") {
 	// UNKNOWN
 	}
-	
-	// Monta http response (em cada funcao que precisa)
-	// Serializa
-	// Envia
-	_http_response.set(200, "OK", "Body");
-	_http_response._headers["a"] = "b";
-	std::cout << _http_response.serialize();
 }
