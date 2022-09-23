@@ -16,14 +16,12 @@ std::string file_to_string(std::string file_path) {
 		myfile.close();
 		return buffer.str();
 	} else {
+	// Substituir por throe de erro 
+	// Erro 500 ?
 	std::cout << "Unable to open file\n";
 	return "";
 	}
-	// Se arquivo nao existe
-	// Se autoindex == on, serve executa autoindex.php
-	// Se nao ,erro
 }
-
 
 // *****************************************************
 // Class Error
@@ -40,6 +38,7 @@ Error::Error(size_t c, ConfigBlock sc) {
 	error_dic[403] = "Forbidden";
 	error_dic[404] = "Not Found";
 	error_dic[405] = "Method Not Allowed";
+	error_dic[413] = "Entity to Large"; // so para post
 	error_dic[500] = "Internal Server Error";
 	
 	// Init Values
@@ -90,7 +89,7 @@ void Error::print_error() {
 
 
 // **********************************************************
-// Req_handler class
+// Class Req_handler
 // **********************************************************
 req_handler::req_handler() {
   std::cout << "req_handler constructor" << std::endl;
@@ -174,7 +173,7 @@ bool req_handler::check_method_GET() {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-	if (path.find(".cgi") != std::string::npos) {
+	if (path.find(".php") != std::string::npos) {
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
@@ -259,6 +258,9 @@ void req_handler::fetch_dir(std::string path, std::string host, std::string port
 
 void req_handler::handler() {
 
+	// ================================================================
+	// Get Inputs
+	// ================================================================
 	// Recebe um http request object
 	// Do request, pega:
 	// 1a linha:
@@ -268,16 +270,22 @@ void req_handler::handler() {
 	// port
 	// host
 	// vao formar chave para config
+	//
 	std::string method = "GET";
-	std::string uri = "www.site1.com/images/site2.html";
-	//std::string uri = "www.site1.com/images/";
+	//std::string uri = "www.site1.com/images/site1.html";
+	std::string uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	std::string port = "8081";
 	std::string host = "www.site1.com";
 	int client_max_body_size = 1000;
 	(void) client_max_body_size;
+	// QQR erro no request dispara um 400 bad request
+	// ================================================================
 
+	// ================================================================
+	// Load Configs
+	// ================================================================
 	// Pega configs na estrutura de configs:
 	std::string conf_key = host + ":" + port;
 	server_config = _parsed_config_map[conf_key];
@@ -315,8 +323,13 @@ void req_handler::handler() {
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
+	// ================================================================
 
-	// START OF PARSING
+	// ================================================================
+	// START OF PARSING (one function for each method)
+	//              GET POST DELETE OTHER
+	// ================================================================
+	// GET
 	// Se tiver redirection, devolve redirection e sai.
 	if (check_redirection(loc_config, server_config)) return;
 
@@ -342,11 +355,7 @@ void req_handler::handler() {
 		LOG(INFO) << "DIR requested...";
 		fetch_dir(path, host, port);
 	};
-	// Monta http response
+	// Monta http response (em cada funcao que precisa)
+	// Serializa
+	// Envia
 }
-
-
-
-
-
-

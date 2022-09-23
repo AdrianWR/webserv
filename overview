@@ -5,24 +5,39 @@ Setup dos sockets (a partir da config) ok
 
 Ouvir sockets
 	Multiplex ok
-	Pedacos ?
-	Chunks ?
+	Pedacos 
+	Chunks 
 	Produz um http request object ?
 
 Handler
 	GET
 		devolve redir ok
 		1.devolve arquivo ok
-		2.devolve dir (autoindex ou erro) ok
+		2.devolve dir (autoindex ou index ou erro) ok
 		3.devolve cgi
-			devolve pag de erro se falhar 1 2 3 
+		devolve pag de erro se falhar 1 2 3 ok
 		Strings precisam gerar http response object 
 
 	POST ?
+		check size
 
 	DELETE ?
 
 Responder socket
 	Devolver http response serializado
 	Fechar conexao ?
+
+============================================================================
+conectar request no handler rapha
+
+criar http response paulo
+conectar o handler no http response
+
+handler do post
+handler do delete
+cgi
+
+criar sites de teste
+criar testadores para principais casos
+
 
