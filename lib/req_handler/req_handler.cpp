@@ -256,6 +256,55 @@ void req_handler::fetch_dir(std::string path, std::string host, std::string port
 	};
 }
 
+void req_handler::load_configs() {
+	// Pega configs na estrutura de configs:
+	std::string conf_key = _host + ":" + _port;
+	server_config = _parsed_config_map[conf_key];
+	LOG(INFO) << "server_config retrieved from memory ...";
+		// debug prints
+		std::ofstream f("server_config.txt", std::ofstream::trunc);
+		server_config.print_block_file(f);
+		
+	// Extract location
+	_loc = extract_location(_uri);
+	// Carrega configs da location na memoria
+	loc_config = server_config._location[_loc];
+	LOG(INFO) << "loc_config retrieved from memory: " << _loc;
+		// debug prints
+		std::ofstream f2("location_config.txt", std::ofstream::trunc);
+		loc_config.print_location(f2);
+	// ================================================================
+}
+
+void req_handler::handle_GET () {
+	// Se tiver redirection, devolve redirection e sai.
+	if (check_redirection(loc_config, server_config)) return;
+
+	// Monta caminho fisico:
+	std::string path = generate_path(_uri, _loc, loc_config._root);
+	LOG(INFO) << "path generated ...";
+	
+	// Checa se GET Permitido neste location
+	if (!check_method_GET()) return;
+
+	// 0) Se for cgi
+	if (what_is_asked(path) == "cgi") {
+		LOG(INFO) << "CGI requested ...";
+		fetch_cgi(_path);
+	};
+	// 1) Se for arquivoi:termina sem /
+	if (what_is_asked(path) == "file") {
+		LOG(INFO) << "FILE requested...";
+		fetch_file(_path);
+	}
+	// 2) Se for diretorio (termina em /)
+	if (what_is_asked(path) == "dir") {
+		LOG(INFO) << "DIR requested...";
+		fetch_dir(_path, _host, _port);
+	};
+	// ================================================================
+}
+
 void req_handler::handler() {
 
 	// ================================================================
@@ -271,13 +320,13 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
-	std::string method = "GET";
+	_method = "GET";
 	//std::string uri = "www.site1.com/images/site1.html";
-	std::string uri = "www.site1.com/images/";
+	_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
-	std::string port = "8081";
-	std::string host = "www.site1.com";
+	_port = "8081";
+	_host = "www.site1.com";
 	int client_max_body_size = 1000;
 	(void) client_max_body_size;
 	// QQR erro no request dispara um 400 bad request
@@ -286,75 +335,18 @@ void req_handler::handler() {
 	// ================================================================
 	// Load Configs
 	// ================================================================
-	// Pega configs na estrutura de configs:
-	std::string conf_key = host + ":" + port;
-	server_config = _parsed_config_map[conf_key];
-	LOG(INFO) << "server_config retrieved from memory ...";
-		// debug prints
-		std::ofstream f("server_config.txt", std::ofstream::trunc);
-		server_config.print_block_file(f);
-		
+	// Populates class atributes with inputs and config values
+	load_configs();
 	// FROM NOW ON SERVER CONFIG ON MEMORY
-	
-	// SO PARA POST ???
-	// GERA ERRO 413 Entity to large
-//	// Checa client_body_size se houver (VALIDO APENAS PARA POSTS ???)
-//	if (client_max_body_size > server_config._client_max_body_size) {
-//	// erro
-//		LOG(ERROR) << "BODY SIZE MAIOR QUE PERMITIDO\n";
-//		std::exit(3); // Retorna um erro
-//	};
-
-	// Pega location
-//	std::string a1;
-//	a1 = extract_location(server_config, "www.site.com/aaa/images/");
-//	std::cout << "exctracted: " << a1 << "\n";
-//	a1 = extract_location(server_config, "www.site.com/images/aaa/bbb/");
-//	std::cout << "exctracted: " << a1 << "\n";
-//	a1 = extract_location(server_config, "www.site.com/images1/aaa/bbb/");
-//	std::cout << "exctracted: " << a1 << "\n";
-
-	// Extract location
-	std::string loc = extract_location(uri);
-
-	// Carrega configs da location na memoria
-	loc_config = server_config._location[loc];
-	LOG(INFO) << "loc_config retrieved from memory: " << loc;
-		// debug prints
-		std::ofstream f2("location_config.txt", std::ofstream::trunc);
-		loc_config.print_location(f2);
-	// ================================================================
-
+	 
 	// ================================================================
 	// START OF PARSING (one function for each method)
 	//              GET POST DELETE OTHER
 	// ================================================================
-	// GET
-	// Se tiver redirection, devolve redirection e sai.
-	if (check_redirection(loc_config, server_config)) return;
-
-	// Monta caminho fisico:
-	std::string path = generate_path(uri, loc, loc_config._root);
-	LOG(INFO) << "path generated ...";
-	
-	// Checa se GET Permitido neste location
-	if (!check_method_GET()) return;
-
-	// 0) Se for cgi
-	if (what_is_asked(path) == "cgi") {
-		LOG(INFO) << "CGI requested ...";
-		fetch_cgi(path);
-	};
-	// 1) Se for arquivoi:termina sem /
-	if (what_is_asked(path) == "file") {
-		LOG(INFO) << "FILE requested...";
-		fetch_file(path);
-	}
-	// 2) Se for diretorio (termina em /)
-	if (what_is_asked(path) == "dir") {
-		LOG(INFO) << "DIR requested...";
-		fetch_dir(path, host, port);
-	};
+	handle_GET();
+	// POST
+	// DELETE
+	//
 	// Monta http response (em cada funcao que precisa)
 	// Serializa
 	// Envia

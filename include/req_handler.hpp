@@ -64,11 +64,21 @@ private:
   void try_index_page(std::string path);
   void try_autoindex(std::string host, std::string port);
   void fetch_dir(std::string path, std::string host, std::string port);
+  void load_configs();
+  void handle_GET ();
 
-public:
+private:
   Config::BlockMap _parsed_config_map;
   ConfigBlock		server_config;
   LocationBlock		loc_config;
+
+  std::string	_host;
+  std::string	_port;
+  std::string	_method;
+  std::string	_uri;
+  std::string	_loc;
+  std::string	_path;
+
   //http request
   //http response
 };
