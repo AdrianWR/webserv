@@ -72,10 +72,10 @@ private:
   ConfigBlock		server_config;
   LocationBlock		loc_config;
 
-  std::string	_host;
-  std::string	_port;
-  std::string	_method;
-  std::string	_uri;
+  std::string	_host;		// Input
+  std::string	_port;		// Input
+  std::string	_method;	// Input
+  std::string	_uri;		// Input
   std::string	_loc;
   std::string	_path;
 

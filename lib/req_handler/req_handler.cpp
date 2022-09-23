@@ -258,7 +258,7 @@ void req_handler::fetch_dir(std::string path, std::string host, std::string port
 
 void req_handler::load_configs() {
 	// Pega configs na estrutura de configs:
-	std::string conf_key = _host + ":" + _port;
+	std::string conf_key = this->_host + ":" + this->_port;
 	server_config = _parsed_config_map[conf_key];
 	LOG(INFO) << "server_config retrieved from memory ...";
 		// debug prints
@@ -266,9 +266,9 @@ void req_handler::load_configs() {
 		server_config.print_block_file(f);
 		
 	// Extract location
-	_loc = extract_location(_uri);
+	this->_loc = extract_location(this->_uri);
 	// Carrega configs da location na memoria
-	loc_config = server_config._location[_loc];
+	this->loc_config = server_config._location[this->_loc];
 	LOG(INFO) << "loc_config retrieved from memory: " << _loc;
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
@@ -278,29 +278,29 @@ void req_handler::load_configs() {
 
 void req_handler::handle_GET () {
 	// Se tiver redirection, devolve redirection e sai.
-	if (check_redirection(loc_config, server_config)) return;
+	if (check_redirection(this->loc_config, this->server_config)) return;
 
 	// Monta caminho fisico:
-	std::string path = generate_path(_uri, _loc, loc_config._root);
+	std::string path = generate_path(this->_uri, this->_loc, this->loc_config._root);
 	LOG(INFO) << "path generated ...";
 	
 	// Checa se GET Permitido neste location
 	if (!check_method_GET()) return;
 
 	// 0) Se for cgi
-	if (what_is_asked(path) == "cgi") {
+	if (what_is_asked(this->_path) == "cgi") {
 		LOG(INFO) << "CGI requested ...";
-		fetch_cgi(_path);
+		fetch_cgi(this->_path);
 	};
 	// 1) Se for arquivoi:termina sem /
-	if (what_is_asked(path) == "file") {
+	if (what_is_asked(this->_path) == "file") {
 		LOG(INFO) << "FILE requested...";
-		fetch_file(_path);
+		fetch_file(this->_path);
 	}
 	// 2) Se for diretorio (termina em /)
 	if (what_is_asked(path) == "dir") {
 		LOG(INFO) << "DIR requested...";
-		fetch_dir(_path, _host, _port);
+		fetch_dir(this->_path, this->_host, this->_port);
 	};
 	// ================================================================
 }
@@ -320,13 +320,13 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
-	_method = "GET";
+	this->_method = "GET";
 	//std::string uri = "www.site1.com/images/site1.html";
-	_uri = "www.site1.com/images/";
+	this->_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
-	_port = "8081";
-	_host = "www.site1.com";
+	this->_port = "8081";
+	this->_host = "www.site1.com";
 	int client_max_body_size = 1000;
 	(void) client_max_body_size;
 	// QQR erro no request dispara um 400 bad request
