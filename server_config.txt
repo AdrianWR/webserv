@@ -1,0 +1,58 @@
+=======================================================
+block_name: sample_server_Z1
+listen: 
+[0]	|8081|
+server_name: 
+[0]	|www.site1.com|
+client_max_body_size:		8000
+error_page:
+|301 : ./www/errors/301.html|
+|400 : ./www/errors/400.html|
+|403 : ./www/errors/403.html|
+|404 : ./www/errors/404.html|
+|405 : ./www/errors/405.html|
+|500 : ./www/errors/500.html|
+------------------------------
+location:		/
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/wwwwwwwwww
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/upload/
+------------------------------
+location:		/images
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1
+autoindex:		1
+index: 
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
+------------------------------
+location:		/sounds
+get_allowed:		0
+post_allowed:		1
+delete_allowed:		1
+redirection:		www.amazon.com
+root:			/var/www
+autoindex:		1
+index: 
+[0]	|nada|
+[1]	|vazio|
+[2]	|vacuo|
+cgi pass:		pass
+cgi_param:
+|p10 : dez|
+|p20 : vinte|
+upload_path::		/uploads_sounds
+=======================================================

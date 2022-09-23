@@ -1,0 +1,12 @@
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1
+autoindex:		1
+index: 
+cgi pass:		pass
+cgi_param:
+|p1 : um|
+|p2 : dois|
+upload_path::		/uploads
