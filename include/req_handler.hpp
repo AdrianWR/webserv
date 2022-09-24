@@ -59,7 +59,8 @@ private:
 	std::string	_port;
 	std::string	_method;
 	std::string	_uri;
-	std::string	_request_body;
+	std::string	_request_body;			// Post
+	int			_client_max_body_size;	// Post
 
 	// Internals
 	std::string	_loc;

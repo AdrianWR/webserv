@@ -257,11 +257,22 @@ void req_handler::handle_DELETE () {
 }
 
 void req_handler::handle_POST () {
-	// Checa se metodo permitido
+	LOG(INFO) << "POST ...";
+	// Checa se POST Permitido neste location
+	if (!check_method_allowed("POST")) return;
 	// Checa tamanho
-	// Salva arquivo criando diretorio
-
-
+	if (_client_max_body_size > server_config._client_max_body_size) {
+		LOG(INFO) << "413 Entity to large !";
+		Error error(413, this->server_config);
+		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			_http_response.show();
+	}
+	else {
+		// Salva arquivo criando diretorio
+		LOG(INFO) << "POST OK";
+		// Generate HTTP Response
+	}
 }
 
 void req_handler::handler() {
@@ -279,9 +290,14 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
-	this->_method = "DELETE";
-	this->_uri = "www.site1.com/images/a";
 	
+	this->_method = "POST";
+	this->_uri = "www.site1.com/images/a";
+	this->_client_max_body_size = 10000;
+
+//	this->_method = "DELETE";
+//	this->_uri = "www.site1.com/images/a";
+//	
 //	this->_method = "GET";
 //	this->_uri = "www.site1.com/images/site1.html";
 //	this->_uri = "www.site1.com/images/site9.html";
@@ -290,8 +306,6 @@ void req_handler::handler() {
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	this->_port = "8081";
 	this->_host = "www.site1.com";
-	int client_max_body_size = 1000;
-	(void) client_max_body_size;
 	// QQR erro no request dispara um 400 bad request
 	// ================================================================
 
@@ -315,6 +329,7 @@ void req_handler::handler() {
 	}
 	if (this->_method == "POST") {
 	// POST
+		handle_POST();
 		return;
 	}
 	if (this->_method == "DELETE") {

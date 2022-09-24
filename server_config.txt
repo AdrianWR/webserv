@@ -27,7 +27,7 @@ upload_path::		./www/upload/
 ------------------------------
 location:		/images
 get_allowed:		1
-post_allowed:		0
+post_allowed:		1
 delete_allowed:		1
 redirection:		
 root:			/www/site1
