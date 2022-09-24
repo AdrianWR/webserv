@@ -64,3 +64,7 @@ std::string HttpResponse::serialize () {
 	out = out + _delimiter; // ?
 	return out;
 }
+
+void HttpResponse::show() {
+	std::cout << "------\n" << "response: \n" << "------\n" << serialize();
+}

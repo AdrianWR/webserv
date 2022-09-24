@@ -62,7 +62,7 @@ bool req_handler::check_redirection() {
 		Error error(301, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 		return true;
 	} else {
 		LOG(INFO) << "No Redirection ...";
@@ -76,7 +76,7 @@ bool req_handler::check_method_allowed(std::string m) {
 		Error error(405, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 		//
 		return false;
 	};
@@ -112,13 +112,13 @@ void req_handler::fetch_file(std::string path) {
 		LOG(INFO) << "File fetched ...";
 		// Generate HTTP Response
 		_http_response.set(200, "OK", output);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
 		Error error(404, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 	};
 }
 
@@ -136,7 +136,7 @@ void req_handler::try_index_page(std::string path) {
 //			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
 		_http_response.set(200, "OK" , output);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 		break;
 		};
 	};
@@ -153,14 +153,14 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 		std::cout << "======================\n";
 		// Generate HTTP Response
 		_http_response.set(200, "OK", ai_page);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 	} else {
 	// se nao devolve erro
 		LOG(INFO) << "404 No index";
 		Error error(404, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 	};
 }
 
@@ -231,7 +231,7 @@ void req_handler::handle_DELETE () {
 		Error error(403, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 		return;
 	}
 	// Se nao existir arquivoL 404
@@ -241,19 +241,27 @@ void req_handler::handle_DELETE () {
 			Error error(404, this->server_config);
 			// Generate HTTP Response
 			_http_response.set(error.code, error.msg, error.body);
-			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 			return;
 		}
 		else {
-	// Se existir, deleta
+			// Se existir, deleta
 			LOG(INFO) << "Deleting file: " << this->_path;
 			std::remove(this->_path.c_str());
 			// Generate Http Response
 			_http_response.set(200, "OK", "");
-					std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+				_http_response.show();
 		}
 	}
 	//
+}
+
+void req_handler::handle_POST () {
+	// Checa se metodo permitido
+	// Checa tamanho
+	// Salva arquivo criando diretorio
+
+
 }
 
 void req_handler::handler() {

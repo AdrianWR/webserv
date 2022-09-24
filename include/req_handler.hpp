@@ -33,36 +33,40 @@ public:
   void handler();
 
 private:
-  std::string extract_location (std::string uri);
-  std::string generate_path(std::string url, std::string location, std::string root);
-  bool check_redirection();
-  bool check_method_allowed(std::string m);
-  std::string what_is_asked(std::string path);
-  void fetch_file(std::string path);
-  void fetch_cgi(std::string path);
-  void try_index_page(std::string path);
-  void try_autoindex(std::string host, std::string port);
-  void fetch_dir(std::string path, std::string host, std::string port);
-  void load_configs();
-  void handle_GET ();
-  void handle_DELETE ();
+	std::string extract_location (std::string uri);
+	std::string generate_path(std::string url, std::string location, std::string root);
+	bool check_redirection();
+	bool check_method_allowed(std::string m);
+	std::string what_is_asked(std::string path);
+	void fetch_file(std::string path);
+	void fetch_cgi(std::string path);
+	void try_index_page(std::string path);
+	void try_autoindex(std::string host, std::string port);
+	void fetch_dir(std::string path, std::string host, std::string port);
+	void load_configs();
+	void handle_GET();
+	void handle_DELETE();
+	void handle_POST();
 
 private:
-  Config::BlockMap _parsed_config_map;
-  ConfigBlock		server_config;
-  LocationBlock		loc_config;
+	// Config objects
+	Config::BlockMap _parsed_config_map;
+	ConfigBlock		server_config;
+	LocationBlock		loc_config;
 
-  std::string	_host;		// Input
-  std::string	_port;		// Input
-  std::string	_method;	// Input
-  std::string	_uri;		// Input
-  std::string	_loc;
-  std::string	_path;
+	// Inputs from http_request
+	std::string	_host;
+	std::string	_port;
+	std::string	_method;
+	std::string	_uri;
+	std::string	_request_body;
 
-  HttpResponse	_http_response;	// Output
+	// Internals
+	std::string	_loc;
+	std::string	_path;
 
-  //http request
-  //http response
+	// Output
+	HttpResponse	_http_response;
 };
 
 

@@ -30,5 +30,6 @@ public:
 // Methods
 	void set(size_t code, std::string reason, std::string body);
 	std::string serialize();
+	void show();
 };
 #endif
