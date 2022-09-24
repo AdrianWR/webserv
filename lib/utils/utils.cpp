@@ -23,6 +23,14 @@ std::string file_to_string(std::string file_path) {
 	}
 }
 
+void string_to_file(std::string file_path, std::string str) {
+	std::ofstream new_file;
+
+	new_file.open(file_path.c_str(), std::ios::binary);
+	new_file.write(str.c_str(), str.length());
+	new_file.close();
+}
+
 std::string IntToString(int a) {
   std::ostringstream temp;
 

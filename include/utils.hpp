@@ -18,6 +18,7 @@
 // *****************************************************
 
 std::string file_to_string(std::string file_path);
+void string_to_file(std::string file_path, std::string str);
 
 std::string IntToString(int a);
 size_t StringToInt(std::string s);

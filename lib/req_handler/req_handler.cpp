@@ -271,7 +271,11 @@ void req_handler::handle_POST () {
 	else {
 		// Salva arquivo criando diretorio
 		LOG(INFO) << "POST OK";
+		// se for multiform part data
+		string_to_file(_path, _request_body);
 		// Generate HTTP Response
+		_http_response.set(200,"OK", "");
+			_http_response.show();
 	}
 }
 
@@ -292,8 +296,10 @@ void req_handler::handler() {
 	//
 	
 	this->_method = "POST";
-	this->_uri = "www.site1.com/images/a";
-	this->_client_max_body_size = 10000;
+	this->_uri = "www.site1.com/images/aa";
+	this->_client_max_body_size = 1000;
+	this->_request_body = "corpo do arquivo.\n";
+
 
 //	this->_method = "DELETE";
 //	this->_uri = "www.site1.com/images/a";
