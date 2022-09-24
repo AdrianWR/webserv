@@ -16,12 +16,13 @@ Handler
 		2.devolve dir (autoindex ou index ou erro) ok
 		3.devolve cgi
 		devolve pag de erro se falhar 1 2 3 ok
-		Strings precisam gerar http response object 
+		Strings precisam gerar http response object ok
 
-	POST ?
-		check size
+	POST ok
+		check size ok
+		check multipart (header)
 
-	DELETE ?
+	DELETE ok
 
 Responder socket
 	Devolver http response serializado
@@ -33,8 +34,8 @@ conectar request no handler rapha
 criar http response ok
 conectar o handler no http response ok
 
-handler do post
-handler do delete
+handler do post ok
+handler do delete ok
 cgi
 
 criar sites de teste

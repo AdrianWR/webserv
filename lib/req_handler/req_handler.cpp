@@ -148,9 +148,7 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 		LOG(INFO) << "Autoindex ON";
 		AutoIndexGenerator auto_index;
 		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
-		std::cout << "======================\n";
-		std::cout << ai_page << std::endl;
-		std::cout << "======================\n";
+			LOG(INFO) << "ai_page:\n" << ai_page;
 		// Generate HTTP Response
 		_http_response.set(200, "OK", ai_page);
 				_http_response.show();
@@ -253,7 +251,7 @@ void req_handler::handle_DELETE () {
 				_http_response.show();
 		}
 	}
-	//
+	// ================================================================
 }
 
 void req_handler::handle_POST () {
@@ -277,6 +275,7 @@ void req_handler::handle_POST () {
 		_http_response.set(200,"OK", "");
 			_http_response.show();
 	}
+	// ================================================================
 }
 
 void req_handler::handler() {
@@ -344,5 +343,10 @@ void req_handler::handler() {
 		return;
 	}
 	// UNKNOWN
+	Error error(405, this->server_config);
+	// Generate HTTP Response
+	_http_response.set(error.code, error.msg, error.body);
+		_http_response.show();
+	
 	return;
 }
