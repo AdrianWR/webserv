@@ -52,7 +52,7 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega root
 	// troca location por root no url
 	std::string str = uri.replace(uri.find(location), location.length(), root);
-	return str.substr(str.find("/"));
+	return ("." + str.substr(str.find("/")));
 }
 
 bool req_handler::check_redirection() {
@@ -70,9 +70,9 @@ bool req_handler::check_redirection() {
 	};
 }
 
-bool req_handler::check_method_GET() {
-	if (this->loc_config._allowed_methods["GET"] == 0) {
-		LOG(INFO) << "GET Not Allowed";
+bool req_handler::check_method_allowed(std::string m) {
+	if (this->loc_config._allowed_methods[m] == 0) {
+		LOG(INFO) << m << " Not Allowed";
 		Error error(405, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
@@ -80,7 +80,7 @@ bool req_handler::check_method_GET() {
 		//
 		return false;
 	};
-	LOG(INFO) << "GET Allowed";
+	LOG(INFO) << m << " Allowed";
 	return true;
 }
 
@@ -106,7 +106,7 @@ void req_handler::fetch_cgi(std::string path) {
 
 void req_handler::fetch_file(std::string path) {
 	// Tenta pegar arquivo.
-	std::string full_path = "." + path;
+	std::string full_path = path;
 	std::string output = file_to_string(full_path);
 	if (output.size() > 0) {
 		LOG(INFO) << "File fetched ...";
@@ -194,32 +194,66 @@ void req_handler::load_configs() {
 }
 
 void req_handler::handle_GET () {
+	LOG(INFO) << "GET Method ...";
 	// Se tiver redirection, devolve redirection e sai.
 	if (check_redirection()) return;
 
-	// Monta caminho fisico:
-	std::string path = generate_path(this->_uri, this->_loc, this->loc_config._root);
-	LOG(INFO) << "path generated ...";
 	
 	// Checa se GET Permitido neste location
-	if (!check_method_GET()) return;
+	if (!check_method_allowed("GET")) return;
 
 	// 0) Se for cgi
-	if (what_is_asked(path) == "cgi") {
+	if (what_is_asked(this->_path) == "cgi") {
 		LOG(INFO) << "CGI requested ...";
-		fetch_cgi(path);
+		fetch_cgi(this->_path);
 	};
 	// 1) Se for arquivoi:termina sem /
-	if (what_is_asked(path) == "file") {
+	if (what_is_asked(this->_path) == "file") {
 		LOG(INFO) << "FILE requested...";
-		fetch_file(path);
+		fetch_file(this->_path);
 	}
 	// 2) Se for diretorio (termina em /)
-	if (what_is_asked(path) == "dir") {
+	if (what_is_asked(_path) == "dir") {
 		LOG(INFO) << "DIR requested...";
-		fetch_dir(path, this->_host, this->_port);
+		fetch_dir(this->_path, this->_host, this->_port);
 	};
 	// ================================================================
+}
+
+void req_handler::handle_DELETE () {
+
+	LOG(INFO) << "DELETE Method ...";
+	// Checa se DELETE Permitido neste location
+	if (!check_method_allowed("DELETE")) return;
+	// Se for diretorio, forbidden
+	if (what_is_asked(this->_path) == "dir") {
+		LOG(INFO) << "DIR requested...";
+		Error error(403, this->server_config);
+		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+		return;
+	}
+	// Se nao existir arquivoL 404
+	if (what_is_asked(this->_path) == "file") {
+		LOG(INFO) << "FILE requested...";
+		if (!file_exist(this->_path)) {
+			Error error(404, this->server_config);
+			// Generate HTTP Response
+			_http_response.set(error.code, error.msg, error.body);
+			std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+			return;
+		}
+		else {
+	// Se existir, deleta
+			LOG(INFO) << "Deleting file: " << this->_path;
+			std::remove(this->_path.c_str());
+			// Generate Http Response
+			_http_response.set(200, "OK", "");
+					std::cout << "------\n" << "response: \n" << "------\n" << _http_response.serialize();
+		}
+	}
+	//
 }
 
 void req_handler::handler() {
@@ -237,10 +271,13 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
-	this->_method = "GET";
+	this->_method = "DELETE";
+	this->_uri = "www.site1.com/images/a";
+	
+//	this->_method = "GET";
 //	this->_uri = "www.site1.com/images/site1.html";
 //	this->_uri = "www.site1.com/images/site9.html";
-	this->_uri = "www.site1.com/images/";
+//	this->_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
 	this->_port = "8081";
@@ -255,6 +292,10 @@ void req_handler::handler() {
 	// ================================================================
 	// Populates class atributes with inputs and config values
 	load_configs(); // FROM NOW ON SERVER CONFIG ON MEMORY
+	//
+	// Monta caminho fisico:
+	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);
+	LOG(INFO) << "path generated: " << _path;
 	 
 	// ================================================================
 	// START OF PARSING (one function for each method)
@@ -262,14 +303,17 @@ void req_handler::handler() {
 	// ================================================================
 	if (this->_method == "GET") {
 		handle_GET();
+		return;
 	}
 	if (this->_method == "POST") {
 	// POST
+		return;
 	}
 	if (this->_method == "DELETE") {
 	// DELETE
+		handle_DELETE();
+		return;
 	}
-	if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE") {
 	// UNKNOWN
-	}
+	return;
 }

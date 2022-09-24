@@ -20,7 +20,7 @@ sample_server_Z1 {
 		autoindex	true
 		allowed_methods	GET		true
 		allowed_methods	POST	false
-		allowed_methods	DELETE	false
+		allowed_methods	DELETE	true
 		cgi_param p1 um
 		cgi_param p2 dois
 	}

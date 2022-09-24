@@ -40,6 +40,11 @@ size_t StringToInt(std::string s) {
   return i;
 }
 
+bool file_exist(std::string path) {
+	struct stat   buffer;   
+	return (stat (path.c_str(), &buffer) == 0);
+}
+
 // **********************************************************
 
 // *****************************************************

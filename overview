@@ -28,10 +28,10 @@ Responder socket
 	Fechar conexao ?
 
 ============================================================================
-conectar request no handler rapha
+conectar request no handler rapha 
 
-criar http response paulo
-conectar o handler no http response
+criar http response ok
+conectar o handler no http response ok
 
 handler do post
 handler do delete

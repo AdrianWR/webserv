@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <dirent.h>
-
+#include <sys/stat.h>
 
 #include "log.hpp"
 
@@ -21,6 +21,7 @@ std::string file_to_string(std::string file_path);
 
 std::string IntToString(int a);
 size_t StringToInt(std::string s);
+bool file_exist(std::string path);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
   typename std::vector<T>::iterator it;
@@ -60,6 +61,7 @@ template <typename A, typename B> void print_mapc(std::map<A, B> m) {
   }
   cout.close();
 }
+
 
 // *****************************************************88
 // Class ReservedWords 

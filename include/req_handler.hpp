@@ -9,6 +9,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #include "log.hpp"
 #include "error.hpp"
@@ -35,7 +36,7 @@ private:
   std::string extract_location (std::string uri);
   std::string generate_path(std::string url, std::string location, std::string root);
   bool check_redirection();
-  bool check_method_GET();
+  bool check_method_allowed(std::string m);
   std::string what_is_asked(std::string path);
   void fetch_file(std::string path);
   void fetch_cgi(std::string path);
@@ -44,6 +45,7 @@ private:
   void fetch_dir(std::string path, std::string host, std::string port);
   void load_configs();
   void handle_GET ();
+  void handle_DELETE ();
 
 private:
   Config::BlockMap _parsed_config_map;

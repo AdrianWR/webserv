@@ -29,7 +29,7 @@ upload_path::		./www/upload/
 location:		/images
 get_allowed:		1
 post_allowed:		0
-delete_allowed:		0
+delete_allowed:		1
 redirection:		
 root:			/www/site1
 autoindex:		1
@@ -88,7 +88,7 @@ upload_path::		./www/upload/
 location:		/images
 get_allowed:		1
 post_allowed:		0
-delete_allowed:		0
+delete_allowed:		1
 redirection:		
 root:			/www/site1
 autoindex:		1
