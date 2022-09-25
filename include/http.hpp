@@ -112,7 +112,7 @@ protected:
 
 public:
   BaseHttp();
-  BaseHttp(const BaseHttp &);
+  // BaseHttp(const BaseHttp &);
   BaseHttp &operator=(const BaseHttp &);
   virtual ~BaseHttp() = 0;
 
@@ -141,8 +141,8 @@ protected:
 
 public:
   HttpRequest();
-  HttpRequest(const HttpRequest &);
-  HttpRequest &operator=(const HttpRequest &);
+  // HttpRequest(const HttpRequest &);
+  HttpRequest &operator=(const HttpRequest &s);
   ~HttpRequest();
 };
 
@@ -150,7 +150,7 @@ class HttpResponse : public BaseHttp {
 public:
   HttpResponse();
   ~HttpResponse();
-  HttpResponse(const HttpResponse &);
+  // HttpResponse(const HttpResponse &);
   HttpResponse &operator=(const HttpResponse &);
   HttpResponse(const char *content);
 };

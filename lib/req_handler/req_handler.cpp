@@ -1,14 +1,18 @@
-#include "req_handler.hpp"
+#include "../../include/req_handler.hpp"
+
 
 // Construtor
 req_handler::req_handler() {
   std::cout << "req_handler constructor" << std::endl;
 }
-req_handler::req_handler(Config fp) {
+req_handler::req_handler(Config fp, HttpRequest req) {
   std::cout << "receiving file parser as fp" << std::endl;
   std::cout << "####################################\n";
   _parsed_config_map = fp.getBlockMap();
   //	print_mapc(_parsed_config_map);
+
+  this->request = req;
+  // (void)req;
 }
 // Destrutor
 req_handler::~req_handler() {

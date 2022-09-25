@@ -9,11 +9,11 @@ HttpResponse HttpHandler::generateResponse(HttpRequest &h, Config &config) {
   BaseHttp::HeaderMap headers = h.getHeaders();
   Config::BlockMap blocks = config.getBlockMap();
 
-  try {
-    ConfigBlock block = blocks.at(headers["host"]);
-  } catch (std::out_of_range) {
-    throw BaseHttp::HttpException("Invalid host configuration");
-    LOG(DEBUG) << "Invalid host configuration";
-  }
+  // try {
+  //   ConfigBlock block = blocks.at(headers["host"]);
+  // } catch (std::out_of_range) {
+  //   throw BaseHttp::HttpException("Invalid host configuration");
+  //   LOG(DEBUG) << "Invalid host configuration";
+  // }
   return k;
 }

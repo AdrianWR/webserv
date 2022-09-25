@@ -16,3 +16,12 @@ HttpRequest::HeaderMap HttpRequest::_parseStatusLine(const std::string &str) {
     throw HttpException("Invalid status line: method is empty");
   return headers;
 }
+
+HttpRequest &HttpRequest::operator=(const HttpRequest &s) {
+  if (this != &s){
+    _method = s._method;
+    _headers = s._headers;
+
+  }
+  return *this;
+}

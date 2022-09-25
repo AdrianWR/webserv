@@ -25,19 +25,19 @@ int main(void) {
 	Config config;
 	config.parse_file("./www/conf/conf4");
 	
-	// Test autoindex generation
-	std::cout << "Pagina de auto_index:\n";
-	AutoIndexGenerator auto_index;
-	std::string ai_page = auto_index.getPage(".","www.site1",8080);
-	std::cout << ai_page << std::endl;
-	std::ofstream ai("autoindex.html", std::ofstream::trunc);
-	ai << ai_page;
+// 	// Test autoindex generation
+// 	std::cout << "Pagina de auto_index:\n";
+// 	AutoIndexGenerator auto_index;
+// 	std::string ai_page = auto_index.getPage(".","www.site1",8080);
+// 	std::cout << ai_page << std::endl;
+// 	std::ofstream ai("autoindex.html", std::ofstream::trunc);
+// 	ai << ai_page;
 
-	// Run req_handler
-	std::cout << "rh: \n";
-	req_handler rh(config);
-//rh.handler(); // function input should be a http request
-	return 0;
+// 	// Run req_handler
+// 	std::cout << "rh: \n";
+// 	req_handler rh(config);
+// //rh.handler(); // function input should be a http request
+// 	return 0;
 
   struct sigaction sigIntHandler;
 
