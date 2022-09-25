@@ -1,8 +1,9 @@
-#include "server.hpp"
-#include "http.hpp"
-#include "log.hpp"
-#include "socket.hpp"
-#include "utils.hpp"
+#include "../../include/server.hpp"
+#include "../../include/http.hpp"
+#include "../../include/req_handler.hpp"
+#include "../../include/log.hpp"
+#include "../../include/socket.hpp"
+#include "../../include/utils.hpp"
 #include <cstring>
 #include <poll.h>
 
@@ -36,15 +37,17 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
     fd = -1;
   } else {
     HttpRequest request;
-    HttpRequest::HeaderMap headers = request.parse(buffer);
+    request.parse(buffer);
+    req_handler rh(config, request);
+    // HttpRequest::HeaderMap headers = request.parse(buffer);
 
     (void)config;
-    HttpResponse response = HttpHandler::generateResponse(request, config);
-    (void)response;
+    // HttpResponse response = HttpHandler::generateResponse(request, config);
+    // (void)response;
 
     // headers = request.getHeaders();
     std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
-                       "text/plain\nContent-Length: 12\n\nHello world!";
+                       "text/plain\nContent-Length: 13\n\nHello world!!";
 
     if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
       throw HttpServerException("Error writing to socket");
