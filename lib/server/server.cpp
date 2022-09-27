@@ -1,3 +1,4 @@
+#include "req_handler.hpp"
 #include "server.hpp"
 #include "http.hpp"
 #include "log.hpp"
@@ -36,11 +37,12 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
     fd = -1;
   } else {
     HttpRequest request;
-    HttpRequest::HeaderMap headers = request.parse(buffer);
+    request.parse(buffer);
+    req_handler rh(config, request);
 
-    (void)config;
-    HttpResponse response = HttpHandler::generateResponse(request, config);
-    (void)response;
+    // (void)config;
+    // HttpResponse response = HttpHandler::generateResponse(request, config);
+    // (void)response;
 
     // headers = request.getHeaders();
     std::string buff = "HTTP/1.1 200 OK\nContent-Type: "

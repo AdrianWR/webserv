@@ -1,6 +1,7 @@
 #ifndef REQ_HANDLER_HPP
 #define REQ_HANDLER_HPP
 
+#include "http.hpp"
 #include "utils.hpp"
 #include <cstdlib>
 #include <fstream>
@@ -22,7 +23,7 @@ class req_handler {
 public:
   // Constructor
   req_handler();
-  req_handler(Config fp);
+  req_handler(Config fp, HttpRequest req);
   //	req_handler(std::string fp);
   // Destructor
   ~req_handler();

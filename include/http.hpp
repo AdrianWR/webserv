@@ -112,7 +112,7 @@ protected:
 
 public:
   BaseHttp();
-  BaseHttp(const BaseHttp &);
+  // BaseHttp(const BaseHttp &);
   BaseHttp &operator=(const BaseHttp &);
   virtual ~BaseHttp() = 0;
 
@@ -141,24 +141,24 @@ protected:
 
 public:
   HttpRequest();
-  HttpRequest(const HttpRequest &);
+  // HttpRequest(const HttpRequest &);
   HttpRequest &operator=(const HttpRequest &);
   ~HttpRequest();
 };
 
-class HttpResponse : public BaseHttp {
-public:
-  HttpResponse();
-  ~HttpResponse();
-  HttpResponse(const HttpResponse &);
-  HttpResponse &operator=(const HttpResponse &);
-  HttpResponse(const char *content);
-};
+// class HttpResponse : public BaseHttp {
+// public:
+//   HttpResponse();
+//   ~HttpResponse();
+//   HttpResponse(const HttpResponse &);
+//   HttpResponse &operator=(const HttpResponse &);
+//   HttpResponse(const char *content);
+// };
 
-class HttpHandler {
-public:
-  static HttpResponse generateResponse(HttpRequest &h, Config &config);
-  // httpresponse.raw_data()
-};
+// class HttpHandler {
+// public:
+//   static HttpResponse generateResponse(HttpRequest &h, Config &config);
+//   // httpresponse.raw_data()
+// };
 
 #endif
