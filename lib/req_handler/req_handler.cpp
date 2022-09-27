@@ -64,6 +64,7 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega location
 	// pega root
 	// troca location por root no url
+	if (_loc == "/") root += "/";
 	std::string str = uri.replace(uri.find(location), location.length(), root);
 	return ("." + str.substr(str.find("/")));
 }
@@ -354,10 +355,6 @@ void req_handler::handler() {
 	//
 	// Monta caminho fisico:
 	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);
-	LOG(DEBUG) << "uri: " << _uri;
-	LOG(DEBUG) << "loc: " << _loc;
-	LOG(DEBUG) << "root: " << loc_config._root;
-
 	LOG(INFO) << "path generated: " << _path;
 	 
 	// ================================================================

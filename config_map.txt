@@ -19,7 +19,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/wwww/site1
+root:			/www/site1
 autoindex:		1
 index: 
 cgi pass:		
@@ -78,7 +78,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/wwww/site1
+root:			/www/site1
 autoindex:		1
 index: 
 cgi pass:		

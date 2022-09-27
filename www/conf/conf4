@@ -39,7 +39,7 @@ sample_server_Z1 {
 		cgi_param p20 vinte
 	}
 	location / {
-		root /wwww/site1
+		root /www/site1
 	}
 }
 
