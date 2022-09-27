@@ -46,10 +46,10 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 
     // headers = request.getHeaders();
 	rh.handler();
-//	std::string buff = rh._http_response.serialize();
-    std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
-                       "text/plain\nContent-Length: 12\n\nHello world!i\n";
-		LOG(INFO) << "buffer: " << buffer;
+	std::string buff = rh._http_response.serialize();
+//    std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
+//                       "text/plain\nContent-Length: 13\n\nHello world!\n";
+		LOG(INFO) << "buffer: " << buff;
 
     if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
       throw HttpServerException("Error writing to socket");
