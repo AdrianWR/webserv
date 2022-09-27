@@ -354,6 +354,10 @@ void req_handler::handler() {
 	//
 	// Monta caminho fisico:
 	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);
+	LOG(DEBUG) << "uri: " << _uri;
+	LOG(DEBUG) << "loc: " << _loc;
+	LOG(DEBUG) << "root: " << loc_config._root;
+
 	LOG(INFO) << "path generated: " << _path;
 	 
 	// ================================================================
