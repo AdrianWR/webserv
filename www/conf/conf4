@@ -14,7 +14,7 @@ sample_server_Z1 {
 	location /images {
 		#redirection www.amazon.com
 		root /www/site1
-		upload_path /uploads
+		upload_path /www/site1/uploads
 		cgi_pass	pass
 		#index	index.htm index.html index.php
 		autoindex	true
@@ -39,7 +39,7 @@ sample_server_Z1 {
 		cgi_param p20 vinte
 	}
 	location / {
-		root /wwwwwwwwww
+		root /www/site1
 	}
 }
 

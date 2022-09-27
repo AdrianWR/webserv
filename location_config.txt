@@ -5,8 +5,6 @@ redirection:
 root:			/www/site1
 autoindex:		1
 index: 
-cgi pass:		pass
+cgi pass:		
 cgi_param:
-|p1 : um|
-|p2 : dois|
-upload_path::		/uploads
+upload_path::		./www/upload/

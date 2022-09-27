@@ -15,6 +15,7 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
 	_method = heard["method"];
 	_uri = _host + heard["path"];
+	LOG(INFO) << "uri: " << _uri;
 
 	// Fazer o post com o post
 	// this->_client_max_body_size = 1000;
@@ -63,6 +64,7 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega location
 	// pega root
 	// troca location por root no url
+	if (_loc == "/") root += "/";
 	std::string str = uri.replace(uri.find(location), location.length(), root);
 	return ("." + str.substr(str.find("/")));
 }
@@ -74,7 +76,6 @@ bool req_handler::check_redirection() {
 		Error error(301, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 		return true;
 	} else {
 		LOG(INFO) << "No Redirection ...";
@@ -88,7 +89,6 @@ bool req_handler::check_method_allowed(std::string m) {
 		Error error(405, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 		//
 		return false;
 	};
@@ -124,13 +124,11 @@ void req_handler::fetch_file(std::string path) {
 		LOG(INFO) << "File fetched ...";
 		// Generate HTTP Response
 		_http_response.set(200, "OK", output);
-				_http_response.show();
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
 		Error error(404, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 	};
 }
 
@@ -148,7 +146,6 @@ void req_handler::try_index_page(std::string path) {
 //			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
 		_http_response.set(200, "OK" , output);
-				_http_response.show();
 		break;
 		};
 	};
@@ -163,14 +160,12 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 			LOG(INFO) << "ai_page:\n" << ai_page;
 		// Generate HTTP Response
 		_http_response.set(200, "OK", ai_page);
-				_http_response.show();
 	} else {
 	// se nao devolve erro
 		LOG(INFO) << "404 No index";
 		Error error(404, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 	};
 }
 
@@ -241,7 +236,6 @@ void req_handler::handle_DELETE () {
 		Error error(403, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 		return;
 	}
 	// Se nao existir arquivoL 404
@@ -251,7 +245,6 @@ void req_handler::handle_DELETE () {
 			Error error(404, this->server_config);
 			// Generate HTTP Response
 			_http_response.set(error.code, error.msg, error.body);
-				_http_response.show();
 			return;
 		}
 		else {
@@ -260,7 +253,6 @@ void req_handler::handle_DELETE () {
 			std::remove(this->_path.c_str());
 			// Generate Http Response
 			_http_response.set(200, "OK", "");
-				_http_response.show();
 		}
 	}
 	// ================================================================
@@ -276,16 +268,43 @@ void req_handler::handle_POST () {
 		Error error(413, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-			_http_response.show();
+		return;
 	}
-	else {
+	if (what_is_asked(this->_path) == "file") {
+		LOG(INFO) << "FILE requested...";
+		// Se tem upload path altera o path para usar o do config
+		if (this->loc_config._upload_path != "") {
+			// monta path
+			_path = generate_path(this->_uri, this->_loc, this->loc_config._upload_path);
+			LOG(INFO) << "upload path updated: " << _path;
+		};
 		// Salva arquivo criando diretorio
 		LOG(INFO) << "POST OK";
 		// se for multiform part data
-		string_to_file(_path, _request_body);
+		bool file_created = string_to_file(_path, _request_body);
+		if (file_created) {
+			// Generate HTTP Response
+			_http_response.set(200,"OK", "");
+			return;
+		}
+		else {
+			Error error(404, this->server_config);
+			// Generate HTTP Response
+			_http_response.set(error.code, error.msg, error.body);
+			return;
+		}
+	}
+	if (what_is_asked(this->_path) == "dir") {
+		LOG(INFO) << "DIR requested...";
 		// Generate HTTP Response
 		_http_response.set(200,"OK", "");
-			_http_response.show();
+		return;
+	};
+	if (what_is_asked(this->_path) == "cgi") {
+		LOG(INFO) << "CGI requested...";
+		// Generate HTTP Response
+		//
+		return;
 	}
 	// ================================================================
 }
@@ -305,12 +324,14 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
+	//
+	LOG(DEBUG) << "handler() function ini";
 	
-	this->_method = "POST";
-	this->_uri = "www.site1.com/images/aa";
-	this->_client_max_body_size = 1000;
-	this->_request_body = "corpo do arquivo.\n";
-
+//	this->_method = "POST";
+//	this->_uri = "www.site1.com/images/aa";
+//	this->_client_max_body_size = 1000;
+//	this->_request_body = "corpo do arquivo.\n";
+////
 
 //	this->_method = "DELETE";
 //	this->_uri = "www.site1.com/images/a";
@@ -321,8 +342,8 @@ void req_handler::handler() {
 //	this->_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
-	this->_port = "8081";
-	this->_host = "www.site1.com";
+//	this->_port = "8081";
+//	this->_host = "www.site1.com";
 	// QQR erro no request dispara um 400 bad request
 	// ================================================================
 
@@ -358,7 +379,6 @@ void req_handler::handler() {
 	Error error(405, this->server_config);
 	// Generate HTTP Response
 	_http_response.set(error.code, error.msg, error.body);
-		_http_response.show();
 	
 	return;
 }

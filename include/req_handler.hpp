@@ -67,6 +67,7 @@ private:
 	std::string	_loc;
 	std::string	_path;
 
+public:
 	// Output
 	HttpResponse	_http_response;
 };

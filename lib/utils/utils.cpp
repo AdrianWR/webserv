@@ -23,12 +23,15 @@ std::string file_to_string(std::string file_path) {
 	}
 }
 
-void string_to_file(std::string file_path, std::string str) {
+bool string_to_file(std::string file_path, std::string str) {
 	std::ofstream new_file;
 
 	new_file.open(file_path.c_str(), std::ios::binary);
+	if (!new_file.is_open()) return false;
+	LOG(DEBUG) << "file opened ? " << new_file.is_open();
 	new_file.write(str.c_str(), str.length());
 	new_file.close();
+	return true;
 }
 
 std::string IntToString(int a) {

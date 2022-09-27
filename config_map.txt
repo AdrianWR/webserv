@@ -19,7 +19,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/wwwwwwwwww
+root:			/www/site1
 autoindex:		1
 index: 
 cgi pass:		
@@ -38,7 +38,7 @@ cgi pass:		pass
 cgi_param:
 |p1 : um|
 |p2 : dois|
-upload_path::		/uploads
+upload_path::		/www/site1/uploads
 ------------------------------
 location:		/sounds
 get_allowed:		0
@@ -78,7 +78,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/wwwwwwwwww
+root:			/www/site1
 autoindex:		1
 index: 
 cgi pass:		
@@ -97,7 +97,7 @@ cgi pass:		pass
 cgi_param:
 |p1 : um|
 |p2 : dois|
-upload_path::		/uploads
+upload_path::		/www/site1/uploads
 ------------------------------
 location:		/sounds
 get_allowed:		0
