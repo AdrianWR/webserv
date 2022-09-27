@@ -1,7 +1,7 @@
 =======================================================
 block_name: sample_server_Z1
 listen: 
-[0]	|8081|
+[0]	|8080|
 server_name: 
 [0]	|www.site1.com|
 client_max_body_size:		8000
@@ -18,7 +18,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/wwwwwwwwww
+root:			/wwww
 autoindex:		1
 index: 
 cgi pass:		
@@ -37,7 +37,7 @@ cgi pass:		pass
 cgi_param:
 |p1 : um|
 |p2 : dois|
-upload_path::		/uploads
+upload_path::		/www/site1/uploads
 ------------------------------
 location:		/sounds
 get_allowed:		0

@@ -15,6 +15,7 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
 	_method = heard["method"];
 	_uri = _host + heard["path"];
+	LOG(INFO) << "uri: " << _uri;
 
 	// Fazer o post com o post
 	// this->_client_max_body_size = 1000;
@@ -277,15 +278,46 @@ void req_handler::handle_POST () {
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
 			_http_response.show();
+		return;
 	}
-	else {
+	if (what_is_asked(this->_path) == "file") {
+		LOG(INFO) << "FILE requested...";
+		// Se tem upload path altera o path para usar o do config
+		if (this->loc_config._upload_path != "") {
+			// monta path
+			_path = generate_path(this->_uri, this->_loc, this->loc_config._upload_path);
+			LOG(INFO) << "upload path updated: " << _path;
+		};
 		// Salva arquivo criando diretorio
 		LOG(INFO) << "POST OK";
 		// se for multiform part data
-		string_to_file(_path, _request_body);
+		bool file_created = string_to_file(_path, _request_body);
+		if (file_created) {
+			// Generate HTTP Response
+			_http_response.set(200,"OK", "");
+				_http_response.show();
+			return;
+		}
+		else {
+			Error error(404, this->server_config);
+			// Generate HTTP Response
+			_http_response.set(error.code, error.msg, error.body);
+				_http_response.show();
+			return;
+		}
+	}
+	if (what_is_asked(this->_path) == "dir") {
+		LOG(INFO) << "DIR requested...";
 		// Generate HTTP Response
 		_http_response.set(200,"OK", "");
 			_http_response.show();
+		return;
+	};
+	if (what_is_asked(this->_path) == "cgi") {
+		LOG(INFO) << "CGI requested...";
+		// Generate HTTP Response
+		//
+		return;
 	}
 	// ================================================================
 }
@@ -305,12 +337,14 @@ void req_handler::handler() {
 	// host
 	// vao formar chave para config
 	//
+	//
+	LOG(DEBUG) << "handler() function ini";
 	
 	this->_method = "POST";
 	this->_uri = "www.site1.com/images/aa";
 	this->_client_max_body_size = 1000;
 	this->_request_body = "corpo do arquivo.\n";
-
+//
 
 //	this->_method = "DELETE";
 //	this->_uri = "www.site1.com/images/a";
@@ -321,8 +355,8 @@ void req_handler::handler() {
 //	this->_uri = "www.site1.com/images/";
 	//std::string uri =		"www.site1.com/images/photo1.png";
 	//std::string uri =		"www.site1.com/images/algo.cgi";
-	this->_port = "8081";
-	this->_host = "www.site1.com";
+//	this->_port = "8081";
+//	this->_host = "www.site1.com";
 	// QQR erro no request dispara um 400 bad request
 	// ================================================================
 
