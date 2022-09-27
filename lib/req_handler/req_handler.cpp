@@ -1,14 +1,26 @@
 #include "req_handler.hpp"
+#include "http.hpp"
 // **********************************************************
 // Class Req_handler
 // **********************************************************
 req_handler::req_handler() {
   std::cout << "req_handler constructor" << std::endl;
 }
-req_handler::req_handler(Config fp) {
+req_handler::req_handler(Config fp, HttpRequest req) {
 	LOG(INFO) << "Initializing req_handler";
-  _parsed_config_map = fp.getBlockMap();
-  //	print_mapc(_parsed_config_map);
+  	_parsed_config_map = fp.getBlockMap();
+  	//	print_mapc(_parsed_config_map);
+	HttpRequest::HeaderMap heard = req.getHeaders();
+	_host = heard["host"].substr(0, heard["host"].find(":"));
+	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
+	_method = heard["method"];
+	_uri = _host + heard["path"];
+
+	// Fazer o post com o post
+	// this->_client_max_body_size = 1000;
+	// this->_request_body = "corpo do arquivo.\n";
+
+
 }
 
 req_handler::~req_handler() {

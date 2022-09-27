@@ -33,10 +33,10 @@ int main(void) {
 //	std::ofstream ai("autoindex.html", std::ofstream::trunc);
 //	ai << ai_page;
 
-	// Run req_handler
-	req_handler rh(config);
-	rh.handler(); // function input should be a http request
-	return 0;
+	// // Run req_handler
+	// req_handler rh(config);
+	// rh.handler(); // function input should be a http request
+	// return 0;
 
   struct sigaction sigIntHandler;
 
