@@ -156,8 +156,8 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 	if (this->loc_config._autoindex == true) {
 		LOG(INFO) << "Autoindex ON";
 		AutoIndexGenerator auto_index;
-		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
-			LOG(INFO) << "ai_page:\n" << ai_page;
+//		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
+		std::string ai_page = auto_index.getPage(_path.c_str(),host, StringToInt(port), _loc);
 		// Generate HTTP Response
 		_http_response.set(200, "OK", ai_page);
 	} else {
@@ -326,6 +326,11 @@ void req_handler::handler() {
 	//
 	//
 	LOG(DEBUG) << "handler() function ini";
+	LOG(DEBUG) << "host: " << _host;
+	LOG(DEBUG) << "port: " << _port;
+	LOG(DEBUG) << "method: " << _method;
+	LOG(DEBUG) << "uri: " << _uri;
+
 	
 //	this->_method = "POST";
 //	this->_uri = "www.site1.com/images/aa";
@@ -356,6 +361,9 @@ void req_handler::handler() {
 	// Monta caminho fisico:
 	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);
 	LOG(INFO) << "path generated: " << _path;
+
+	LOG(DEBUG) << "loc: " << _loc;
+	LOG(DEBUG) << "path: " << _path;
 	 
 	// ================================================================
 	// START OF PARSING (one function for each method)

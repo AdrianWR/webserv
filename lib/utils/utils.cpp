@@ -442,8 +442,10 @@ AutoIndexGenerator::operator=(AutoIndexGenerator const &src) {
 }
 
 std::string AutoIndexGenerator::getPage(const char *path,
-                                        std::string const &host, int port) {
+                                        std::string const &host, int port,
+										std::string loc) {
   std::string dirName(path);
+  LOG(DEBUG) << "dirname: " << dirName;
   DIR *dir = opendir(path);
   std::string page = "<!DOCTYPE html>\n\
     <html>\n\
@@ -463,8 +465,8 @@ std::string AutoIndexGenerator::getPage(const char *path,
     dirName = "/" + dirName;
   for (struct dirent *dirEntry = readdir(dir); dirEntry;
        dirEntry = readdir(dir)) {
-    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), dirName,
-                                        host, port);
+    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), loc, host, port);
+//    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), dirName, host, port);
   }
   page += "\
     </p>\n\

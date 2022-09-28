@@ -179,7 +179,7 @@ class AutoIndexGenerator {
 
         AutoIndexGenerator   &operator=(AutoIndexGenerator const &src);
 
-        static std::string  getPage(const char *path, std::string const &host, int port);
+        static std::string  getPage(const char *path, std::string const &host, int port, std::string loc);
     private:
         static std::string  getLink(std::string const &dirEntry, std::string const &dirName, std::string const &host, int port);
 
