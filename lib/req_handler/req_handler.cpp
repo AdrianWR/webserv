@@ -250,9 +250,18 @@ void req_handler::handle_DELETE () {
 		else {
 			// Se existir, deleta
 			LOG(INFO) << "Deleting file: " << this->_path;
-			std::remove(this->_path.c_str());
-			// Generate Http Response
-			_http_response.set(200, "OK", "");
+			if (std::remove(this->_path.c_str()) == 0) {
+				// Generate Http Response
+				_http_response.set(200, "OK", "");
+				return;
+			}
+			else
+			{ 
+				Error error(403, this->server_config);
+				// Generate HTTP Response
+				_http_response.set(error.code, error.msg, error.body);
+				return;
+			}
 		}
 	}
 	// ================================================================
