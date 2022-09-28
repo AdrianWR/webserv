@@ -7,7 +7,7 @@ Ouvir sockets
 	Multiplex ok
 	Pedacos 
 	Chunks 
-	Produz um http request object ?
+	Produz um http request object ok
 
 Handler
 	GET
@@ -20,16 +20,16 @@ Handler
 
 	POST ok
 		check size ok
-		check multipart (header)
+		fetch_cgi
 
 	DELETE ok
 
 Responder socket
-	Devolver http response serializado
+	Devolver http response serializado ok
 	Fechar conexao ?
 
 ============================================================================
-conectar request no handler rapha 
+conectar request no handler ok
 
 criar http response ok
 conectar o handler no http response ok

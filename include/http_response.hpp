@@ -2,6 +2,7 @@
 #define HTTPRESPONSE_HPP
 
 #include <map>
+#include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -9,7 +10,6 @@
 
 class HttpResponse {
 
-	typedef std::map<std::string, std::string>	HeaderMap;
 
 public:
 	HttpResponse ();
@@ -24,12 +24,15 @@ public:
 	size_t			_code;
 	std::string		_reason;
 	std::string		_status_line;
-	HeaderMap		_headers;
+	std::vector<std::string>	_header_key;
+	std::vector<std::string>	_header_val;
+
 	std::string		_body;
 
 // Methods
 	void set(size_t code, std::string reason, std::string body);
 	std::string serialize();
 	void show();
+	void insert_header(std::string key, std::string val);
 };
 #endif

@@ -5,7 +5,7 @@
 // *****************************************************
 HttpResponse::HttpResponse () {
 
-	_delimiter = "\r\f";
+	_delimiter = "\r\n";
 	_version = "HTTP/1.1";
 	_code = 0;
 	_reason = "";
@@ -18,7 +18,7 @@ HttpResponse::HttpResponse () {
 
 HttpResponse::HttpResponse (size_t code, std::string reason, std::string body) {
 
-	_delimiter = "\r\f";
+	_delimiter = "\r\n";
 	_version = "HTTP/1.1";
 	_code = code;
 	_reason = reason;
@@ -41,7 +41,7 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &s) {
 }
 
 void HttpResponse::set(size_t code, std::string reason, std::string body) {
-	_delimiter = "\r\f";
+	_delimiter = "\n";
 	_version = "HTTP/1.1";
 	_code = code;
 	_reason = reason;
@@ -50,21 +50,30 @@ void HttpResponse::set(size_t code, std::string reason, std::string body) {
 
 	_body = body;
 	// Note: _header starts empty. Need to check if is empty when serializing
+	insert_header("Content-Type","html");
+	insert_header("Content-Length",IntToString(_body.size()+1));
+
 }
 
 std::string HttpResponse::serialize () {
 	std::string out;
-	HeaderMap::iterator it;
+	size_t i;
 
 	out = _status_line + _delimiter;
-	for (it = _headers.begin(); it != _headers.end(); it++) {
-		out = out + (it->first) + ":" + (it->second) + _delimiter;
+	for (i = 0; i < _header_key.size(); i++) {
+		out = out + _header_key[i] + ":" + _header_val[i] + _delimiter;
 	};
-	out = out + _body + _delimiter;
-	out = out + _delimiter; // ?
+	out = out + _delimiter + _delimiter + _body;
+//	out = out + _delimiter; // ?
 	return out;
 }
 
 void HttpResponse::show() {
 	std::cout << "------\n" << "response: \n" << "------\n" << serialize();
 }
+
+void HttpResponse::insert_header(std::string key, std::string val) {
+	_header_key.push_back(key);
+	_header_val.push_back(val);
+}
+
