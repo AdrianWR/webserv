@@ -29,10 +29,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
   char buffer[BUFFER_SIZE];
 
   int bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
-  if (bytes_read < 0) {
-    throw HttpServerException("Error reading from socket");
-  }
-  if (bytes_read == 0) {
+  if (bytes_read <= 0) {
     close(fd);
     fd = -1;
   } else {
