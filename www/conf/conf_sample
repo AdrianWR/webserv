@@ -1,0 +1,93 @@
+sample_server_Z1 {
+
+	listen 8080 8081
+	server_name www.site1.com
+	client_max_body_size 8000
+
+	error_page 301 ./www/errors/301.html
+	error_page 400 ./www/errors/400.html
+	error_page 403 ./www/errors/403.html
+	error_page 404 ./www/errors/404.html
+	error_page 405 ./www/errors/405.html
+	error_page 500 ./www/errors/500.html
+
+	location /images {
+		#redirection www.amazon.com
+		root /www/site1
+		upload_path /www/site1/uploads
+		cgi_pass	pass
+		#index	index.htm index.html index.php
+		autoindex	true
+		allowed_methods	GET		true
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p1 um
+		cgi_param p2 dois
+	}
+	location /sounds {
+		redirection www.amazon.com
+		root /var/www
+		upload_path /uploads_sounds
+		cgi_pass	pass
+		autoindex	true
+		index nada vazio vacuo 
+		#index	index.htm index.html index.php
+		allowed_methods	GET		false
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p10 dez
+		cgi_param p20 vinte
+	}
+	location / {
+		root /www/site1
+	}
+}
+
+
+
+sample_server_Z2 {
+
+	location /images {
+		redirection www.buscape.com
+		root /var/www
+		upload_path /uploads
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p1 dez
+		cgi_pass	pass
+		autoindex	true
+		index	index.htm 
+		allowed_methods	GET		true
+		cgi_param p2 vinte
+	}
+	location /sounds {
+		redirection www.yahoo.com
+		root /var/www
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+		cgi_param p10 dez
+		cgi_param p20 vinte
+		upload_path /uploads_sounds
+		cgi_pass	pass
+		autoindex	true
+		index joao e maria 
+		allowed_methods	GET		false
+	}
+	listen 8082 
+	server_name www.site2.com
+	client_max_body_size 4000
+	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+}
+
+sample_server_Z3 {
+
+	error_page 404 ./error/404.html
+	error_page 403 ./error/403.html
+	error_page 500 ./error/500.html
+	listen 8083
+	server_name www.site3.com
+	client_max_body_size 10000
+	error_page 600 ./error/600.html
+	error_page 500 ./error/500.html
+}

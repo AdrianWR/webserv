@@ -26,7 +26,7 @@ Handler
 
 Responder socket
 	Devolver http response serializado ok
-	Fechar conexao ?
+	Fechar conexao ok
 
 ============================================================================
 conectar request no handler ok
@@ -38,7 +38,26 @@ handler do post ok
 handler do delete ok
 cgi
 
-criar sites de teste
+criar sites de teste ok
 criar testadores para principais casos
 
+=========================================================================
+Estrutura do site
+www
+	site1
+		aaa (getnok)
+		bbb (getok) [arquivo existe / nao existe / diretorio sem autoindex]
+		ccc (redirection)
+		ddd (diretorio) [com index]
+		eee (diretorioa) [com autoindex]
+		fff (cgi)
+	site2
+		ggg (uploadok) [arquivo / arquivo gde]
+		hhh (noupload) [metodo nao permitido]
+		iii (diretorio)
+		jjj (cgi)
+	site3
+		kkk (deleteok) [delete permitido]
+		lll (deletenok) [metodo nao permitido
+		mmm (sempermissao) [delete sem permissao]
 
