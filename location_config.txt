@@ -1,10 +1,11 @@
 get_allowed:		1
-post_allowed:		1
-delete_allowed:		1
+post_allowed:		0
+delete_allowed:		0
 redirection:		
-root:			/www/site1
+root:			/www/site1/bbb
 autoindex:		1
 index: 
+[0]	|index.html|
 cgi pass:		
 cgi_param:
 upload_path::		./www/upload/

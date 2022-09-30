@@ -23,7 +23,7 @@ int main(void) {
 
 	// Read config file
 	Config config;
-	config.parse_file("./www/conf/conf4");
+	config.parse_file("./www/conf/conf");
 	
 	// Test autoindex generation
 //	std::cout << "Pagina de auto_index:\n";

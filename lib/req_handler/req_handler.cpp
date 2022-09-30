@@ -136,7 +136,8 @@ void req_handler::try_index_page(std::string path) {
 	// loop
 	for (size_t i = 0; i < this->loc_config._index.size(); i++) {
 		// monta caminho com um dos index
-		std::string full_path = "." + path + this->loc_config._index[i];
+//		std::string full_path = "." + path + this->loc_config._index[i];
+		std::string full_path = path + this->loc_config._index[i];
 			std::cout << "full_path: " << full_path << std::endl;
 		// devolve
 		std::string output = file_to_string(full_path);

@@ -1,7 +1,7 @@
 =======================================================
-block_name: sample_server_Z1
+block_name: server1
 listen: 
-[0]	|8080|
+[0]	|8081|
 server_name: 
 [0]	|www.site1.com|
 client_max_body_size:		8000
@@ -25,34 +25,65 @@ cgi pass:
 cgi_param:
 upload_path::		./www/upload/
 ------------------------------
-location:		/images
+location:		/cgi
 get_allowed:		1
-post_allowed:		1
-delete_allowed:		1
+post_allowed:		0
+delete_allowed:		0
 redirection:		
-root:			/www/site1
+root:			/www/site1/fff
 autoindex:		1
 index: 
-cgi pass:		pass
+cgi pass:		
 cgi_param:
-|p1 : um|
-|p2 : dois|
-upload_path::		/www/site1/uploads
+upload_path::		./www/upload/
 ------------------------------
-location:		/sounds
-get_allowed:		0
-post_allowed:		1
-delete_allowed:		1
-redirection:		www.amazon.com
-root:			/var/www
+location:		/diretorio
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1/eee
 autoindex:		1
 index: 
-[0]	|nada|
-[1]	|vazio|
-[2]	|vacuo|
-cgi pass:		pass
+cgi pass:		
 cgi_param:
-|p10 : dez|
-|p20 : vinte|
-upload_path::		/uploads_sounds
+upload_path::		./www/upload/
+------------------------------
+location:		/getnok
+get_allowed:		0
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1/aaa
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/upload/
+------------------------------
+location:		/getok
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1/bbb
+autoindex:		1
+index: 
+[0]	|index.html|
+cgi pass:		
+cgi_param:
+upload_path::		./www/upload/
+------------------------------
+location:		/redirection
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		www.amazon.com
+root:			/www/site1/ccc
+autoindex:		1
+index: 
+[0]	|index.html|
+cgi pass:		
+cgi_param:
+upload_path::		./www/upload/
 =======================================================
