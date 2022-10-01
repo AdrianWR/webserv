@@ -66,6 +66,8 @@ std::string req_handler::extract_extension(std::string path) {
 
 void req_handler::add_content_type(std::string path) {
 	std::string ext = extract_extension(path);
+	LOG(DEBUG) << "ct path: " << path;
+	LOG(DEBUG) << "Adding content-type for: " << ext;
 
 	if (ext == "html" || ext == "htm") {
 		_http_response.insert_header("Content-Type","text/html");
@@ -197,6 +199,7 @@ void req_handler::try_index_page(std::string path) {
 //			std::cout << "|" << full_path << "|: ";
 //			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
+		add_content_type(path);
 		_http_response.set(200, "OK" , output);
 		break;
 		};
@@ -211,6 +214,7 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 //		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
 		std::string ai_page = auto_index.getPage(_path.c_str(),host, StringToInt(port), _loc);
 		// Generate HTTP Response
+		add_content_type(".html");
 		_http_response.set(200, "OK", ai_page);
 	} else {
 	// se nao devolve erro
