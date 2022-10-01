@@ -34,6 +34,8 @@ public:
   void handler();
 
 private:
+	std::string extract_extension(std::string path);
+	void add_content_type(std::string path);
 	std::string extract_location (std::string uri);
 	std::string generate_path(std::string url, std::string location, std::string root);
 	bool check_redirection();

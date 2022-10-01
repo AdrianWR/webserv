@@ -34,6 +34,56 @@ req_handler &req_handler::operator=(const req_handler &s) {
   return *this;
 }
 
+std::string req_handler::extract_extension(std::string path) {
+	if (path.find(".html") != std::string::npos) {
+		return "html";
+	}
+	if (path.find(".htm") != std::string::npos) {
+		return "htm";
+	}
+	if (path.find(".txt") != std::string::npos) {
+		return "txt";
+	}
+	if (path.find(".jpg") != std::string::npos) {
+		return "jpg";
+	}
+	if (path.find(".jpeg") != std::string::npos) {
+		return "jpeg";
+	}
+	if (path.find(".png") != std::string::npos) {
+		return "png";
+	}
+	if (path.find(".gif") != std::string::npos) {
+		return "gif";
+	}
+	if (path.find_last_of("/") == path.size() - 1){
+		return "txt";
+	}
+	else {
+		return "";
+	}
+}
+
+void req_handler::add_content_type(std::string path) {
+	std::string ext = extract_extension(path);
+
+	if (ext == "html" || ext == "htm") {
+		_http_response.insert_header("Content-Type","text/html");
+	}
+	if (ext == "txt" || ext == "") {
+		_http_response.insert_header("Content-Type","text/plain");
+	}
+	if (ext == "jpg" || ext == "jpeg") {
+		_http_response.insert_header("Content-Type","image/jpeg");
+	}
+	if (ext == "png") {
+		_http_response.insert_header("Content-Type","image/png");
+	}
+	if (ext == "gif") {
+		_http_response.insert_header("Content-Type","image/gif");
+	}
+}
+
 std::string req_handler::extract_location (std::string uri) {
 	ConfigBlock::MapOfLocations::iterator	it;
 	std::string key;
@@ -123,6 +173,7 @@ void req_handler::fetch_file(std::string path) {
 	if (output.size() > 0) {
 		LOG(INFO) << "File fetched ...";
 		// Generate HTTP Response
+		add_content_type(path);
 		_http_response.set(200, "OK", output);
 	} else {
 		LOG(INFO) << "Error 404 Not Found";
