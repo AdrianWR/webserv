@@ -1,6 +1,6 @@
 server1 {
 
-	listen 8081
+	listen 8080 8081 
 	server_name www.site1.com
 	client_max_body_size 8000
 

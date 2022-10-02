@@ -47,7 +47,7 @@ int main(void) {
   sigIntHandler.sa_flags = 0;
   sigaction(SIGINT, &sigIntHandler, NULL);
 
-  LOG(INFO) << "Starting new webserver on port 8080";
+  LOG(INFO) << "Starting new webserver";
   try {
     HttpServer s;
     s.run(config);
