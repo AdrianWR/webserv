@@ -204,6 +204,12 @@ void req_handler::try_index_page(std::string path) {
 		break;
 		};
 	};
+	if (_http_response._code != 200) {
+		LOG(INFO) << "Error 404 Not Found";
+		Error error(404, this->server_config);
+		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+	};
 }
 
 void req_handler::try_autoindex(std::string host, std::string port) {

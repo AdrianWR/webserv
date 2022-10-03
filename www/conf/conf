@@ -59,6 +59,10 @@ server1 {
 	}
 	location / {
 		root /www/site1
+		index site1_root.html
+		allowed_methods	GET		true
+		allowed_methods	POST	false
+		allowed_methods	DELETE	false
 	}
 }
 
