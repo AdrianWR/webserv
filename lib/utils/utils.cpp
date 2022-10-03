@@ -250,7 +250,7 @@ void Config::generate_config_map() {
  *
  * @note: The returned map is a copy of the internal map.
  */
-void Config::parse_file(std::string file) {
+bool Config::parse_file(std::string file) {
 	ConfigBlock stub;
 	std::fstream fileStream;
 	std::string buffer = "";
@@ -258,8 +258,9 @@ void Config::parse_file(std::string file) {
 	fileStream.open(file.c_str());
 	if (!fileStream.is_open()) {
 		LOG(ERROR) << "Failed to open file " << file;
-	return;
+	return false;
 	}
+
 
 	// file loop
 	LOG(INFO) << "Parsing Config File";
@@ -282,6 +283,7 @@ void Config::parse_file(std::string file) {
 	generate_config_map();
 	// Output config map to a file config_map.txt for easy checking
 	print_mapc(_config_map);
+	return true;
 }
 
 // *****************************************************

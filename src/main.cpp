@@ -19,11 +19,22 @@ bool is_in(int i, std::set<int> s) {
   return true;
 }
 
-int main(void) {
+int main(int argc, char **argv) {
 
+	if (argc != 2) {
+		std::cout << "USAGE: ./webserv [config_file]\n";
+		return 1;
+	}
+	
+	std::string config_file(argv[1]);
+	LOG(INFO) << "config file: " << config_file;
 	// Read config file
 	Config config;
-	config.parse_file("./www/conf/conf");
+//	config.parse_file("./www/conf/conf");
+	if (!config.parse_file(config_file)) {
+		LOG(INFO) << "Error reading config file. Exiting";
+		exit (1);
+	}
 	
 	// Test autoindex generation
 //	std::cout << "Pagina de auto_index:\n";

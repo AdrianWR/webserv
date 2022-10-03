@@ -1,9 +1,9 @@
 get_allowed:		1
-post_allowed:		1
-delete_allowed:		1
+post_allowed:		0
+delete_allowed:		0
 redirection:		
-root:			/www/site3/mmm
-autoindex:		1
+root:			/www/site1/bbb
+autoindex:		0
 index: 
 cgi pass:		
 cgi_param:

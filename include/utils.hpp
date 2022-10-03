@@ -156,7 +156,7 @@ public:
   // Atributos
 
   // Methods
-  void parse_file(std::string file);
+  bool parse_file(std::string file);
   ConfigBlock parse_config_block_file(std::fstream &fileStream,
                                       std::string &buffer);
   LocationBlock parse_location(std::fstream &fs, std::string buffer);
