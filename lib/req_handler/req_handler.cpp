@@ -239,10 +239,19 @@ void req_handler::fetch_dir(std::string path, std::string host, std::string port
 	};
 }
 
-void req_handler::load_configs() {
+bool req_handler::load_configs() {
 	// Pega configs na estrutura de configs:
 	std::string conf_key = this->_host + ":" + this->_port;
 	server_config = _parsed_config_map[conf_key];
+	// Se config invalida retorna falso
+	if (server_config._block_name == "empty") {
+		LOG(INFO) << "Invalide host:port requested";
+		Error error(404, this->server_config);
+		// Generate HTTP Response
+		add_content_type(".html");
+		_http_response.set(error.code, error.msg, "<html> Error 404 </html>");
+		return false;
+	}
 	LOG(INFO) << "server_config retrieved from memory ...";
 		// debug prints
 		std::ofstream f("server_config.txt", std::ofstream::trunc);
@@ -257,6 +266,7 @@ void req_handler::load_configs() {
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
 	// ================================================================
+	return true;
 }
 
 void req_handler::handle_GET () {
@@ -426,7 +436,9 @@ void req_handler::handler() {
 	// Load Configs
 	// ================================================================
 	// Populates class atributes with inputs and config values
-	load_configs(); // FROM NOW ON SERVER CONFIG ON MEMORY
+	if (!load_configs()) { return; };
+
+	// FROM NOW ON SERVER CONFIG ON MEMORY
 	//
 	// Monta caminho fisico:
 	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);

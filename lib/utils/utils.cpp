@@ -64,7 +64,9 @@ bool file_exist(std::string path) {
 // *****************************************************
 Config::Config() {}
 
-Config::~Config() {}
+Config::~Config() {
+//	LOG(DEBUG) << "Config destructor ...";
+}
 
 Config &Config::operator=(const Config &s) {
   if (this != &s)
@@ -283,7 +285,7 @@ void Config::parse_file(std::string file) {
 }
 
 // *****************************************************
-// Class Config
+// Class ReservedWords
 // *****************************************************
 ReservedWords::ReservedWords() {
   list.insert("listen");
@@ -311,7 +313,7 @@ bool ReservedWords::is_reserved_word(std::string query_string) {
 }
 
 // *****************************************************
-// Class Location
+// Class LocationBlock
 // *****************************************************
 LocationBlock::LocationBlock() {
   _allowed_methods["GET"] = true;
@@ -326,7 +328,9 @@ LocationBlock::LocationBlock() {
   _upload_path = "./www/upload/";
 }
 
-LocationBlock::~LocationBlock() {}
+LocationBlock::~LocationBlock() {
+//	LOG(DEBUG) << "LocationBlock destructor";
+}
 
 LocationBlock &LocationBlock::operator=(const LocationBlock &rhs) {
   if (this != &rhs) {
@@ -378,7 +382,9 @@ ConfigBlock::ConfigBlock() {
   //	_location["none"] = location();
 }
 
-ConfigBlock::~ConfigBlock() {}
+ConfigBlock::~ConfigBlock() {
+//	LOG(DEBUG) << "ConfigBlock destructor";
+}
 
 ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
   if (this != &rhs) {

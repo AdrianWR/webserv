@@ -46,7 +46,7 @@ private:
 	void try_index_page(std::string path);
 	void try_autoindex(std::string host, std::string port);
 	void fetch_dir(std::string path, std::string host, std::string port);
-	void load_configs();
+	bool load_configs();
 	void handle_GET();
 	void handle_DELETE();
 	void handle_POST();
