@@ -21,7 +21,7 @@ server1 {
 	location /getok {
 		root /www/site1/bbb
 		autoindex	true
-		index index.html
+		#index index.html
 		allowed_methods	GET		true
 		allowed_methods	POST	false
 		allowed_methods	DELETE	false

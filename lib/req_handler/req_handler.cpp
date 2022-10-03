@@ -199,7 +199,6 @@ void req_handler::try_index_page(std::string path) {
 //			std::cout << "|" << full_path << "|: ";
 //			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
-		add_content_type(path);
 		_http_response.set(200, "OK" , output);
 		break;
 		};

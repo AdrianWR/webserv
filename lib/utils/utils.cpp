@@ -10,15 +10,16 @@ std::string file_to_string(std::string file_path) {
 
 	// Se arquivo existe, serve arquivo
 	if (myfile.is_open()) {
-		while (getline(myfile, line)) {
-			buffer << line;
-		};
+//		while (getline(myfile, line)) {
+//			buffer << line;
+//		};
+		buffer << myfile.rdbuf();
 		myfile.close();
 		return buffer.str();
 	} else {
 	// Substituir por throe de erro 
 	// Erro 500 ?
-	std::cout << "Unable to open file\n";
+	LOG(INFO) << "Unable to open file";
 	return "";
 	}
 }

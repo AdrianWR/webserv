@@ -70,7 +70,6 @@ redirection:
 root:			/www/site1/bbb
 autoindex:		1
 index: 
-[0]	|index.html|
 cgi pass:		
 cgi_param:
 upload_path::		./www/upload/

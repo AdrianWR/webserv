@@ -51,7 +51,7 @@ void HttpResponse::set(size_t code, std::string reason, std::string body) {
 	_body = body;
 	// Note: _header starts empty. Need to check if is empty when serializing
 //	insert_header("Content-Type","html");
-	insert_header("Content-Length",IntToString(_body.size()+1));
+	insert_header("Content-Length",IntToString((_body.size()+1)));
 
 }
 
