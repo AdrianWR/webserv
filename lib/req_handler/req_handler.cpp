@@ -124,10 +124,12 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 bool req_handler::check_redirection() {
 	if (this->loc_config._redirection != "") {
 		LOG(INFO) << "There is redirection ...";
+		LOG(DEBUG) << "redir: " << loc_config._redirection;
 		// Gera "erro"
 		Error error(301, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
+		_http_response.insert_header("Location","http://" + this->loc_config._redirection);
 		return true;
 	} else {
 		LOG(INFO) << "No Redirection ...";
@@ -352,6 +354,7 @@ void req_handler::handle_POST () {
 	}
 	if (what_is_asked(this->_path) == "file") {
 		LOG(INFO) << "FILE requested...";
+		LOG(INFO) << "upload path: " << loc_config._upload_path;
 		// Se tem upload path altera o path para usar o do config
 		if (this->loc_config._upload_path != "") {
 			// monta path
@@ -405,12 +408,13 @@ void req_handler::handler() {
 	// vao formar chave para config
 	//
 	//
+	this->_client_max_body_size = 10;
 	LOG(DEBUG) << "handler() function ini";
 	LOG(DEBUG) << "host: " << _host;
 	LOG(DEBUG) << "port: " << _port;
 	LOG(DEBUG) << "method: " << _method;
 	LOG(DEBUG) << "uri: " << _uri;
-
+	LOG(DEBUG) << "client_max_body_size: " << _client_max_body_size;
 	
 //	this->_method = "POST";
 //	this->_uri = "www.site1.com/images/aa";

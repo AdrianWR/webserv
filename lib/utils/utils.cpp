@@ -325,7 +325,7 @@ LocationBlock::LocationBlock() {
   //	_index.push_back("none");
   //	_cgi_param["none"] = "none";
   _cgi_pass = "";
-  _upload_path = "./www/upload/";
+  _upload_path = "./www/uploads";
 }
 
 LocationBlock::~LocationBlock() {

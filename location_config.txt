@@ -2,9 +2,9 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		1
 redirection:		
-root:			/www/
+root:			/www/site3/mmm
 autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/upload/
+upload_path::		./www/uploads

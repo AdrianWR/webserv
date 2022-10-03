@@ -1,10 +1,63 @@
 =======================================================
-block_name: empty
+block_name: server3
 listen: 
-[0]	|-1|
+[0]	|8083|
 server_name: 
-[0]	|none|
-client_max_body_size:		8
+[0]	|www.site3.com|
+client_max_body_size:		8000
 error_page:
-|404 : ./errors/404.html|
+|301 : ./www/errors/301.html|
+|400 : ./www/errors/400.html|
+|403 : ./www/errors/403.html|
+|404 : ./www/errors/404.html|
+|405 : ./www/errors/405.html|
+|500 : ./www/errors/500.html|
+------------------------------
+location:		/
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/www/site3
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
+------------------------------
+location:		/deletenok
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		0
+redirection:		
+root:			/www/site3/lll
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
+------------------------------
+location:		/deleteok
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/www/site3/kkk
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
+------------------------------
+location:		/sempermissao
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/www/site3/mmm
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
 =======================================================
