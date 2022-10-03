@@ -50,6 +50,7 @@ private:
   std::vector<ServerBlock> _servers;
 
   void _handleConnection(int &it, Config &config);
+  HttpServer::SocketsVector _sockets;
 
 public:
   HttpServer();

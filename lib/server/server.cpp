@@ -9,7 +9,20 @@
 
 HttpServer::HttpServer() {}
 
-HttpServer::~HttpServer() {}
+HttpServer::~HttpServer() {
+
+	LOG(INFO) << "HttpServer Destructor ...";
+	size_t i;
+	for (i = 0; i < _sockets.size(); i++) {
+		delete _sockets[i];
+	}
+//	//  TCPServerSocket *s;
+//	Config::PortSet::const_iterator it;
+//	for (it = _ports.begin(); it != _ports.end(); it++) {
+//		//    s = new TCPServerSocket(*it);
+//		delete *it;
+//	}n
+}
 
 HttpServer::HttpServer(const HttpServer &httpServer)
     : _servers(httpServer._servers) {}
@@ -71,13 +84,14 @@ HttpServer::SocketsVector HttpServer::_initSockets(Config config) {
 
 void HttpServer::run(Config config) {
 
-  HttpServer::SocketsVector sockets = _initSockets(config);
+//  HttpServer::SocketsVector sockets = _initSockets(config);
+ _sockets = _initSockets(config);
   // Config::PortSet ports = config.getAvailablePorts();
   // HttpServer::SocketsVector sockets(ports.begin(), ports.end());
 
   pollFdVector fds;
   SocketsVector::iterator it;
-  for (it = sockets.begin(); it != sockets.end(); it++) {
+  for (it = _sockets.begin(); it != _sockets.end(); it++) {
     fds.push_back((*it)->getPollfd());
   }
   std::size_t listeners_size = fds.size();
