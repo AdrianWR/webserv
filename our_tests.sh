@@ -53,7 +53,7 @@ if [ $n == 9 ]; then
 	curl -v -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 10 ]; then
-	echo 10
+	curl -v -H "content-length: 10000" -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 11 ]; then
 	curl -v -X POST www.site2.com:8082/noupload/aaa.txt

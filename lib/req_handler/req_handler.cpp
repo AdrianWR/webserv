@@ -15,6 +15,11 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
 	_method = heard["method"];
 	_uri = _host + heard["path"];
+	if (heard.find("content-length") != heard.end()) {
+		_content_length = StringToInt(heard["content-length"]);
+	} else {
+		_content_length = 0;
+	};
 	LOG(INFO) << "uri: " << _uri;
 
 	// Fazer o post com o post
@@ -345,7 +350,7 @@ void req_handler::handle_POST () {
 	// Checa se POST Permitido neste location
 	if (!check_method_allowed("POST")) return;
 	// Checa tamanho
-	if (_client_max_body_size > server_config._client_max_body_size) {
+	if (_content_length > server_config._client_max_body_size) {
 		LOG(INFO) << "413 Entity to large !";
 		Error error(413, this->server_config);
 		// Generate HTTP Response
@@ -408,13 +413,12 @@ void req_handler::handler() {
 	// vao formar chave para config
 	//
 	//
-	this->_client_max_body_size = 10;
 	LOG(DEBUG) << "handler() function ini";
 	LOG(DEBUG) << "host: " << _host;
 	LOG(DEBUG) << "port: " << _port;
 	LOG(DEBUG) << "method: " << _method;
 	LOG(DEBUG) << "uri: " << _uri;
-	LOG(DEBUG) << "client_max_body_size: " << _client_max_body_size;
+	LOG(DEBUG) << "content_length: " << _content_length;
 	
 //	this->_method = "POST";
 //	this->_uri = "www.site1.com/images/aa";

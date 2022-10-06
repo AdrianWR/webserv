@@ -63,7 +63,7 @@ private:
 	std::string	_method;
 	std::string	_uri;
 	std::string	_request_body;			// Post
-	int			_client_max_body_size;	// Post
+	int			_content_length;		// Post
 
 	// Internals
 	std::string	_loc;
