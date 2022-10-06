@@ -80,19 +80,19 @@ void req_handler::add_content_type(std::string path) {
 	LOG(DEBUG) << "Adding content-type for: " << ext;
 
 	if (ext == "html" || ext == "htm") {
-		_http_response.insert_header("Content-Type","text/html");
+		_http_response.insert_header("content-type","text/html");
 	}
 	if (ext == "txt" || ext == "") {
-		_http_response.insert_header("Content-Type","text/plain");
+		_http_response.insert_header("content-type","text/plain");
 	}
 	if (ext == "jpg" || ext == "jpeg") {
-		_http_response.insert_header("Content-Type","image/jpeg");
+		_http_response.insert_header("content-type","image/jpeg");
 	}
 	if (ext == "png") {
-		_http_response.insert_header("Content-Type","image/png");
+		_http_response.insert_header("content-type","image/png");
 	}
 	if (ext == "gif") {
-		_http_response.insert_header("Content-Type","image/gif");
+		_http_response.insert_header("content-type","image/gif");
 	}
 }
 
