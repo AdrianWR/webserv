@@ -50,13 +50,13 @@ fi
 # POST
 # ===========================================================
 if [ $n == 9 ]; then
-	curl -v -X POST www.site2.com:8082/uploadok/aaa.txt
+	curl -v -H "body:12345" -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 10 ]; then
 	curl -v -H "content-length: 10000" -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 11 ]; then
-	curl -v -X POST www.site2.com:8082/noupload/aaa.txt
+	curl -v -H "body:12345" -X POST www.site2.com:8082/noupload/aaa.txt
 fi
 if [ $n == 12 ]; then
 	curl -v -X POST www.site2.com:8082/diretorio/

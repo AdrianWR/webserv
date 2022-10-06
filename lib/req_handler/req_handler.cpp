@@ -15,6 +15,11 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
 	_method = heard["method"];
 	_uri = _host + heard["path"];
+	if (heard.find("body") != heard.end()) {
+		_request_body = heard["body"];
+	} else {
+		_request_body = "";
+	};
 	if (heard.find("content-length") != heard.end()) {
 		_content_length = StringToInt(heard["content-length"]);
 	} else {
