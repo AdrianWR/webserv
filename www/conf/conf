@@ -11,6 +11,15 @@ server1 {
 	error_page 405 ./www/errors/405.html
 	error_page 500 ./www/errors/500.html
 
+	location /uploads {
+		root /www/
+		autoindex	true
+		allowed_methods	GET		true
+		allowed_methods	POST	true
+		allowed_methods	DELETE	true
+	}
+
+
 	location /getnok {
 		root /www/site1/aaa
 		autoindex	true
