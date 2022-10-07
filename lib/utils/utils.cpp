@@ -212,10 +212,6 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
 	// Se location vazio ou se nao tem location /, adiciona location default
 	if (stub._location.find("/") == stub._location.end()) {
 		stub.add_default_location();
-		std::cout << "Nao tem location /\n";
-	}
-	else {
-		std::cout << "Tem location / \n";
 	};
 	// return
 	return (stub);

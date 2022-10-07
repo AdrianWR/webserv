@@ -184,6 +184,7 @@ void req_handler::fetch_file(std::string path) {
 	// Tenta pegar arquivo.
 	std::string full_path = path;
 	std::string output = file_to_string(full_path);
+	LOG(DEBUG) << "output size read from file: " << output.size();
 	if (output.size() > 0) {
 		LOG(INFO) << "File fetched ...";
 		// Generate HTTP Response
@@ -203,7 +204,7 @@ void req_handler::try_index_page(std::string path) {
 		// monta caminho com um dos index
 //		std::string full_path = "." + path + this->loc_config._index[i];
 		std::string full_path = path + this->loc_config._index[i];
-			std::cout << "full_path: " << full_path << std::endl;
+		LOG(INFO) << "full path: " << full_path;
 		// devolve
 		std::string output = file_to_string(full_path);
 		if (output.size() > 0) {
