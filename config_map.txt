@@ -100,6 +100,18 @@ index:
 cgi pass:		
 cgi_param:
 upload_path::		./www/uploads
+------------------------------
+location:		/uploads
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/www/
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
 =======================================================
 www.site2.com:8082:
 =======================================================

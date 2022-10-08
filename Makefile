@@ -20,6 +20,7 @@ all: pre $(NAME)
 clean:
 	rm -fR ./obj
 	rm -fR ./lib
+	bash ./remove_hosts.sh
 
 fclean: clean
 	rm -f $(NAME)
@@ -31,9 +32,8 @@ pre:
 	mkdir lib
 
 $(NAME): $(LIB)
+	bash ./add_hosts.sh
 	$(CC) $(FLAGS) -g  main.cpp  -L. -I ./src $(LIB) -o $@
-
-
 
 $(LIB): $(OBJ)
 	ar rcs $@ $(OBJ)
