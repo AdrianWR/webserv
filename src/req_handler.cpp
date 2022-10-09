@@ -139,21 +139,31 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega location
 	// pega root
 	// troca location por root no url
+	// se uri termina em location -> acrescenta / no final do path
 	LOG(DEBUG) << "====== begin generate_path =========";
 	LOG(DEBUG) << "uri: " << uri;
 	LOG(DEBUG) << "location: " << location;
 	LOG(DEBUG) << "root: " << root;
 	LOG(DEBUG) << "loc: " << _loc;
 
+
 //	if (_loc == "/") root += "/";
 	std::string uri_exhost = uri.substr(uri.find("/"));
 		LOG(DEBUG) << "uri_exhost: " << uri_exhost;
 	size_t pos = uri_exhost.find(location);
-	size_t len = location.length();
-	std::string uri_root = uri_exhost.replace(pos, len, root);
-		LOG(DEBUG) << "pos: " << pos << " len: " << len;
+	size_t loc_len = location.length();
+	std::string uri_root = "." + uri_exhost.replace(pos, loc_len, root);
+		LOG(DEBUG) << "pos: " << pos << " loc_len: " << loc_len;
 		LOG(DEBUG) << "uri_root: " << uri_root;
-	std::string full_path = "." + uri_root + "/";
+	std::string full_path = uri_root;
+
+	size_t last_pos = uri.rfind(location);
+	size_t uri_len = uri.length();
+	if (last_pos + loc_len == uri_len) {
+		// Uri termina em location, entao precisa acrescentar /
+		full_path = full_path + "/";
+	}
+		LOG(DEBUG) << "last_pos: " << last_pos << "uri_len: " << uri.size();
 		LOG(DEBUG) << "full_path: " << full_path;
 	LOG(DEBUG) << "====== end generate_path =========";
 
