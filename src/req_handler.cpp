@@ -97,11 +97,20 @@ void req_handler::add_content_type(std::string path) {
 }
 
 std::string req_handler::extract_location (std::string uri) {
+
+// uri:		localhost/directory
+// s:		/directory
+// out:		./YoupiBanane/
+
+// pega uri da 1a barra em diante (inclusive barrra)
+// troca location /palavra por root (./dir/)
+
 	ConfigBlock::MapOfLocations::iterator	it;
 	std::string key;
 	bool match;
 	size_t p;
 
+		LOG(DEBUG) << "uri: " << uri;
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
 		LOG(DEBUG) << "s: " << s;
@@ -110,7 +119,8 @@ std::string req_handler::extract_location (std::string uri) {
 		key = it->first;
 		LOG(DEBUG) << "key: " << key;
 		if (key != "/") {
-			p = s.find(key + "/");
+			p = s.find(key);
+			LOG(DEBUG) << "p: " << p;
 			if (p == 0) {
 				match = true;
 				break;
@@ -129,19 +139,25 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega location
 	// pega root
 	// troca location por root no url
-	LOG(DEBUG) << "====== generate_path =========";
+	LOG(DEBUG) << "====== begin generate_path =========";
 	LOG(DEBUG) << "uri: " << uri;
 	LOG(DEBUG) << "location: " << location;
 	LOG(DEBUG) << "root: " << root;
 	LOG(DEBUG) << "loc: " << _loc;
 
+//	if (_loc == "/") root += "/";
+	std::string uri_exhost = uri.substr(uri.find("/"));
+		LOG(DEBUG) << "uri_exhost: " << uri_exhost;
+	size_t pos = uri_exhost.find(location);
+	size_t len = location.length();
+	std::string uri_root = uri_exhost.replace(pos, len, root);
+		LOG(DEBUG) << "pos: " << pos << " len: " << len;
+		LOG(DEBUG) << "uri_root: " << uri_root;
+	std::string full_path = "." + uri_root + "/";
+		LOG(DEBUG) << "full_path: " << full_path;
+	LOG(DEBUG) << "====== end generate_path =========";
 
-	if (_loc == "/") root += "/";
-	std::string str = uri.replace(uri.find(location), location.length(), root);
-	LOG(DEBUG) << "root: " << root;
-	LOG(DEBUG) << "str: " << str;
-	LOG(DEBUG) << "-----------";
-	return ("." + str.substr(str.find("/")));
+	return (full_path);
 }
 
 bool req_handler::check_redirection() {
@@ -221,7 +237,7 @@ void req_handler::try_index_page(std::string path) {
 		// devolve
 		std::string output = file_to_string(full_path);
 		if (output.size() > 0) {
-			LOG(INFO) << "Autoindex:";
+			LOG(INFO) << "Index Page:";
 //			std::cout << "|" << full_path << "|: ";
 //			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
