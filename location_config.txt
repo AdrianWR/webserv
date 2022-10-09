@@ -2,7 +2,7 @@ get_allowed:		1
 post_allowed:		0
 delete_allowed:		0
 redirection:		
-root:			./YoupiBanane
+root:			/YoupiBanane
 autoindex:		1
 index: 
 cgi pass:		

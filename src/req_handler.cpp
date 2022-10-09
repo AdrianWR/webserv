@@ -104,9 +104,11 @@ std::string req_handler::extract_location (std::string uri) {
 
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
+		LOG(DEBUG) << "s: " << s;
 	match = false;
 	for (it = server_config._location.begin(); it != server_config._location.end(); it++) {
 		key = it->first;
+		LOG(DEBUG) << "key: " << key;
 		if (key != "/") {
 			p = s.find(key + "/");
 			if (p == 0) {
@@ -115,6 +117,7 @@ std::string req_handler::extract_location (std::string uri) {
 			}
 		};
 	}
+	LOG(DEBUG) << "match? : " << match;
 	if (!match) {
 		key = "/";
 	}
@@ -126,8 +129,18 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega location
 	// pega root
 	// troca location por root no url
+	LOG(DEBUG) << "====== generate_path =========";
+	LOG(DEBUG) << "uri: " << uri;
+	LOG(DEBUG) << "location: " << location;
+	LOG(DEBUG) << "root: " << root;
+	LOG(DEBUG) << "loc: " << _loc;
+
+
 	if (_loc == "/") root += "/";
 	std::string str = uri.replace(uri.find(location), location.length(), root);
+	LOG(DEBUG) << "root: " << root;
+	LOG(DEBUG) << "str: " << str;
+	LOG(DEBUG) << "-----------";
 	return ("." + str.substr(str.find("/")));
 }
 

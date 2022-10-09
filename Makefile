@@ -1,8 +1,10 @@
 NAME = webserv
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS += -g
 
-CC = c++
+#CC = c++
+CC = clang++
 
 OBJ_PATH = ./obj
 SRC_PATH = ./src
@@ -25,11 +27,11 @@ clean:
 fclean: clean
 	rm -f $(NAME)
 
-re: fclean all test
+re: fclean all
 
 pre:
-	mkdir obj
-	mkdir lib
+	mkdir -p obj
+	mkdir -p lib
 
 $(NAME): $(LIB)
 	bash ./add_hosts.sh
@@ -41,3 +43,11 @@ $(LIB): $(OBJ)
 
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/%.cpp
 	$(CC) -g $(FLAGS) -c $< -o $@
+
+.PHONY: intra run
+
+intra:
+	./webserv ./www/conf/conf_tester
+run:
+	./webserv ./www/conf/conf
+

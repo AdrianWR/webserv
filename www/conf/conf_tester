@@ -6,7 +6,7 @@ example_server {
 	client_max_body_size 100
 
 	location / {
-		root ./YoupiBanane
+		root /YoupiBanane
 		allowed_methods	GET		true
 		allowed_methods	POST	false
 		allowed_methods	DELETE	false
@@ -14,21 +14,21 @@ example_server {
 	}
 
 	location /post_test {
-		root ./YoupiBanane
+		root /YoupiBanane
 		allowed_methods	GET		true
 		allowed_methods	POST	true
 		allowed_methods	DELETE	false
 	}
   
     location /post_body {
-		root ./YoupiBanane
+		root /YoupiBanane
 		allowed_methods	GET		true
 		allowed_methods	POST	true
 		allowed_methods	DELETE	false
 	}
 
     location /directory {
-		root ./YoupiBanane
+		root /YoupiBanane
 		allowed_methods	GET		true
 		allowed_methods	POST	true
 		allowed_methods	DELETE	false

@@ -13,7 +13,7 @@ get_allowed:		1
 post_allowed:		0
 delete_allowed:		0
 redirection:		
-root:			./YoupiBanane
+root:			/YoupiBanane
 autoindex:		1
 index: 
 cgi pass:		
@@ -25,7 +25,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		0
 redirection:		
-root:			./YoupiBanane
+root:			/YoupiBanane
 autoindex:		1
 index: 
 [0]	|youpi.bad_extension|
@@ -38,7 +38,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		0
 redirection:		
-root:			./YoupiBanane
+root:			/YoupiBanane
 autoindex:		1
 index: 
 cgi pass:		
@@ -50,7 +50,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		0
 redirection:		
-root:			./YoupiBanane
+root:			/YoupiBanane
 autoindex:		1
 index: 
 cgi pass:		
