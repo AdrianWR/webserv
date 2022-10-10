@@ -60,6 +60,29 @@ bool file_exist(std::string path) {
 	return (stat (path.c_str(), &buffer) == 0);
 }
 
+std::string path_is(std::string path) {
+	struct stat s;
+
+	if(stat(path.c_str(), &s) == 0) {
+		if(s.st_mode & S_IFDIR) {
+			//it's a directory
+			return ("dir");
+		}
+		else if(s.st_mode & S_IFREG) {
+			//it's a file
+			return("file");
+		}
+	}
+	return("error");
+}
+
+bool end_in_slash(std::string str) {
+//	LOG(DEBUG) << "slash: " << str.back();
+	char a = str[str.length()-1];
+	LOG(DEBUG) << "a: " << a;
+	if (a == '/') return true;
+	return false;
+}
 // **********************************************************
 
 // *****************************************************

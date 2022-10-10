@@ -23,6 +23,8 @@ bool string_to_file(std::string file_path, std::string str);
 std::string IntToString(int a);
 size_t StringToInt(std::string s);
 bool file_exist(std::string path);
+std::string path_is(std::string s);
+bool end_in_slash(std::string str);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
   typename std::vector<T>::iterator it;

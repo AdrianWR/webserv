@@ -157,13 +157,11 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 		LOG(DEBUG) << "uri_root: " << uri_root;
 	std::string full_path = uri_root;
 
-	size_t last_pos = uri.rfind(location);
-	size_t uri_len = uri.length();
-	if (last_pos + loc_len == uri_len) {
-		// Uri termina em location, entao precisa acrescentar /
+	// Se uri_root eh dir e nao termina em / -> add /
+	LOG(DEBUG) << "path_is: " << path_is(uri_root);
+	if (path_is(uri_root) == "dir" && !end_in_slash(uri_root)) {
 		full_path = full_path + "/";
 	}
-		LOG(DEBUG) << "last_pos: " << last_pos << "uri_len: " << uri.size();
 		LOG(DEBUG) << "full_path: " << full_path;
 	LOG(DEBUG) << "====== end generate_path =========";
 

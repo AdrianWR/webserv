@@ -1,11 +1,10 @@
 get_allowed:		1
-post_allowed:		1
+post_allowed:		0
 delete_allowed:		0
 redirection:		
 root:			/YoupiBanane
 autoindex:		1
 index: 
-[0]	|youpi.bad_extension|
 cgi pass:		
 cgi_param:
 upload_path::		./www/uploads
