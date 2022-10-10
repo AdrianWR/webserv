@@ -14,7 +14,7 @@ echo "11 POST: Metodo nao permitido"
 echo "12 POST: Post dir"
 #CGI
 echo "14 DELETE: Metodo Permitido"
-echo "15 DELETE: Arquivo existe"
+echo "15 DELETE: Metodo nao Permitido"
 echo "16 DELETE: Arquivo nao existe"
 echo "17 DELETE: Arquivo existe mas nao tem permissao"
 
@@ -40,7 +40,7 @@ if [ $n == 5 ]; then
 	curl -v www.site1.com:8081/diretorio/index.html
 fi
 if [ $n == 6 ]; then
-	curl -v www.site1.com:8081/diretorioa/
+	curl -v www.site1.com:8081/outrodir/
 fi
 if [ $n == 7 ]; then
 	curl -v www.site1.com:8081/getok/

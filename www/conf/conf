@@ -12,14 +12,12 @@ server1 {
 	error_page 500 ./www/errors/500.html
 
 	location /uploads {
-		root /www/
+		root /www
 		autoindex	true
 		allowed_methods	GET		true
 		allowed_methods	POST	true
 		allowed_methods	DELETE	true
 	}
-
-
 	location /getnok {
 		root /www/site1/aaa
 		autoindex	true
@@ -52,7 +50,7 @@ server1 {
 		allowed_methods	POST	false
 		allowed_methods	DELETE	false
 	}
-	location /diretorioa {
+	location /outrodir {
 		root /www/site1/eee
 		autoindex	true
 		allowed_methods	GET		true

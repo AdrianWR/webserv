@@ -147,7 +147,7 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	LOG(DEBUG) << "loc: " << _loc;
 
 
-//	if (_loc == "/") root += "/";
+	if (_loc == "/") root += "/";
 	std::string uri_exhost = uri.substr(uri.find("/"));
 		LOG(DEBUG) << "uri_exhost: " << uri_exhost;
 	size_t pos = uri_exhost.find(location);
