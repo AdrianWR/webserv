@@ -21,16 +21,16 @@ bool is_in(int i, std::set<int> s) {
 
 int main(int argc, char **argv) {
 
+	// Check CLI arguments
 	if (argc != 2) {
 		std::cout << "USAGE: ./webserv [config_file]\n";
 		return 1;
 	}
 	
+	// Read config file
 	std::string config_file(argv[1]);
 	LOG(INFO) << "config file: " << config_file;
-	// Read config file
 	Config config;
-//	config.parse_file("./www/conf/conf");
 	if (!config.parse_file(config_file)) {
 		LOG(INFO) << "Error reading config file. Exiting";
 		exit (1);

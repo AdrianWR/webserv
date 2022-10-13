@@ -2,6 +2,7 @@ NAME = webserv
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
 FLAGS += -g
+FLAGS += -fsanitize=address
 
 #CC = c++
 CC = clang++
