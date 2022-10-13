@@ -1,8 +1,11 @@
 NAME = webserv
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS += -g
+FLAGS += -fsanitize=address
 
-CC = c++
+#CC = c++
+CC = clang++
 
 OBJ_PATH = ./obj
 SRC_PATH = ./src
@@ -30,16 +33,16 @@ fclean: clean
 re: fclean all
 
 pre:
-	mkdir obj
-	mkdir lib
+
+	mkdir -p obj
+	mkdir -p lib
 	cp /etc/hosts ./hosts_backup
 	sudo rm /etc/hosts
 	sudo cp ./config_hosts /etc/hosts
 
+
 $(NAME): $(LIB)
 	$(CC) $(FLAGS) -g  main.cpp  -L. -I ./src $(LIB) -o $@
-
-
 
 $(LIB): $(OBJ)
 	ar rcs $@ $(OBJ)
@@ -47,3 +50,11 @@ $(LIB): $(OBJ)
 
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/%.cpp
 	$(CC) -g $(FLAGS) -c $< -o $@
+
+.PHONY: intra run pre
+
+intra:
+	./webserv ./www/conf/conf_tester
+run:
+	./webserv ./www/conf/conf
+

@@ -52,18 +52,6 @@ cgi pass:
 cgi_param:
 upload_path::		./www/uploads
 ------------------------------
-location:		/diretorioa
-get_allowed:		1
-post_allowed:		0
-delete_allowed:		0
-redirection:		
-root:			/www/site1/eee
-autoindex:		1
-index: 
-cgi pass:		
-cgi_param:
-upload_path::		./www/uploads
-------------------------------
 location:		/getnok
 get_allowed:		0
 post_allowed:		0
@@ -88,6 +76,18 @@ cgi pass:
 cgi_param:
 upload_path::		./www/uploads
 ------------------------------
+location:		/outrodir
+get_allowed:		1
+post_allowed:		0
+delete_allowed:		0
+redirection:		
+root:			/www/site1/eee
+autoindex:		1
+index: 
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
+------------------------------
 location:		/redirection
 get_allowed:		1
 post_allowed:		0
@@ -97,6 +97,18 @@ root:			/www/site1/ccc
 autoindex:		1
 index: 
 [0]	|index.html|
+cgi pass:		
+cgi_param:
+upload_path::		./www/uploads
+------------------------------
+location:		/uploads
+get_allowed:		1
+post_allowed:		1
+delete_allowed:		1
+redirection:		
+root:			/www
+autoindex:		1
+index: 
 cgi pass:		
 cgi_param:
 upload_path::		./www/uploads

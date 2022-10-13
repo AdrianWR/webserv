@@ -1,0 +1,37 @@
+
+example_server {
+
+	listen 8081
+	server_name localhost
+	client_max_body_size 100
+
+	location / {
+		root /YoupiBanane
+		allowed_methods	GET		true
+		allowed_methods	POST	false
+		allowed_methods	DELETE	false
+		autoindex true
+	}
+
+	location /post_test {
+		root /YoupiBanane
+		allowed_methods	GET		true
+		allowed_methods	POST	true
+		allowed_methods	DELETE	false
+	}
+  
+    location /post_body {
+		root /YoupiBanane
+		allowed_methods	GET		true
+		allowed_methods	POST	true
+		allowed_methods	DELETE	false
+	}
+
+    location /directory {
+		root /YoupiBanane
+		allowed_methods	GET		true
+		allowed_methods	POST	true
+		allowed_methods	DELETE	false
+		index youpi.bad_extension
+	}
+}

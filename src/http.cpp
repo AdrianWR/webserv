@@ -50,9 +50,10 @@ BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str) {
   std::stringstream ss(str);
   HeaderMap headers;
 
+	LOG(DEBUG) << "ss: |" << ss << "|";
   ss >> headers["method"] >> headers["path"] >> headers["version"];
   if (ss.fail())
-    throw HttpException("Invalid status line");
+    throw HttpException("Invalid status line !");
   if (headers["method"] == "")
     throw HttpException("Invalid status line: method is empty");
   return headers;
@@ -100,17 +101,20 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
   std::string header = ss.substr(0, pos);
   headers = _parseStatusLine(header); // Might be overridden by subclass
   ss.erase(0, pos + delimiter_size);
+	  LOG(DEBUG) << "header: |" << header << "|";
 
   // Parse remaining header lines
   std::string header_line;
+	LOG(DEBUG) << "ss: " << ss << "|";
   while (ss.size() > 0) {
     pos = ss.find(_delimiter);
-    if (pos == std::string::npos)
-      throw HttpException("Failed to parse header: no delimiter found.");
+//    if (pos == std::string::npos)
+//      throw HttpException("Failed to parse header: no delimiter found.");
     header_line = ss.substr(0, pos);
     if (header_line.size() == 0)
       break;
-    header_line = ss.substr(0, pos);
+//    header_line = ss.substr(0, pos);
+	  LOG(DEBUG) << "header_line: |" << header_line << "|";
     headers.insert(_parseHeaderField(header_line));
     ss.erase(0, pos + delimiter_size);
   }
@@ -136,7 +140,7 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
   }
 
   _headers = headers;
-  LOG(DEBUG) << "Parsed headers: " << _headers;
+  LOG(DEBUG) << "Parsed headers:\n" << _headers;
   return headers;
 }
 

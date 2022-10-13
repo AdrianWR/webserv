@@ -31,6 +31,8 @@ bool string_to_file(std::string file_path, std::string str);
 std::string IntToString(int a);
 size_t StringToInt(std::string s);
 bool file_exist(std::string path);
+std::string path_is(std::string s);
+bool end_in_slash(std::string str);
 
 void	receive_line(int fd, std::string &line, std::string delimiter);
 std::string int_to_string(int integer);
