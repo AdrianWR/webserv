@@ -22,13 +22,19 @@ clean:
 	rm -fR ./lib
 
 fclean: clean
+	sudo rm /etc/hosts
+	sudo cp ./hosts_backup /etc/hosts
+
 	rm -f $(NAME)
 
-re: fclean all test
+re: fclean all
 
 pre:
 	mkdir obj
 	mkdir lib
+	cp /etc/hosts ./hosts_backup
+	sudo rm /etc/hosts
+	sudo cp ./config_hosts /etc/hosts
 
 $(NAME): $(LIB)
 	$(CC) $(FLAGS) -g  main.cpp  -L. -I ./src $(LIB) -o $@

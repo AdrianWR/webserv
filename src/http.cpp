@@ -3,6 +3,10 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include "utils.hpp"
+
+#define SP " "
+#define CRLF "\r\n"
 
 const std::string BaseHttp::_delimiter = "\r\n";
 const BaseHttp::MethodMap BaseHttp::_methodName =
@@ -54,6 +58,29 @@ BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str) {
   return headers;
 }
 
+
+size_t BaseHttp::_get_chunk_size(int &fd)
+{
+	std::string line;
+	std::size_t pos;
+
+	receive_line(fd, line, CRLF);
+	if (line == "")
+		return (0);
+	pos = line.find(SP);
+	return (_convert_chunk_size(line.substr(0, pos)));
+}
+
+size_t BaseHttp::_convert_chunk_size(std::string chunk_size)
+{
+	std::size_t size;
+	std::stringstream s_stream(chunk_size);
+
+	s_stream >> std::hex >> size;
+	return (size);
+}
+
+
 /**
  * @brief Parse the header from the client. The header parsed is stored in the
  * Http object to be used in other methods.
@@ -61,7 +88,7 @@ BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str) {
  * @return The header map. The keys are the header names. The values are the
  * values, as defined in RFC 2616.
  */
-BaseHttp::HeaderMap BaseHttp::parse(const char *buffer) {
+BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
   HeaderMap headers;
   std::string ss(buffer);
   size_t delimiter_size = _delimiter.size();
@@ -86,6 +113,26 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer) {
     header_line = ss.substr(0, pos);
     headers.insert(_parseHeaderField(header_line));
     ss.erase(0, pos + delimiter_size);
+  }
+
+  if (headers["transfer-encoding"] == "chunked")
+  {
+    int length = 0;
+	  std::string temp_line;
+	  std::size_t chunk_size;
+    std::string body;
+
+	  chunk_size = this->_get_chunk_size(fd);
+	  while (chunk_size > 0)
+	  {
+      receive_line(fd, temp_line, CRLF);
+      body += temp_line;
+      length += chunk_size;
+      receive_line(fd, temp_line, CRLF);
+      chunk_size = this->_get_chunk_size(fd);
+    }
+  headers.insert(HeaderField("body:", body));
+  headers.insert(HeaderField("content-length:", int_to_string(length)));
   }
 
   _headers = headers;
