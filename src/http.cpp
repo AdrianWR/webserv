@@ -90,59 +90,59 @@ size_t BaseHttp::_convert_chunk_size(std::string chunk_size)
  * values, as defined in RFC 2616.
  */
 BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
-  HeaderMap headers;
-  std::string ss(buffer);
-  size_t delimiter_size = _delimiter.size();
+	  HeaderMap headers;
+	  std::string ss(buffer);
+	  size_t delimiter_size = _delimiter.size();
 
-  // Parse first header line
-  std::string::size_type pos = ss.find(_delimiter);
-  if (pos == std::string::npos)
-    throw HttpException("Failed to parse header");
-  std::string header = ss.substr(0, pos);
-  headers = _parseStatusLine(header); // Might be overridden by subclass
-  ss.erase(0, pos + delimiter_size);
-	  LOG(DEBUG) << "header: |" << header << "|";
+	  // Parse first header line
+	  std::string::size_type pos = ss.find(_delimiter);
+	  if (pos == std::string::npos)
+		throw HttpException("Failed to parse header");
+	  std::string header = ss.substr(0, pos);
+	  headers = _parseStatusLine(header); // Might be overridden by subclass
+	  ss.erase(0, pos + delimiter_size);
+		  LOG(DEBUG) << "header: |" << header << "|";
 
-  // Parse remaining header lines
-  std::string header_line;
-	LOG(DEBUG) << "ss: " << ss << "|";
-  while (ss.size() > 0) {
-    pos = ss.find(_delimiter);
-//    if (pos == std::string::npos)
-//      throw HttpException("Failed to parse header: no delimiter found.");
-    header_line = ss.substr(0, pos);
-    if (header_line.size() == 0)
-      break;
-//    header_line = ss.substr(0, pos);
-	  LOG(DEBUG) << "header_line: |" << header_line << "|";
-    headers.insert(_parseHeaderField(header_line));
-    ss.erase(0, pos + delimiter_size);
-  }
+	  // Parse remaining header lines
+	  std::string header_line;
+		LOG(DEBUG) << "ss: " << ss << "|";
+	  while (ss.size() > 0) {
+		pos = ss.find(_delimiter);
+	//    if (pos == std::string::npos)
+	//      throw HttpException("Failed to parse header: no delimiter found.");
+		header_line = ss.substr(0, pos);
+		if (header_line.size() == 0)
+		  break;
+	//    header_line = ss.substr(0, pos);
+		  LOG(DEBUG) << "header_line: |" << header_line << "|";
+		headers.insert(_parseHeaderField(header_line));
+		ss.erase(0, pos + delimiter_size);
+	  }
 
-  if (headers["transfer-encoding"] == "chunked")
-  {
-    int length = 0;
-	  std::string temp_line;
-	  std::size_t chunk_size;
-    std::string body;
-
-	  chunk_size = this->_get_chunk_size(fd);
-	  while (chunk_size > 0)
-	  {
-      receive_line(fd, temp_line, CRLF);
-      body += temp_line;
-      length += chunk_size;
-      receive_line(fd, temp_line, CRLF);
-      chunk_size = this->_get_chunk_size(fd);
-    }
-  headers.insert(HeaderField("body:", body));
-  headers.insert(HeaderField("content-length:", int_to_string(length)));
-  }
-
-  _headers = headers;
-  LOG(DEBUG) << "Parsed headers:\n" << _headers;
-  return headers;
+	  // Checar se o key existe
+	if (headers.find("transfer-encoding") != headers.end()) {
+		if (headers["transfer-encoding"] == "chunked") {
+			int length = 0;
+			std::string temp_line;
+			std::size_t chunk_size;
+			std::string body;
+			chunk_size = this->_get_chunk_size(fd);
+			while (chunk_size > 0) {
+				receive_line(fd, temp_line, CRLF);
+				body += temp_line;
+				length += chunk_size;
+				receive_line(fd, temp_line, CRLF);
+				chunk_size = this->_get_chunk_size(fd);
+			}
+		headers.insert(HeaderField("body", body));
+		headers.insert(HeaderField("content-length", int_to_string(length)));
+		}
+	}
+	_headers = headers;
+	LOG(DEBUG) << "Parsed headers:\n" << _headers;
+	return headers;
 }
+
 
 HttpMethod BaseHttp::getMethod() { return _method; }
 

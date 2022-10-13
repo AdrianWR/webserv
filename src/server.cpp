@@ -42,6 +42,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
   char buffer[BUFFER_SIZE];
 
   int bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
+	LOG(DEBUG) << "BUFFER_SIZE: " << BUFFER_SIZE;
   if (bytes_read <= 0) {
     close(fd);
     fd = -1;

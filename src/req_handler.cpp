@@ -428,6 +428,7 @@ void req_handler::handle_POST () {
 	if (what_is_asked(this->_path) == "dir") {
 		LOG(INFO) << "DIR requested...";
 		// Generate HTTP Response
+		// Checar se diretorio existe , caso contratrio 404
 		_http_response.set(200,"OK", "");
 		return;
 	};
