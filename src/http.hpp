@@ -109,6 +109,9 @@ protected:
   HeaderField _parseHeaderField(const std::string &str);
 
   static std::map<HttpMethod, std::string> _initializeMethodNames();
+  size_t _get_chunk_size(int &fd);
+  size_t _convert_chunk_size(std::string chunk_size);
+  // std::string _body;
 
 public:
   BaseHttp();
@@ -122,7 +125,7 @@ public:
 
   HttpMethod getMethod();
   HeaderMap getHeaders();
-  HeaderMap parse(const char *buffer);
+  HeaderMap parse(const char *buffer, int &fd);
 };
 
 std::ostream &operator<<(std::ostream &os,
@@ -138,6 +141,7 @@ class HttpRequest : public BaseHttp {
 
 protected:
   HeaderMap _parseStatusLine(const std::string &statusLine);
+
 
 public:
   HttpRequest();

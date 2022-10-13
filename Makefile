@@ -23,19 +23,25 @@ all: pre $(NAME)
 clean:
 	rm -fR ./obj
 	rm -fR ./lib
-	bash ./remove_hosts.sh
 
 fclean: clean
+	sudo rm /etc/hosts
+	sudo cp ./hosts_backup /etc/hosts
+
 	rm -f $(NAME)
 
 re: fclean all
 
 pre:
+
 	mkdir -p obj
 	mkdir -p lib
+	cp /etc/hosts ./hosts_backup
+	sudo rm /etc/hosts
+	sudo cp ./config_hosts /etc/hosts
+
 
 $(NAME): $(LIB)
-	bash ./add_hosts.sh
 	$(CC) $(FLAGS) -g  main.cpp  -L. -I ./src $(LIB) -o $@
 
 $(LIB): $(OBJ)
@@ -45,7 +51,7 @@ $(LIB): $(OBJ)
 $(OBJ_PATH)/%.o:	$(SRC_PATH)/%.cpp
 	$(CC) -g $(FLAGS) -c $< -o $@
 
-.PHONY: intra run
+.PHONY: intra run pre
 
 intra:
 	./webserv ./www/conf/conf_tester

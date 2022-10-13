@@ -47,7 +47,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
     fd = -1;
   } else {
     HttpRequest request;
-    request.parse(buffer);
+    request.parse(buffer, fd);
     req_handler rh(config, request);
 
     // (void)config;

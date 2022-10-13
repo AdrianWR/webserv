@@ -11,7 +11,15 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+
 #include "log.hpp"
+
+#include <ctime>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <cerrno>
 
 // *****************************************************
 // Auxiliary Functions
@@ -25,6 +33,9 @@ size_t StringToInt(std::string s);
 bool file_exist(std::string path);
 std::string path_is(std::string s);
 bool end_in_slash(std::string str);
+
+void	receive_line(int fd, std::string &line, std::string delimiter);
+std::string int_to_string(int integer);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
   typename std::vector<T>::iterator it;
