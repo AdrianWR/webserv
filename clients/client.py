@@ -25,8 +25,8 @@ def set_headers(connection: http.client.HTTPConnection):
 
 
 def send_chunked_request():
-	body_chunk = "Chunked, please!\n"
-	body = body_chunk * 42
+	body_chunk = "Chunked, o boneco assassino !!\n"
+	body = body_chunk * 100
 	host = "www.site2.com:8082"
 
 	connection = http.client.HTTPConnection(host)
