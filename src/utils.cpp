@@ -21,7 +21,7 @@ void	receive_line(int fd, std::string &line, std::string delimiter)
 		num_of_bytes = recv(fd, buffer, 1, 0);
 		if (num_of_bytes == ERROR)
 			throw (std::exception());
-		if (num_of_bytes == 0)
+		if (num_of_bytes <= 0)
 			break ;
 		temp_line += buffer;
         if (has_delimiter(temp_line, delimiter))

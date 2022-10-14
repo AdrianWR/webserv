@@ -39,14 +39,16 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
 }
 
 void HttpServer::_handleConnection(int &fd, Config &config) {
-  char buffer[BUFFER_SIZE];
+  char buffer[BUFFER_SIZE] = {0};
 
   int bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
+	LOG(DEBUG) << "bytes_read: " << bytes_read;
 	LOG(DEBUG) << "BUFFER_SIZE: " << BUFFER_SIZE;
   if (bytes_read <= 0) {
     close(fd);
     fd = -1;
   } else {
+//	  buffer[bytes_read + 1] = 0;
     HttpRequest request;
     request.parse(buffer, fd);
     req_handler rh(config, request);
@@ -67,6 +69,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
       throw HttpServerException("Error writing to socket");
     }
   }
+  close(fd);
 }
 
 HttpServer::SocketsVector HttpServer::_initSockets(Config config) {
