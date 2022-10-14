@@ -38,38 +38,45 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
   _servers.push_back(serverBlock);
 }
 
+
 void HttpServer::_handleConnection(int &fd, Config &config) {
-  char buffer[BUFFER_SIZE] = {0};
+//  char buffer[BUFFER_SIZE + 1] = {0};
+	std::string buffer;
+	char c = {0};
+	int bytes_read = 1;
+	int total_bytes_read = 0;
 
-  int bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
-	LOG(DEBUG) << "bytes_read: " << bytes_read;
-	LOG(DEBUG) << "BUFFER_SIZE: " << BUFFER_SIZE;
-  if (bytes_read <= 0) {
-    close(fd);
-    fd = -1;
-  } else {
-//	  buffer[bytes_read + 1] = 0;
-    HttpRequest request;
-    request.parse(buffer, fd);
-    req_handler rh(config, request);
+//  int total_bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
+	while (bytes_read > 0) {
+		bytes_read = recv(fd, &c, 1, 0);
+		buffer += c;
+		total_bytes_read++;
+		if (ends_in_two_delimiters(buffer)) {
+			break;
+		}
+	}
+	LOG(DEBUG) << "total_bytes_read: " << total_bytes_read;
+	if (bytes_read <= 0) {
+		LOG(DEBUG) << "CLOSING FD: " << fd;
+		close(fd);
+		fd = -1;
+	} else {
+		HttpRequest request;
+		request.parse(buffer.c_str(), fd);
 
-    // (void)config;
-    // HttpResponse response = HttpHandler::generateResponse(request, config);
-    // (void)response;
-
-    // headers = request.getHeaders();
-	rh.handler();
-	std::string buff = rh._http_response.serialize();
+		req_handler rh(config, request);
+		rh.handler();
+		std::string buff = rh._http_response.serialize();
 //    std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
 //                       "text/plain\nContent-Length: 13\n\nHello world!\n";
-	LOG(INFO) << "buffer size: " << buff.size();
-	LOG(INFO) << "buffer:\n|" << buff << "|";;
+		LOG(INFO) << "buffer size: " << buff.size();
+		LOG(INFO) << "buffer:\n|" << buff << "|";;
 
-    if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
-      throw HttpServerException("Error writing to socket");
-    }
-  }
-  close(fd);
+		if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
+			throw HttpServerException("Error writing to socket");
+		}
+	}
+	close(fd);
 }
 
 HttpServer::SocketsVector HttpServer::_initSockets(Config config) {
@@ -114,14 +121,17 @@ void HttpServer::run(Config config) {
         int new_fd = TCPServerSocket::accept_connection(fds[i].fd);
         struct pollfd new_pollfd = {new_fd, POLLIN, 0};
         fds.push_back(new_pollfd);
+		LOG(DEBUG) << "New fd accepted: " << new_fd;
       }
     }
 
     // Check for new clients to handle
     for (std::size_t i = listeners_size; i < fds.size(); i++) {
       if (fds[i].fd > 0 && fds[i].revents & POLLIN) {
+		  LOG(DEBUG) << "WILL HANDLE FD: " << fds[i].fd;
         _handleConnection(fds[i].fd, config);
-      } else if (fds[i].fd == -1) {
+			LOG(DEBUG) << "Finished handling";
+      } else if (fds[i].fd <= 0) {
         fds.erase(fds.begin() + i);
       }
     }

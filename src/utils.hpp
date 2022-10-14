@@ -11,7 +11,6 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-
 #include "log.hpp"
 
 #include <ctime>
@@ -25,6 +24,9 @@
 // Auxiliary Functions
 // *****************************************************
 
+void	receive_line(int fd, std::string &line, std::string delimiter);
+
+bool ends_in_two_delimiters(std::string buffer);
 std::string file_to_string(std::string file_path);
 bool string_to_file(std::string file_path, std::string str);
 
@@ -34,8 +36,6 @@ bool file_exist(std::string path);
 std::string path_is(std::string s);
 bool end_in_slash(std::string str);
 
-void	receive_line(int fd, std::string &line, std::string delimiter);
-std::string int_to_string(int integer);
 
 template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
   typename std::vector<T>::iterator it;

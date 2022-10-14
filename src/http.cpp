@@ -135,7 +135,7 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 				chunk_size = this->_get_chunk_size(fd);
 			}
 		headers.insert(HeaderField("body", body));
-		headers.insert(HeaderField("content-length", int_to_string(length)));
+		headers.insert(HeaderField("content-length", IntToString(length)));
 		}
 	}
 	_headers = headers;

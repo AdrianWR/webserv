@@ -4,7 +4,6 @@
 // Utility functions
 // **********************************************************
 
-
 static bool has_delimiter(std::string line, std::string delimiter)
 {
 	return (line.rfind(delimiter) != std::string::npos);
@@ -32,13 +31,14 @@ void	receive_line(int fd, std::string &line, std::string delimiter)
 		line.resize(line.rfind(delimiter));
 }
 
+bool ends_in_two_delimiters(std::string buffer) {
+	size_t pos = 0;
 
-std::string int_to_string(int integer)
-{
-	std::stringstream str_stream;
-
-	str_stream << integer;
-	return (str_stream.str());
+	pos = buffer.rfind("\r\n\r\n");
+	if (pos + 4 == buffer.size() && buffer.size() > 4) {
+		return true;
+	}
+	return false;
 }
 
 std::string file_to_string(std::string file_path) {
