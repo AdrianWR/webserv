@@ -72,7 +72,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 		LOG(INFO) << "buffer size: " << buff.size();
 		LOG(INFO) << "buffer:\n|" << buff << "|";;
 
-		if (send(fd, buff.c_str(), buff.size(), 0) < 0) {
+		if (send(fd, buff.c_str(), buff.size(), 0) <= 0) {
 			throw HttpServerException("Error writing to socket");
 		}
 	}
