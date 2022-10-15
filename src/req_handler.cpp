@@ -26,16 +26,13 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 		_content_length = 0;
 	};
 	LOG(INFO) << "uri: " << _uri;
-
-	// Fazer o post com o post
-	// this->_client_max_body_size = 1000;
-	// this->_request_body = "corpo do arquivo.\n";
-
+	_cgi_pass = loc_config._cgi_pass;
+	LOG(INFO) << "cgi_pass: " << _cgi_pass;
 
 }
 
 req_handler::~req_handler() {
-  std::cout << "req_handler destructor" << std::endl;
+  LOG(DEBUG) << "req_handler destructor";
 }
 
 req_handler &req_handler::operator=(const req_handler &s) {
@@ -196,7 +193,9 @@ bool req_handler::check_method_allowed(std::string m) {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-	if (path.find(".php") != std::string::npos) {
+//	if (path.find(".php") != std::string::npos) {
+	if (path.find(this->_cgi_pass) != std::string::npos) {
+		LOG(DEBUG) << "Pediu CGI";
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
@@ -213,6 +212,11 @@ void req_handler::fetch_cgi(std::string path) {
 		// Monta args
 		// executa (fork etc)
 		// devolve output
+		LOG(INFO) << "Running CGI ...";
+
+		// Generate HTTP Response
+		add_content_type(path);
+		_http_response.set(200, "OK", "output do cgi !");
 }
 
 void req_handler::fetch_file(std::string path) {
@@ -328,7 +332,6 @@ void req_handler::handle_GET () {
 
 	// 0) Se for cgi
 	if (what_is_asked(this->_path) == "cgi") {
-		LOG(INFO) << "CGI requested ...";
 		fetch_cgi(this->_path);
 	};
 	// 1) Se for arquivoi:termina sem /

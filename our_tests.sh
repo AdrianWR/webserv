@@ -7,7 +7,7 @@ echo "4  GET: arquivo nao existe"
 echo "5  GET: diretorio com index"
 echo "6  GET: diretorio sem index com autoindex"
 echo "7  GET: diretorio sem index e sem autoindex"
-#CGI
+echo "8 GET: CGI (executa arquivo.py)"
 echo "9  POST: Metodo permitido / Post arquivo"
 echo "99 POST: Metodo permitido / Chunked"
 echo "10 POST: Maior que body size"
@@ -52,6 +52,10 @@ fi
 if [ $n == 7 ]; then
 #"7  GET: diretorio sem index e sem autoindex"
 	curl -v www.site1.com:8081/getok/
+fi
+if [ $n == 8 ]; then
+#8 GET: CGI (executa arquivo.py)"
+	curl -v www.site1.com:8081/cgi/pag_cgi.py
 fi
 
 # ===========================================================

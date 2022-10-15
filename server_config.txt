@@ -34,7 +34,7 @@ redirection:
 root:			/www/site1/fff
 autoindex:		1
 index: 
-cgi pass:		
+cgi pass:		.py
 cgi_param:
 upload_path::		./www/uploads
 ------------------------------

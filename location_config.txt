@@ -2,9 +2,9 @@ get_allowed:		1
 post_allowed:		0
 delete_allowed:		0
 redirection:		
-root:			/www/site1/bbb
-autoindex:		0
+root:			/www/site1/fff
+autoindex:		1
 index: 
-cgi pass:		
+cgi pass:		.py
 cgi_param:
 upload_path::		./www/uploads
