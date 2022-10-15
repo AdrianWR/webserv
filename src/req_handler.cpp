@@ -94,11 +94,6 @@ void req_handler::add_content_type(std::string path) {
 }
 
 std::string req_handler::extract_location (std::string uri) {
-
-// uri:		localhost/directory
-// s:		/directory
-// out:		./YoupiBanane/
-
 // pega uri da 1a barra em diante (inclusive barrra)
 // troca location /palavra por root (./dir/)
 
@@ -239,15 +234,12 @@ void req_handler::try_index_page(std::string path) {
 	// loop
 	for (size_t i = 0; i < this->loc_config._index.size(); i++) {
 		// monta caminho com um dos index
-//		std::string full_path = "." + path + this->loc_config._index[i];
 		std::string full_path = path + this->loc_config._index[i];
 		LOG(INFO) << "full path: " << full_path;
 		// devolve
 		std::string output = file_to_string(full_path);
 		if (output.size() > 0) {
 			LOG(INFO) << "Index Page:";
-//			std::cout << "|" << full_path << "|: ";
-//			std::cout << "|" << output << "|" << std::endl;
 		// Generate HTTP Response
 		_http_response.set(200, "OK" , output);
 		break;
@@ -410,7 +402,6 @@ void req_handler::handle_POST () {
 		};
 		// Salva arquivo criando diretorio
 		LOG(INFO) << "POST OK";
-		// se for multiform part data
 		bool file_created = string_to_file(_path, _request_body);
 		if (file_created) {
 			// Generate HTTP Response
@@ -427,7 +418,6 @@ void req_handler::handle_POST () {
 	if (what_is_asked(this->_path) == "dir") {
 		LOG(INFO) << "DIR requested...";
 		// Generate HTTP Response
-		// Checar se diretorio existe , caso contratrio 404
 		_http_response.set(200,"OK", "");
 		return;
 	};
@@ -444,17 +434,6 @@ void req_handler::handler() {
 	// ================================================================
 	// Get Inputs
 	// ================================================================
-	// Recebe um http request object
-	// Do request, pega:
-	// 1a linha:
-	// Metodo (GET)
-	// url
-	// 2a linha:
-	// port
-	// host
-	// vao formar chave para config
-	//
-	//
 	LOG(DEBUG) << "handler() function ini";
 	LOG(DEBUG) << "host: " << _host;
 	LOG(DEBUG) << "port: " << _port;
@@ -462,26 +441,6 @@ void req_handler::handler() {
 	LOG(DEBUG) << "uri: " << _uri;
 	LOG(DEBUG) << "content_length: " << _content_length;
 	
-//	this->_method = "POST";
-//	this->_uri = "www.site1.com/images/aa";
-//	this->_client_max_body_size = 1000;
-//	this->_request_body = "corpo do arquivo.\n";
-////
-
-//	this->_method = "DELETE";
-//	this->_uri = "www.site1.com/images/a";
-//	
-//	this->_method = "GET";
-//	this->_uri = "www.site1.com/images/site1.html";
-//	this->_uri = "www.site1.com/images/site9.html";
-//	this->_uri = "www.site1.com/images/";
-	//std::string uri =		"www.site1.com/images/photo1.png";
-	//std::string uri =		"www.site1.com/images/algo.cgi";
-//	this->_port = "8081";
-//	this->_host = "www.site1.com";
-	// QQR erro no request dispara um 400 bad request
-	// ================================================================
-
 	// ================================================================
 	// Load Configs
 	// ================================================================
@@ -489,7 +448,6 @@ void req_handler::handler() {
 	if (!load_configs()) { return; };
 
 	// FROM NOW ON SERVER CONFIG ON MEMORY
-	//
 	// Monta caminho fisico:
 	_path = generate_path(this->_uri, this->_loc, this->loc_config._root);
 	LOG(INFO) << "path generated: " << _path;
@@ -515,7 +473,7 @@ void req_handler::handler() {
 		handle_DELETE();
 		return;
 	}
-	// UNKNOWN
+	// UNKNOWN Method
 	Error error(405, this->server_config);
 	// Generate HTTP Response
 	_http_response.set(error.code, error.msg, error.body);
