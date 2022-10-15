@@ -193,9 +193,7 @@ bool req_handler::check_method_allowed(std::string m) {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-//	if (path.find(".php") != std::string::npos) {
 	if (path.find(this->_cgi_pass) != std::string::npos) {
-		LOG(DEBUG) << "Pediu CGI";
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
@@ -212,8 +210,8 @@ void req_handler::fetch_cgi(std::string path) {
 		// Monta args
 		// executa (fork etc)
 		// devolve output
-		LOG(INFO) << "Running CGI ...";
 
+		LOG(INFO) << "Running CGI ...";
 		// Generate HTTP Response
 		add_content_type(path);
 		_http_response.set(200, "OK", "output do cgi !");
@@ -435,8 +433,7 @@ void req_handler::handle_POST () {
 	};
 	if (what_is_asked(this->_path) == "cgi") {
 		LOG(INFO) << "CGI requested...";
-		// Generate HTTP Response
-		//
+		fetch_cgi(this->_path);
 		return;
 	}
 	// ================================================================
