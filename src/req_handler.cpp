@@ -113,14 +113,12 @@ std::string req_handler::extract_location (std::string uri) {
 		LOG(DEBUG) << "uri: " << uri;
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
-		LOG(DEBUG) << "s: " << s;
 	match = false;
 	for (it = server_config._location.begin(); it != server_config._location.end(); it++) {
 		key = it->first;
 		LOG(DEBUG) << "key: " << key;
 		if (key != "/") {
 			p = s.find(key);
-			LOG(DEBUG) << "p: " << p;
 			if (p == 0) {
 				match = true;
 				break;
@@ -497,7 +495,7 @@ void req_handler::handler() {
 	LOG(INFO) << "path generated: " << _path;
 
 	LOG(DEBUG) << "loc: " << _loc;
-	LOG(DEBUG) << "path: " << _path;
+	LOG(INFO) << "======================";
 	 
 	// ================================================================
 	// START OF PARSING (one function for each method)

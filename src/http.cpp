@@ -105,7 +105,7 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 
 	  // Parse remaining header lines
 	  std::string header_line;
-		LOG(DEBUG) << "ss: " << ss << "|";
+//		LOG(DEBUG) << "ss: " << ss << "|";
 	  while (ss.size() > 0) {
 		pos = ss.find(_delimiter);
 	//    if (pos == std::string::npos)

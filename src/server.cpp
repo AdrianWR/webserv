@@ -121,7 +121,8 @@ void HttpServer::run(Config config) {
         int new_fd = TCPServerSocket::accept_connection(fds[i].fd);
         struct pollfd new_pollfd = {new_fd, POLLIN, 0};
         fds.push_back(new_pollfd);
-		LOG(DEBUG) << "New fd accepted: " << new_fd;
+		LOG(INFO) << "=============================";
+		LOG(INFO) << "New fd accepted: " << new_fd;
       }
     }
 
