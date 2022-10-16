@@ -68,7 +68,7 @@ if [ $n == 9 ]; then
 fi
 if [ $n == 95 ]; then
 # "95  POST: CGI"
-	curl -v -X POST www.site1.com:8081/cgi/post_cgi.py -H "Content-Type: application/x-www-form-urlencoded" -d "num1=1&num2=2"
+	curl -v -X POST www.site2.com:8082/cgi/post_cgi.py -H "Content-Type: application/x-www-form-urlencoded" -d "num1=1&num2=2"
 fi
 if [ $n == 99 ]; then
 # "99 POST: Metodo permitido / Chunked"

@@ -53,22 +53,22 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 		total_bytes_read++;
 		if (ends_in_two_delimiters(buffer)) {
 
-      size_t found = buffer.find("POST");
-      if (found != std::string::npos){
-        found = buffer.find("Content-Length: ");
-        temp = buffer.substr(found);
-        size_t pos = temp.rfind("\r\n");
-        temp = temp.substr(0,pos);
-        found = temp.find(" ");
-        temp = temp.substr(found + 1);
-
-        int v = atoi(temp.c_str());
-        for (int i = 0; i < v; i++) {
-          bytes_read = recv(fd, &c, 1, 0);
-          buffer += c;
-          total_bytes_read++;
-        }
-      }
+//      size_t found = buffer.find("POST");
+//      if (found != std::string::npos){
+//        found = buffer.find("Content-Length: ");
+//        temp = buffer.substr(found);
+//        size_t pos = temp.rfind("\r\n");
+//        temp = temp.substr(0,pos);
+//        found = temp.find(" ");
+//        temp = temp.substr(found + 1);
+//
+//        int v = atoi(temp.c_str());
+//        for (int i = 0; i < v; i++) {
+//          bytes_read = recv(fd, &c, 1, 0);
+//          buffer += c;
+//          total_bytes_read++;
+//        }
+//      }
 			break;
 		}
 	}
