@@ -69,6 +69,7 @@ private:
 	std::string	_uri;
 	std::string	_request_body;			// Post
 	int			_content_length;		// Post
+	std::string	_cgi_pass;				// Post
 
 	char**		_env;
 	char**		_cmd;

@@ -59,6 +59,7 @@ server1 {
 	}
 	location /cgi {
 		root /www/site1/fff
+		cgi_pass .py
 		autoindex	true
 		cgi_pass .py
 		allowed_methods	GET		true
@@ -111,6 +112,7 @@ server2 {
 	}
 	location /cgi {
 		root /www/site2/jjj
+		cgi_pass .py
 		autoindex	true
 		allowed_methods	GET		true
 		allowed_methods	POST	true

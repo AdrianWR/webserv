@@ -114,10 +114,7 @@ HttpServer::SocketsVector HttpServer::_initSockets(Config config) {
 
 void HttpServer::run(Config config) {
 
-//  HttpServer::SocketsVector sockets = _initSockets(config);
  _sockets = _initSockets(config);
-  // Config::PortSet ports = config.getAvailablePorts();
-  // HttpServer::SocketsVector sockets(ports.begin(), ports.end());
 
   pollFdVector fds;
   SocketsVector::iterator it;

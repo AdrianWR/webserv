@@ -149,7 +149,7 @@ redirection:
 root:			/www/site2/jjj
 autoindex:		1
 index: 
-cgi pass:		
+cgi pass:		.py
 cgi_param:
 upload_path::		./www/uploads
 ------------------------------

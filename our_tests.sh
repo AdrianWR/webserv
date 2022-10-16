@@ -8,14 +8,14 @@ echo "4  GET: arquivo nao existe"
 echo "5  GET: diretorio com index"
 echo "6  GET: diretorio sem index com autoindex"
 echo "7  GET: diretorio sem index e sem autoindex"
-#CGI
+echo "8  GET: CGI (executa arquivo.py)"
 echo "9  POST: Metodo permitido / Post arquivo"
 echo "95 POST: CGI"
 echo "99 POST: Metodo permitido / Chunked"
 echo "10 POST: Maior que body size"
 echo "11 POST: Metodo nao permitido"
 echo "12 POST: Post dir"
-#CGI
+echo "13 POST: CGI (executa arquivo.py)"
 echo "14 DELETE: Metodo Permitido"
 echo "15 DELETE: Metodo nao Permitido"
 echo "16 DELETE: Arquivo nao existe"
@@ -60,6 +60,11 @@ if [ $n == 7 ]; then
 #"7  GET: diretorio sem index e sem autoindex"
 	curl -v www.site1.com:8081/getok/
 fi
+if [ $n == 8 ]; then
+#8 GET: CGI (executa arquivo.py)"
+	curl -v www.site1.com:8081/cgi/pag_cgi.py
+fi
+
 # ===========================================================
 # POST
 # ===========================================================
@@ -87,6 +92,11 @@ if [ $n == 12 ]; then
 # "12 POST: Post dir"
 	curl -v -X POST www.site2.com:8082/diretorio/
 fi
+if [ $n == 13 ]; then
+# "13 POST: CGI (executa arquivo.py)"
+	curl -v -X POST www.site2.com:8082/cgi/pag_cgi.py
+fi
+
 
 # ===========================================================
 # DELETE
