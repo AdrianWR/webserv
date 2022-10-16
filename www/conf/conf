@@ -61,8 +61,9 @@ server1 {
 		root /www/site1/fff
 		cgi_pass .py
 		autoindex	true
+		cgi_pass .py
 		allowed_methods	GET		true
-		allowed_methods	POST	false
+		allowed_methods	POST	true
 		allowed_methods	DELETE	false
 	}
 	location / {

@@ -11,6 +11,10 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "log.hpp"
 #include "error.hpp"
@@ -42,7 +46,7 @@ private:
 	bool check_method_allowed(std::string m);
 	std::string what_is_asked(std::string path);
 	void fetch_file(std::string path);
-	void fetch_cgi(std::string path);
+	void fetch_cgi();
 	void try_index_page(std::string path);
 	void try_autoindex(std::string host, std::string port);
 	void fetch_dir(std::string path, std::string host, std::string port);
@@ -50,6 +54,7 @@ private:
 	void handle_GET();
 	void handle_DELETE();
 	void handle_POST();
+	void _get_script_output(std::FILE *temp_file);
 
 private:
 	// Config objects
@@ -65,6 +70,9 @@ private:
 	std::string	_request_body;			// Post
 	int			_content_length;		// Post
 	std::string	_cgi_pass;				// Post
+
+	char**		_env;
+	char**		_cmd;
 
 	// Internals
 	std::string	_loc;

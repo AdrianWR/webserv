@@ -4,8 +4,8 @@ FLAGS = -Wall -Wextra -Werror -std=c++98
 FLAGS += -g
 FLAGS += -fsanitize=address
 
-#CC = c++
-CC = clang++
+CC = c++
+# CC = clang++
 
 OBJ_PATH = ./obj
 SRC_PATH = ./src

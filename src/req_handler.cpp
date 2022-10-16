@@ -32,6 +32,18 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 }
 
 req_handler::~req_handler() {
+	std::cout << "req_handler destructor" << std::endl;
+
+	if (what_is_asked(this->_path) == "cgi") {
+		free(this->_cmd[0]);
+		free(this->_cmd[1]);
+		delete [] this->_cmd;
+		if (this->_method == "POST")
+		{
+			free(this->_env[0]);
+			delete [] this->_env;
+		}
+	}
   LOG(DEBUG) << "req_handler destructor";
 }
 
@@ -199,17 +211,65 @@ std::string req_handler::what_is_asked(std::string path) {
 	}
 }
 
-void req_handler::fetch_cgi(std::string path) {
-	(void) path;
-		// Monta environment
-		// Monta args
-		// executa (fork etc)
-		// devolve output
+int _get_file_size(std::FILE *temp_file)
+{
+	int size;
 
-		LOG(INFO) << "Running CGI ...";
-		// Generate HTTP Response
-		add_content_type(path);
-		_http_response.set(200, "OK", "output do cgi !");
+	fseek(temp_file , 0 , SEEK_END);
+	size = ftell(temp_file);
+	rewind(temp_file);
+	return (size);
+}
+
+void req_handler::_get_script_output(std::FILE *temp_file)
+{
+	int size = _get_file_size(temp_file);
+	char* buffer = new char[size + 1];
+
+	memset(buffer, 0, size + 1);
+	fread(buffer, 1, size, temp_file);
+	_http_response.set(200, "OK" , std::string(buffer));
+	delete [] buffer;
+}
+
+
+void req_handler::fetch_cgi() {
+	int	pid;
+	std::string executable;
+	std::string file_path;
+	char** cmd = new char*[3];
+	
+	std::FILE *temp_file = std::tmpfile();
+	int temp_fd = fileno(temp_file);
+		
+	executable = "/usr/bin/python3";
+	file_path = this->_path;
+
+	memset(cmd, 0, 3 * sizeof(char*));
+	cmd[0] = strdup(executable.c_str());
+	cmd[1] = strdup(file_path.c_str());
+	this->_cmd = cmd;
+	if (this->_method == "GET")
+	{
+		this->_env = NULL;
+	}
+	else
+	{
+		char**	env = new char*[1];
+		memset(env, 0, 1 * sizeof(char*));
+		std::string var_string = "QUERY_STRING=" + this->_request_body;
+		env[0] = strdup((var_string.c_str()));
+		this->_env = env;
+	}
+	pid = fork();
+	if (pid == 0){
+		dup2(temp_fd, STDOUT_FILENO);
+		execve(this->_cmd[0], this->_cmd, this->_env);
+		close(temp_fd);
+	}
+	waitpid(pid,NULL, 0);
+	_get_script_output(temp_file);
+	fclose(temp_file);
 }
 
 void req_handler::fetch_file(std::string path) {
@@ -322,7 +382,8 @@ void req_handler::handle_GET () {
 
 	// 0) Se for cgi
 	if (what_is_asked(this->_path) == "cgi") {
-		fetch_cgi(this->_path);
+		LOG(INFO) << "CGI requested ...";
+		fetch_cgi();
 	};
 	// 1) Se for arquivoi:termina sem /
 	if (what_is_asked(this->_path) == "file") {
@@ -422,8 +483,8 @@ void req_handler::handle_POST () {
 		return;
 	};
 	if (what_is_asked(this->_path) == "cgi") {
-		LOG(INFO) << "CGI requested...";
-		fetch_cgi(this->_path);
+		LOG(INFO) << "CGI requested ...";
+		fetch_cgi();
 		return;
 	}
 	// ================================================================

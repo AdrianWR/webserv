@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Choose test: "
 echo "1  GET: metodo permitido"
+echo "115 GET: CGI"
 echo "2  GET: tem redirection"
 echo "3  GET: arquivo existe"
 echo "4  GET: arquivo nao existe"
@@ -9,6 +10,7 @@ echo "6  GET: diretorio sem index com autoindex"
 echo "7  GET: diretorio sem index e sem autoindex"
 echo "8  GET: CGI (executa arquivo.py)"
 echo "9  POST: Metodo permitido / Post arquivo"
+echo "95 POST: CGI"
 echo "99 POST: Metodo permitido / Chunked"
 echo "10 POST: Maior que body size"
 echo "11 POST: Metodo nao permitido"
@@ -29,6 +31,11 @@ if [ $n == 1 ]; then
 # "1  GET: metodo permitido"
 	curl -v www.site1.com:8081/getok/site1.html
 fi
+if [ $n == 115 ]; then
+# "15  POST: CGI"
+	curl -v www.site1.com:8081/cgi/get_cgi.py
+fi
+
 if [ $n == 2 ]; then
 # "2  GET: tem redirection"
 	curl -v www.site1.com:8081/redirection/
@@ -63,7 +70,11 @@ fi
 # ===========================================================
 if [ $n == 9 ]; then
 # "9  POST: Metodo permitido / Post arquivo"
-	curl -v -H "body:12345" -X POST www.site2.com:8082/uploadok/aaa.txt
+	curl -v -X POST www.site2.com:8082/uploadok/aaa.txt 
+fi
+if [ $n == 95 ]; then
+# "95  POST: CGI"
+	curl -v -X POST www.site1.com:8081/cgi/post_cgi.py -H "Content-Type: application/x-www-form-urlencoded" -d "num1=1&num2=2"
 fi
 if [ $n == 99 ]; then
 # "99 POST: Metodo permitido / Chunked"

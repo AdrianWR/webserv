@@ -92,6 +92,7 @@ size_t BaseHttp::_convert_chunk_size(std::string chunk_size)
 BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 	  HeaderMap headers;
 	  std::string ss(buffer);
+	  std::string body;
 	  size_t delimiter_size = _delimiter.size();
 
 	  // Parse first header line
@@ -125,7 +126,6 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 			int length = 0;
 			std::string temp_line;
 			std::size_t chunk_size;
-			std::string body;
 			chunk_size = this->_get_chunk_size(fd);
 			while (chunk_size > 0) {
 				receive_line(fd, temp_line, CRLF);
@@ -138,6 +138,11 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 		headers.insert(HeaderField("content-length", IntToString(length)));
 		}
 	}
+	if(headers["method"] == "POST"){
+		body = ss.substr(2);
+		headers.insert(HeaderField("body", body));
+	}
+
 	_headers = headers;
 	LOG(DEBUG) << "Parsed headers:\n" << _headers;
 	return headers;
