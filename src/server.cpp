@@ -42,6 +42,7 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
 void HttpServer::_handleConnection(int &fd, Config &config) {
 //  char buffer[BUFFER_SIZE + 1] = {0};
 	std::string buffer;
+  std::string temp;
 	char c = {0};
 	int bytes_read = 1;
 	int total_bytes_read = 0;
@@ -52,6 +53,23 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 		buffer += c;
 		total_bytes_read++;
 		if (ends_in_two_delimiters(buffer)) {
+
+      size_t found = buffer.find("POST");
+      if (found != std::string::npos){
+        found = buffer.find("Content-Length: ");
+        temp = buffer.substr(found);
+        size_t pos = temp.rfind("\r\n");
+        temp = temp.substr(0,pos);
+        found = temp.find(" ");
+        temp = temp.substr(found + 1);
+
+        int v = atoi(temp.c_str());
+        for (int i = 0; i < v; i++) {
+          bytes_read = recv(fd, &c, 1, 0);
+          buffer += c;
+          total_bytes_read++;
+        }
+      }
 			break;
 		}
 	}
@@ -111,6 +129,7 @@ void HttpServer::run(Config config) {
   LOG(INFO) << "Initializing server FDs polling";
   while (true) {
     int ret = poll(&*fds.begin(), fds.size(), -1);
+
     if (ret < 0) {
       throw HttpServerException("Error polling socket");
     }

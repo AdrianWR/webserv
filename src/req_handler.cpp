@@ -35,6 +35,18 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 }
 
 req_handler::~req_handler() {
+	std::cout << "req_handler destructor" << std::endl;
+
+	if (what_is_asked(this->_path) == "cgi") {
+		free(this->_cmd[0]);
+		free(this->_cmd[1]);
+		delete [] this->_cmd;
+		if (this->_method == "POST")
+		{
+			free(this->_env[0]);
+			delete [] this->_env;
+		}
+	}
   std::cout << "req_handler destructor" << std::endl;
 }
 
@@ -235,7 +247,6 @@ void req_handler::fetch_cgi() {
 	std::string file_path;
 	char** cmd = new char*[3];
 	
-
 	std::FILE *temp_file = std::tmpfile();
 	int temp_fd = fileno(temp_file);
 		
@@ -243,11 +254,21 @@ void req_handler::fetch_cgi() {
 	file_path = this->_path;
 
 	memset(cmd, 0, 3 * sizeof(char*));
-	cmd[0] = strdup(executable.c_str());;
+	cmd[0] = strdup(executable.c_str());
 	cmd[1] = strdup(file_path.c_str());
 	this->_cmd = cmd;
-	this->_env = NULL;
-
+	if (this->_method == "GET")
+	{
+		this->_env = NULL;
+	}
+	else
+	{
+		char**	env = new char*[1];
+		memset(env, 0, 1 * sizeof(char*));
+		std::string var_string = "QUERY_STRING=" + this->_request_body;
+		env[0] = strdup((var_string.c_str()));
+		this->_env = env;
+	}
 	pid = fork();
 	if (pid == 0){
 		dup2(temp_fd, STDOUT_FILENO);
@@ -476,9 +497,8 @@ void req_handler::handle_POST () {
 		return;
 	};
 	if (what_is_asked(this->_path) == "cgi") {
-		LOG(INFO) << "CGI requested...";
-		// Generate HTTP Response
-		//
+		LOG(INFO) << "CGI requested ...";
+		fetch_cgi();
 		return;
 	}
 	// ================================================================
