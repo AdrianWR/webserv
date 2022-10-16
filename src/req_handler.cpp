@@ -26,9 +26,6 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 		_content_length = 0;
 	};
 	LOG(INFO) << "uri: " << _uri;
-	_cgi_pass = loc_config._cgi_pass;
-	LOG(INFO) << "cgi_pass: " << _cgi_pass;
-
 }
 
 req_handler::~req_handler() {
@@ -200,7 +197,8 @@ bool req_handler::check_method_allowed(std::string m) {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-	if (_cgi_pass != "" && path.find(this->_cgi_pass) != std::string::npos) {
+	LOG(DEBUG) << "_cgi_pass: |" << _cgi_pass << "|";
+	if (_cgi_pass != "" && (path.find(this->_cgi_pass) != std::string::npos)) {
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
@@ -367,6 +365,7 @@ bool req_handler::load_configs() {
 		// debug prints
 		std::ofstream f2("location_config.txt", std::ofstream::trunc);
 		loc_config.print_location(f2);
+	_cgi_pass = this->loc_config._cgi_pass;
 	// ================================================================
 	return true;
 }
@@ -525,12 +524,10 @@ void req_handler::handler() {
 		return;
 	}
 	if (this->_method == "POST") {
-	// POST
 		handle_POST();
 		return;
 	}
 	if (this->_method == "DELETE") {
-	// DELETE
 		handle_DELETE();
 		return;
 	}

@@ -40,9 +40,8 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
 
 
 void HttpServer::_handleConnection(int &fd, Config &config) {
-//  char buffer[BUFFER_SIZE + 1] = {0};
 	std::string buffer;
-  std::string temp;
+	std::string temp;
 	char c = {0};
 	int bytes_read = 1;
 	int total_bytes_read = 0;

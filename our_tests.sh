@@ -1,7 +1,6 @@
 #!/bin/bash
 echo "Choose test: "
 echo "1  GET: metodo permitido"
-echo "115 GET: CGI"
 echo "2  GET: tem redirection"
 echo "3  GET: arquivo existe"
 echo "4  GET: arquivo nao existe"
@@ -31,11 +30,6 @@ if [ $n == 1 ]; then
 # "1  GET: metodo permitido"
 	curl -v www.site1.com:8081/getok/site1.html
 fi
-if [ $n == 115 ]; then
-# "15  POST: CGI"
-	curl -v www.site1.com:8081/cgi/get_cgi.py
-fi
-
 if [ $n == 2 ]; then
 # "2  GET: tem redirection"
 	curl -v www.site1.com:8081/redirection/
@@ -62,7 +56,7 @@ if [ $n == 7 ]; then
 fi
 if [ $n == 8 ]; then
 #8 GET: CGI (executa arquivo.py)"
-	curl -v www.site1.com:8081/cgi/pag_cgi.py
+	curl -v www.site1.com:8081/cgi/get_cgi.py
 fi
 
 # ===========================================================
