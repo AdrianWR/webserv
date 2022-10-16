@@ -38,7 +38,6 @@ void HttpServer::addServerBlock(const ServerBlock &serverBlock) {
   _servers.push_back(serverBlock);
 }
 
-
 void HttpServer::_handleConnection(int &fd, Config &config) {
 	std::string buffer;
 	std::string temp;

@@ -31,7 +31,7 @@ HttpResponse::HttpResponse (size_t code, std::string reason, std::string body) {
 
 
 HttpResponse::~HttpResponse () {
-	std::cout << "HttpResponse destructor\n";
+	LOG (DEBUG) << "HttpResponse destructor";
 }
 
 HttpResponse &HttpResponse::operator=(const HttpResponse &s) {

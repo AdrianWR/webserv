@@ -4,7 +4,7 @@
 // Class Req_handler
 // **********************************************************
 req_handler::req_handler() {
-  std::cout << "req_handler constructor" << std::endl;
+  LOG(DEBUG) << "req_handler constructor";
 }
 req_handler::req_handler(Config fp, HttpRequest req) {
 	LOG(INFO) << "Initializing req_handler";
@@ -29,8 +29,6 @@ req_handler::req_handler(Config fp, HttpRequest req) {
 }
 
 req_handler::~req_handler() {
-	std::cout << "req_handler destructor" << std::endl;
-
 	if (what_is_asked(this->_path) == "cgi") {
 		free(this->_cmd[0]);
 		free(this->_cmd[1]);
@@ -197,7 +195,6 @@ bool req_handler::check_method_allowed(std::string m) {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-	LOG(DEBUG) << "_cgi_pass: |" << _cgi_pass << "|";
 	if (_cgi_pass != "" && (path.find(this->_cgi_pass) != std::string::npos)) {
 		return "cgi";
 	}
