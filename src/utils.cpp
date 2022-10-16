@@ -46,8 +46,8 @@ std::string file_to_string(std::string file_path) {
 	std::stringstream buffer;
 	std::ifstream myfile(file_path.c_str(), std::ifstream::in);
 
-	LOG(DEBUG) << " ======= begin file_to_string ========";
-	LOG(DEBUG) << "file_path: " << file_path;
+	LOG(INFO) << " ======= begin file_to_string ========";
+	LOG(INFO) << "file_path: " << file_path;
 
 	// Se arquivo existe, serve arquivo
 	if (myfile.is_open()) {

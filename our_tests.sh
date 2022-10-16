@@ -63,7 +63,7 @@ fi
 # ===========================================================
 if [ $n == 9 ]; then
 # "9  POST: Metodo permitido / Post arquivo"
-	curl -v -X POST www.site2.com:8082/uploadok/aaa.txt 
+	curl -v -d @arquivo.txt -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 99 ]; then
 # "99 POST: Metodo permitido / Chunked"
@@ -71,19 +71,19 @@ if [ $n == 99 ]; then
 fi
 if [ $n == 10 ]; then
 # "10 POST: Maior que body size"
-	curl -v -H "content-length: 10000" -X POST www.site2.com:8082/uploadok/aaa.txt
+	curl -v -d @gde.txt -X POST www.site2.com:8082/uploadok/aaa.txt
 fi
 if [ $n == 11 ]; then
 # "11 POST: Metodo nao permitido"
-	curl -v -H "body:12345" -X POST www.site2.com:8082/noupload/aaa.txt
+	curl -v -d @arquivo.txt -X POST www.site2.com:8082/noupload/aaa.txt
 fi
 if [ $n == 12 ]; then
 # "12 POST: Post dir"
-	curl -v -X POST www.site2.com:8082/diretorio/
+	curl -v -d "12345" -X POST www.site2.com:8082/diretorio/
 fi
 if [ $n == 13 ]; then
 # "13 POST: CGI (executa arquivo.py)"
-	curl -v -X POST www.site2.com:8082/cgi/post_cgi.py -H "Content-Type: application/x-www-form-urlencoded" -d "num1=1&num2=2"
+	curl -v -X POST www.site2.com:8082/cgi/post_cgi.py -H "Content-Type: application/x-www-form-urlencoded" -d "num1=11&num2=2"
 fi
 
 

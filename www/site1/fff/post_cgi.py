@@ -3,8 +3,7 @@ cgitb.enable()
 
 input_data = cgi.FieldStorage()
 
-print('<h1>POST from python CGI!</h1>')
-
+print('<h1>POST from python CGI!",input_data['num1"],"</h1>')
 try:
     num1 = int(input_data["num1"].value)
     num2 = int(input_data["num2"].value)

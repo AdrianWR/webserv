@@ -6,8 +6,8 @@ HttpRequest::HttpRequest() : BaseHttp() {}
 HttpRequest::~HttpRequest() {}
 
 HttpRequest::HeaderMap HttpRequest::_parseStatusLine(const std::string &str) {
-	LOG(DEBUG) << "_parseStatusLine do request";
-	LOG(DEBUG) << "str: " << str;
+	LOG(INFO) << "===== _parseStatusLine =====";
+	LOG(INFO) << "Status Line: " << str;
   std::stringstream ss(str);
   HeaderMap headers;
 

@@ -81,7 +81,7 @@ std::string req_handler::extract_extension(std::string path) {
 void req_handler::add_content_type(std::string path) {
 	std::string ext = extract_extension(path);
 	LOG(DEBUG) << "ct path: " << path;
-	LOG(DEBUG) << "Adding content-type for: " << ext;
+	LOG(INFO) << "Adding content-type for: " << ext;
 
 	if (ext == "html" || ext == "htm") {
 		_http_response.insert_header("content-type","text/html");
@@ -109,7 +109,7 @@ std::string req_handler::extract_location (std::string uri) {
 	bool match;
 	size_t p;
 
-		LOG(DEBUG) << "uri: " << uri;
+	LOG(INFO) << "uri: " << uri;
 	size_t pos1 = uri.find("/");
 	std::string s = uri.substr(pos1);
 	match = false;
@@ -137,11 +137,11 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	// pega root
 	// troca location por root no url
 	// se uri termina em location -> acrescenta / no final do path
-	LOG(DEBUG) << "====== begin generate_path =========";
-	LOG(DEBUG) << "uri: " << uri;
-	LOG(DEBUG) << "location: " << location;
-	LOG(DEBUG) << "root: " << root;
-	LOG(DEBUG) << "loc: " << _loc;
+	LOG(INFO) << "====== begin generate_path =========";
+	LOG(INFO) << "uri: " << uri;
+	LOG(INFO) << "location: " << location;
+	LOG(INFO) << "root: " << root;
+	LOG(INFO) << "loc: " << _loc;
 
 
 	if (_loc == "/") root += "/";
@@ -155,12 +155,12 @@ std::string req_handler::generate_path(std::string uri, std::string location,
 	std::string full_path = uri_root;
 
 	// Se uri_root eh dir e nao termina em / -> add /
-	LOG(DEBUG) << "path_is: " << path_is(uri_root);
+	LOG(INFO) << "path_is: " << path_is(uri_root);
 	if (path_is(uri_root) == "dir" && !end_in_slash(uri_root)) {
 		full_path = full_path + "/";
 	}
-		LOG(DEBUG) << "full_path: " << full_path;
-	LOG(DEBUG) << "====== end generate_path =========";
+		LOG(INFO) << "full_path: " << full_path;
+	LOG(INFO) << "====== end generate_path =========";
 
 	return (full_path);
 }
@@ -349,6 +349,7 @@ bool req_handler::load_configs() {
 		_http_response.set(error.code, error.msg, "<html> Error 404 </html>");
 		return false;
 	}
+	LOG(INFO) << "==============";
 	LOG(INFO) << "server_config retrieved from memory ...";
 		// debug prints
 		std::ofstream f("server_config.txt", std::ofstream::trunc);
@@ -491,12 +492,12 @@ void req_handler::handler() {
 	// ================================================================
 	// Get Inputs
 	// ================================================================
-	LOG(DEBUG) << "handler() function ini";
-	LOG(DEBUG) << "host: " << _host;
-	LOG(DEBUG) << "port: " << _port;
-	LOG(DEBUG) << "method: " << _method;
-	LOG(DEBUG) << "uri: " << _uri;
-	LOG(DEBUG) << "content_length: " << _content_length;
+	LOG(INFO) << "====== handler() function ini =====";
+	LOG(INFO) << "host: " << _host;
+	LOG(INFO) << "port: " << _port;
+	LOG(INFO) << "method: " << _method;
+	LOG(INFO) << "uri: " << _uri;
+	LOG(INFO) << "content_length: " << _content_length;
 	
 	// ================================================================
 	// Load Configs

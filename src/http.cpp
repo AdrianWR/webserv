@@ -144,7 +144,7 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 	}
 
 	_headers = headers;
-	LOG(DEBUG) << "Parsed headers:\n" << _headers;
+	LOG(INFO) << "Parsed headers:\n" << _headers;
 	return headers;
 }
 
