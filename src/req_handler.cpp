@@ -196,7 +196,7 @@ bool req_handler::check_method_allowed(std::string m) {
 }
 
 std::string req_handler::what_is_asked(std::string path) {
-	if (path.find(".php") != std::string::npos) {
+	if (path.find(".py") != std::string::npos) {
 		return "cgi";
 	}
 	if (path.find_last_of("/") == path.size() - 1){
@@ -207,12 +207,57 @@ std::string req_handler::what_is_asked(std::string path) {
 	}
 }
 
-void req_handler::fetch_cgi(std::string path) {
-	(void) path;
-		// Monta environment
-		// Monta args
-		// executa (fork etc)
-		// devolve output
+int _get_file_size(std::FILE *temp_file)
+{
+	int size;
+
+	fseek(temp_file , 0 , SEEK_END);
+	size = ftell(temp_file);
+	rewind(temp_file);
+	return (size);
+}
+
+void req_handler::_get_script_output(std::FILE *temp_file)
+{
+	int size = _get_file_size(temp_file);
+	char* buffer = new char[size + 1];
+
+	memset(buffer, 0, size + 1);
+	fread(buffer, 1, size, temp_file);
+	_http_response.set(200, "OK" , std::string(buffer));
+	delete [] buffer;
+}
+
+
+void req_handler::fetch_cgi() {
+	int	pid;
+	std::string executable;
+	std::string file_path;
+	char** cmd = new char*[3];
+	
+
+	std::FILE *temp_file = std::tmpfile();
+	int temp_fd = fileno(temp_file);
+		
+	executable = "/usr/bin/python3";
+	file_path = this->_path;
+
+	memset(cmd, 0, 3 * sizeof(char*));
+	cmd[0] = strdup(executable.c_str());;
+	cmd[1] = strdup(file_path.c_str());
+	this->_cmd = cmd;
+	this->_env = NULL;
+
+	pid = fork();
+	if (pid == 0){
+		dup2(temp_fd, STDOUT_FILENO);
+		execve(this->_cmd[0], this->_cmd, this->_env);
+		close(temp_fd);
+	}
+	waitpid(pid,NULL, 0);
+	_get_script_output(temp_file);
+	fclose(temp_file);
+
 }
 
 void req_handler::fetch_file(std::string path) {
@@ -329,7 +374,7 @@ void req_handler::handle_GET () {
 	// 0) Se for cgi
 	if (what_is_asked(this->_path) == "cgi") {
 		LOG(INFO) << "CGI requested ...";
-		fetch_cgi(this->_path);
+		fetch_cgi();
 	};
 	// 1) Se for arquivoi:termina sem /
 	if (what_is_asked(this->_path) == "file") {

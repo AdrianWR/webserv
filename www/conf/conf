@@ -60,8 +60,9 @@ server1 {
 	location /cgi {
 		root /www/site1/fff
 		autoindex	true
+		cgi_pass .py
 		allowed_methods	GET		true
-		allowed_methods	POST	false
+		allowed_methods	POST	true
 		allowed_methods	DELETE	false
 	}
 	location / {
