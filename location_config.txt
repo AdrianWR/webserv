@@ -2,9 +2,9 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		0
 redirection:		
-root:			/www/site2/jjj
+root:			/www/site2/ggg
 autoindex:		1
 index: 
-cgi pass:		.py
+cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/site2/ggg

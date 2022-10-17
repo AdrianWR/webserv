@@ -27,7 +27,7 @@ Error::Error(size_t c, ConfigBlock sc) {
 }
 
 Error::~Error() {
-  std::cout << "Error destructor" << std::endl;
+  LOG(DEBUG) << "Error destructor";
 }
 
 Error &Error::operator=(const Error &s) {
@@ -38,9 +38,6 @@ Error &Error::operator=(const Error &s) {
 
 std::string Error::fetch_error_page(size_t code, ConfigBlock sc) {
 	std::string page_path;
-//	(void) code;
-//	(void) sc;
-//	body = "ERROR BODY !!!!";
 	
 	// Pega path da pag de erro
 	page_path = sc._error_page[code];

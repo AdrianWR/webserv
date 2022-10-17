@@ -86,6 +86,7 @@ server2 {
 	error_page 403 ./www/errors/403.html
 	error_page 404 ./www/errors/404.html
 	error_page 405 ./www/errors/405.html
+	error_page 413 ./www/errors/413.html
 	error_page 500 ./www/errors/500.html
 
 	location /uploadok {

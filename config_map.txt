@@ -242,6 +242,7 @@ error_page:
 |403 : ./www/errors/403.html|
 |404 : ./www/errors/404.html|
 |405 : ./www/errors/405.html|
+|413 : ./www/errors/413.html|
 |500 : ./www/errors/500.html|
 ------------------------------
 location:		/
