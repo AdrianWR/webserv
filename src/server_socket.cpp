@@ -81,15 +81,6 @@ int TCPServerSocket::accept_connection(int listener_sockfd) {
 }
 
 void TCPServerSocket::handleConnection(int client_sockfd) {
-  // char buffer[BUFFER_SIZE];
-  // int bytes_read = recv(client_sockfd, buffer, BUFFER_SIZE, 0);
-  // if (bytes_read < 0) {
-  //   throw SocketException("Could not read from socket");
-  // }
-  // LOG(DEBUG) << "Received " << bytes_read << " bytes from client";
-  // if (send(client_sockfd, buffer, bytes_read, 0) < 0) {
-  //   throw SocketException("Could not send message");
-  // }
   LOG(DEBUG) << "Received connection from client";
   if (send(client_sockfd, "Hello, world!", 13, 0) < 0) {
     throw SocketException("Could not send message");

@@ -9,7 +9,6 @@ req_handler::req_handler() {
 req_handler::req_handler(Config fp, HttpRequest req) {
 	LOG(INFO) << "Initializing req_handler";
   	_parsed_config_map = fp.getBlockMap();
-  	//	print_mapc(_parsed_config_map);
 	HttpRequest::HeaderMap heard = req.getHeaders();
 	_host = heard["host"].substr(0, heard["host"].find(":"));
 	_port = heard["host"].substr(heard["host"].rfind(":") + 1);
@@ -187,7 +186,6 @@ bool req_handler::check_method_allowed(std::string m) {
 		Error error(405, this->server_config);
 		// Generate HTTP Response
 		_http_response.set(error.code, error.msg, error.body);
-		//
 		return false;
 	};
 	LOG(INFO) << m << " Allowed";
@@ -325,13 +323,12 @@ void req_handler::try_autoindex(std::string host, std::string port) {
 	if (this->loc_config._autoindex == true) {
 		LOG(INFO) << "Autoindex ON";
 		AutoIndexGenerator auto_index;
-//		std::string ai_page = auto_index.getPage(".",host, StringToInt(port));
 		std::string ai_page = auto_index.getPage(_path.c_str(),host, StringToInt(port), _loc);
 		// Generate HTTP Response
 		add_content_type(".html");
 		_http_response.set(200, "OK", ai_page);
 	} else {
-	// se nao devolve erro
+		// se nao devolve erro
 		LOG(INFO) << "404 No index";
 		Error error(404, this->server_config);
 		// Generate HTTP Response
@@ -384,11 +381,8 @@ void req_handler::handle_GET () {
 	LOG(INFO) << "GET Method ...";
 	// Se tiver redirection, devolve redirection e sai.
 	if (check_redirection()) return;
-
-	
 	// Checa se GET Permitido neste location
 	if (!check_method_allowed("GET")) return;
-
 	// 0) Se for cgi
 	if (what_is_asked(this->_path) == "cgi") {
 		LOG(INFO) << "CGI requested ...";

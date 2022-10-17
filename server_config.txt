@@ -1,7 +1,7 @@
 =======================================================
 block_name: server1
 listen: 
-[0]	|8082|
+[0]	|8081|
 server_name: 
 [0]	|www.site1.com|
 client_max_body_size:		8000

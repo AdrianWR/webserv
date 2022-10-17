@@ -64,4 +64,3 @@ void Error::print_error() {
 	std::cout << "body: " << body << std::endl;
 	std::cout << "----------------------\n";
 }
-

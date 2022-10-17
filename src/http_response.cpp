@@ -74,5 +74,3 @@ void HttpResponse::insert_header(std::string key, std::string val) {
 	_header_key.push_back(key);
 	_header_val.push_back(val);
 }
-
-//	out = out + _delimiter; // ?

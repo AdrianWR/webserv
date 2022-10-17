@@ -16,12 +16,6 @@ HttpServer::~HttpServer() {
 	for (i = 0; i < _sockets.size(); i++) {
 		delete _sockets[i];
 	}
-//	//  TCPServerSocket *s;
-//	Config::PortSet::const_iterator it;
-//	for (it = _ports.begin(); it != _ports.end(); it++) {
-//		//    s = new TCPServerSocket(*it);
-//		delete *it;
-//	}n
 }
 
 HttpServer::HttpServer(const HttpServer &httpServer)
@@ -45,7 +39,6 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 	int bytes_read = 1;
 	int total_bytes_read = 0;
 
-//  int total_bytes_read = recv(fd, buffer, BUFFER_SIZE, 0);
 	while (bytes_read > 0) {
 		// Read statusline and headers
 		bytes_read = recv(fd, &c, 1, 0);
@@ -88,8 +81,6 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 		req_handler rh(config, request);
 		rh.handler();
 		std::string buff = rh._http_response.serialize();
-//    std::string buff = "HTTP/1.1 200 OK\nContent-Type: "
-//                       "text/plain\nContent-Length: 13\n\nHello world!\n";
 		LOG(INFO) << "buffer size: " << buff.size();
 		LOG(INFO) << "buffer:\n|" << buff << "|";;
 

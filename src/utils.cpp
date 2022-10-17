@@ -51,15 +51,10 @@ std::string file_to_string(std::string file_path) {
 
 	// Se arquivo existe, serve arquivo
 	if (myfile.is_open()) {
-//		while (getline(myfile, line)) {
-//			buffer << line;
-//		};
 		buffer << myfile.rdbuf();
 		myfile.close();
 		return buffer.str();
 	} else {
-	// Substituir por throe de erro 
-	// Erro 500 ?
 	LOG(INFO) << "Unable to open file";
 	return "";
 	}
@@ -115,7 +110,6 @@ std::string path_is(std::string path) {
 }
 
 bool end_in_slash(std::string str) {
-//	LOG(DEBUG) << "slash: " << str.back();
 	char a = str[str.length()-1];
 	LOG(DEBUG) << "a: " << a;
 	if (a == '/') return true;
@@ -129,7 +123,6 @@ bool end_in_slash(std::string str) {
 Config::Config() {}
 
 Config::~Config() {
-//	LOG(DEBUG) << "Config destructor ...";
 }
 
 Config &Config::operator=(const Config &s) {
@@ -277,7 +270,6 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
 	if (stub._location.find("/") == stub._location.end()) {
 		stub.add_default_location();
 	};
-	// return
 	return (stub);
 }
 
@@ -320,8 +312,6 @@ bool Config::parse_file(std::string file) {
 		LOG(ERROR) << "Failed to open file " << file;
 	return false;
 	}
-
-
 	// file loop
 	LOG(INFO) << "Parsing Config File";
 	while (fileStream >> buffer) {
@@ -332,14 +322,8 @@ bool Config::parse_file(std::string file) {
 			LOG(ERROR) << "Missing 'listen' and 'server_name' directives !";
 		};
 		// se stub nano tem location -> colocar um location default
-		//stub.add_default_location();
 		_config_vector.push_back(stub);
 	};
-//	std::cout << "Vector: \n";
-//	print_vectorc(_config_vector);
-//	if (_config_vector.empty()){
-//		LOG(ERROR) << "Empty config !";
-//	}
 	generate_config_map();
 	// Output config map to a file config_map.txt for easy checking
 	print_mapc(_config_map);
@@ -384,14 +368,11 @@ LocationBlock::LocationBlock() {
   _redirection = "";
   _root = "/www/";
   _autoindex = true;
-  //	_index.push_back("none");
-  //	_cgi_param["none"] = "none";
   _cgi_pass = "";
   _upload_path = "./www/uploads";
 }
 
 LocationBlock::~LocationBlock() {
-//	LOG(DEBUG) << "LocationBlock destructor";
 }
 
 LocationBlock &LocationBlock::operator=(const LocationBlock &rhs) {
@@ -441,11 +422,9 @@ ConfigBlock::ConfigBlock() {
   _error_page[404] = "./errors/404.html";
   _client_max_body_size =
       8; // max size for the client body, defaults to 8 000
-  //	_location["none"] = location();
 }
 
 ConfigBlock::~ConfigBlock() {
-//	LOG(DEBUG) << "ConfigBlock destructor";
 }
 
 ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
@@ -535,7 +514,6 @@ std::string AutoIndexGenerator::getPage(const char *path,
   for (struct dirent *dirEntry = readdir(dir); dirEntry;
        dirEntry = readdir(dir)) {
     page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), loc, host, port);
-//    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), dirName, host, port);
   }
   page += "\
     </p>\n\

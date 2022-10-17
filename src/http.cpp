@@ -106,15 +106,11 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd) {
 
 	  // Parse remaining header lines
 	  std::string header_line;
-//		LOG(DEBUG) << "ss: " << ss << "|";
 	  while (ss.size() > 0) {
 		pos = ss.find(_delimiter);
-	//    if (pos == std::string::npos)
-	//      throw HttpException("Failed to parse header: no delimiter found.");
 		header_line = ss.substr(0, pos);
 		if (header_line.size() == 0)
 		  break;
-	//    header_line = ss.substr(0, pos);
 		  LOG(DEBUG) << "header_line: |" << header_line << "|";
 		headers.insert(_parseHeaderField(header_line));
 		ss.erase(0, pos + delimiter_size);

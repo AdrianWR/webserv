@@ -142,27 +142,11 @@ class HttpRequest : public BaseHttp {
 protected:
   HeaderMap _parseStatusLine(const std::string &statusLine);
 
-
 public:
   HttpRequest();
   // HttpRequest(const HttpRequest &);
   HttpRequest &operator=(const HttpRequest &);
   ~HttpRequest();
 };
-
-// class HttpResponse : public BaseHttp {
-// public:
-//   HttpResponse();
-//   ~HttpResponse();
-//   HttpResponse(const HttpResponse &);
-//   HttpResponse &operator=(const HttpResponse &);
-//   HttpResponse(const char *content);
-// };
-
-// class HttpHandler {
-// public:
-//   static HttpResponse generateResponse(HttpRequest &h, Config &config);
-//   // httpresponse.raw_data()
-// };
 
 #endif
