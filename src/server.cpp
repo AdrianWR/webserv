@@ -49,6 +49,7 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 	while (bytes_read > 0) {
 		// Read statusline and headers
 		bytes_read = recv(fd, &c, 1, 0);
+			if (bytes_read <= 0 ) break;
 		buffer += c;
 		total_bytes_read += bytes_read;
 		if (ends_in_two_delimiters(buffer)) {
@@ -65,9 +66,10 @@ void HttpServer::_handleConnection(int &fd, Config &config) {
 				int v = atoi(temp.c_str());
 				LOG(DEBUG) << "v: " << v;
 				for (int i = 0; i < v; i++) {
-				  bytes_read = recv(fd, &c, 1, 0);
-				  buffer += c;
-				  total_bytes_read++;
+					bytes_read = recv(fd, &c, 1, 0);
+					if (bytes_read <= 0 ) break;
+					buffer += c;
+					total_bytes_read += bytes_read;
 				}
 			}
 			break;
