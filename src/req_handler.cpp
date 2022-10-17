@@ -219,11 +219,23 @@ int _get_file_size(std::FILE *temp_file)
 void req_handler::_get_script_output(std::FILE *temp_file)
 {
 	int size = _get_file_size(temp_file);
+	LOG(DEBUG) << "size: " << size;
 	char* buffer = new char[size + 1];
 
 	memset(buffer, 0, size + 1);
 	fread(buffer, 1, size, temp_file);
-	_http_response.set(200, "OK" , std::string(buffer));
+	LOG(DEBUG) << "Opening file from cgi";
+	LOG(DEBUG) << "size: " << size;
+	if (size < 0 ) {
+		LOG(INFO) << "Error 500 Internal Server Error";
+		Error error(500, this->server_config);
+		// Generate HTTP Response
+		_http_response.set(error.code, error.msg, error.body);
+	}
+	else {
+		LOG(DEBUG) << "buffer: " << buffer;
+		_http_response.set(200, "OK" , std::string(buffer));
+	}
 	delete [] buffer;
 }
 

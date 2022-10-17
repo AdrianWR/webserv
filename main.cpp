@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
   struct sigaction sigIntHandler;
 
-  FILELog::ReportingLevel() = FILELog::FromString("INFO");
+  FILELog::ReportingLevel() = FILELog::FromString("DEBUG");
 
   sigIntHandler.sa_handler = sigint_handler;
   sigemptyset(&sigIntHandler.sa_mask);
