@@ -20,6 +20,7 @@ echo "14 DELETE: Metodo Permitido"
 echo "15 DELETE: Metodo nao Permitido"
 echo "16 DELETE: Arquivo nao existe"
 echo "17 DELETE: Arquivo existe mas nao tem permissao"
+echo "18 PUT: Metodo nao implementado"
 
 
 read n
@@ -108,4 +109,9 @@ if [ $n == 17 ]; then
 # "17 DELETE: Arquivo existe mas nao tem permissao"
 	curl -v -X DELETE www.site3.com:8083/sempermissao/arq1
 fi
+if [ $n == 18 ]; then
+# "18 PUT: Metodo nao implementado"
+	curl -v -X PUT www.site3.com:8083/sempermissao/arq1
+fi
+
 

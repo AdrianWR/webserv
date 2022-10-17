@@ -1,10 +1,11 @@
 get_allowed:		1
-post_allowed:		1
+post_allowed:		0
 delete_allowed:		0
 redirection:		
-root:			/www/site2/ggg
+root:			/www/site1
 autoindex:		1
 index: 
+[0]	|site1_root.html|
 cgi pass:		
 cgi_param:
-upload_path::		/www/site2/ggg
+upload_path::		./www/uploads

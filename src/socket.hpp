@@ -17,10 +17,6 @@ public:
   class SocketException : public std::exception {
   public:
     SocketException(const std::string &msg) : message(msg) {
-      if (errno != 0) {
-        message += ": ";
-        message += strerror(errno);
-      };
     }
     ~SocketException() throw() {}
     const char *what() const throw() { return message.c_str(); }
