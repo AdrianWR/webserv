@@ -2,7 +2,7 @@ get_allowed:		1
 post_allowed:		1
 delete_allowed:		0
 redirection:		
-root:			/www/site1/fff
+root:			/www/site2/jjj
 autoindex:		1
 index: 
 cgi pass:		.py
