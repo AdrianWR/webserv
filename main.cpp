@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <iostream>
 
+# define DEFAULT_CONFIG_PATH "./www/conf/conf"
+
 void sigint_handler(int sig) {
   LOG(INFO) << "Received SIGINT, shutting down...";
   LOG(DEBUG) << "Signal number: " << sig;
@@ -19,23 +21,34 @@ bool is_in(int i, std::set<int> s) {
   return true;
 }
 
+static bool set_config_file(int argc, char **argv, std::string &file_path) {
+  if (argc > 2) {
+    LOG(ERROR) << "USAGE: ./webserv config_file_path";
+    return (false);
+  }
+  if (argc == 1)
+    file_path = DEFAULT_CONFIG_PATH;
+  else if (argc == 2)
+    file_path = argv[1];
+  return (true);
+}
+
 int main(int argc, char **argv) {
 
+	std::string config_file;
 	// Check CLI arguments
-	if (argc != 2) {
-		std::cout << "USAGE: ./webserv [config_file]\n";
-		return 1;
-	}
-	
+	if (!set_config_file(argc, argv, config_file))
+		return (1);
+
+
 	// Read config file
-	std::string config_file(argv[1]);
 	LOG(INFO) << "config file: " << config_file;
 	Config config;
 	if (!config.parse_file(config_file)) {
 		LOG(INFO) << "Error reading config file. Exiting";
 		exit (1);
 	}
-	
+
 	// Test autoindex generation
 //	std::cout << "Pagina de auto_index:\n";
 //	AutoIndexGenerator auto_index;
