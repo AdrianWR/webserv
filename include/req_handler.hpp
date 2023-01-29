@@ -15,32 +15,29 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "log.hpp"
 #include "error.hpp"
 #include "http_response.hpp"
 
 // *****************************************************
-// Class ReqHander
+// Class RequestHander
 // *****************************************************
-class req_handler {
+
+class RequestHandler
+{
 public:
-  // Constructor
-  req_handler();
-  req_handler(Config fp, HttpRequest req);
-  //	req_handler(std::string fp);
-  // Destructor
-  ~req_handler();
-  // Assignment operator
-  req_handler &operator=(const req_handler &s);
+	RequestHandler();
+	RequestHandler(Config fp, HttpRequest req);
+	~RequestHandler();
+	RequestHandler &operator=(const RequestHandler &s);
 
 public:
-  void handler();
+	void handler();
 
 private:
 	std::string extract_extension(std::string path);
 	void add_content_type(std::string path);
-	std::string extract_location (std::string uri);
+	std::string extract_location(std::string uri);
 	std::string generate_path(std::string url, std::string location, std::string root);
 	bool check_redirection();
 	bool check_method_allowed(std::string m);
@@ -59,29 +56,28 @@ private:
 private:
 	// Config objects
 	Config::BlockMap _parsed_config_map;
-	ConfigBlock		server_config;
-	LocationBlock		loc_config;
+	ConfigBlock server_config;
+	LocationBlock loc_config;
 
 	// Inputs from http_request
-	std::string	_host;
-	std::string	_port;
-	std::string	_method;
-	std::string	_uri;
-	std::string	_request_body;			// Post
-	int			_content_length;		// Post
-	std::string	_cgi_pass;				// Post
+	std::string _host;
+	std::string _port;
+	std::string _method;
+	std::string _uri;
+	std::string _request_body; // Post
+	int _content_length;			 // Post
+	std::string _cgi_pass;		 // Post
 
-	char**		_env;
-	char**		_cmd;
+	char **_env;
+	char **_cmd;
 
 	// Internals
-	std::string	_loc;
-	std::string	_path;
+	std::string _loc;
+	std::string _path;
 
 public:
 	// Output
-	HttpResponse	_http_response;
+	HttpResponse _http_response;
 };
-
 
 #endif

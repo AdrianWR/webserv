@@ -5,7 +5,8 @@
 #include <map>
 #include <string>
 
-enum HttpMethod {
+enum HttpMethodEnum
+{
   HTTP_GET,
   HTTP_POST,
   HTTP_PUT,
@@ -17,7 +18,8 @@ enum HttpMethod {
   HTTP_PATCH
 };
 
-enum HttpStatusCode {
+enum HttpStatusCode
+{
   STATUS_CODE_CONTINUE = 100,
   STATUS_CODE_SWITCHING_PROTOCOLS = 101,
   STATUS_CODE_EARLY_HINTS = 103,
@@ -77,10 +79,12 @@ enum HttpStatusCode {
   STATUS_CODE_NETWORK_AUTHENTICATION_REQUIRED = 511
 };
 
-class BaseHttp {
+class BaseHttp
+{
 
 public:
-  class HttpException : public std::exception {
+  class HttpException : public std::exception
+  {
   public:
     HttpException(const std::string &message) : message(message) {}
     ~HttpException() throw() {}
@@ -94,10 +98,10 @@ public:
   // typedef enum HttpMethod HttpMethod;
   typedef std::pair<std::string, std::string> HeaderField;
   typedef std::map<std::string, std::string> HeaderMap;
-  typedef std::map<HttpMethod, std::string> MethodMap;
+  typedef std::map<HttpMethodEnum, std::string> MethodMap;
 
 protected:
-  HttpMethod _method;
+  HttpMethodEnum _methodEnum;
   HeaderMap _headers;
   static const MethodMap _methodName;
   static const std::map<HttpStatusCode, std::string> _status_codes;
@@ -105,17 +109,23 @@ protected:
   static const std::string _header_delimiter;
   static const std::string _http_version;
 
+  std::string _host;
+  std::string _port;
+  std::string _method;
+  std::string _uri;
+  std::string _request_body; // Post
+  int _content_length;       // Post
+  std::string _cgi_pass;     // Post
+
   virtual HeaderMap _parseStatusLine(const std::string &statusLine);
   HeaderField _parseHeaderField(const std::string &str);
 
-  static std::map<HttpMethod, std::string> _initializeMethodNames();
+  static std::map<HttpMethodEnum, std::string> _initializeMethodNames();
   size_t _get_chunk_size(int &fd);
   size_t _convert_chunk_size(std::string chunk_size);
-  // std::string _body;
 
 public:
   BaseHttp();
-  // BaseHttp(const BaseHttp &);
   BaseHttp &operator=(const BaseHttp &);
   virtual ~BaseHttp() = 0;
 
@@ -123,7 +133,7 @@ public:
   BaseHttp(const char *buffer,
            int length); // Construct with header and body from client
 
-  HttpMethod getMethod();
+  HttpMethodEnum getMethod();
   HeaderMap getHeaders();
   HeaderMap parse(const char *buffer, int &fd);
 };
@@ -137,7 +147,8 @@ std::ostream &operator<<(std::ostream &os,
  * This class is used to represent an HTTP request.
  */
 
-class HttpRequest : public BaseHttp {
+class HttpRequest : public BaseHttp
+{
 
 protected:
   HeaderMap _parseStatusLine(const std::string &statusLine);
