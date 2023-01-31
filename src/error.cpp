@@ -9,7 +9,7 @@ Error::Error()
 	std::cout << "Error constructor" << std::endl;
 }
 
-Error::Error(size_t c, ConfigBlock sc)
+const Error &Error::set(size_t c, ConfigBlock sc)
 {
 	// Init dic
 	error_dic[200] = "OK";
@@ -29,6 +29,13 @@ Error::Error(size_t c, ConfigBlock sc)
 		msg = "Undefined Error Code";
 	};
 	body = fetch_error_page(code, sc);
+
+	return *this;
+}
+
+Error::Error(size_t c, ConfigBlock sc)
+{
+	set(c, sc);
 }
 
 Error::~Error()

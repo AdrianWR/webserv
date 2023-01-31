@@ -32,6 +32,7 @@ private:
 
 public:
 	std::string fetch_error_page(size_t code, ConfigBlock sc);
+	const Error &set(size_t c, ConfigBlock sc);
 };
 
 #endif

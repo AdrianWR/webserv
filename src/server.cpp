@@ -1,6 +1,7 @@
 #include "req_handler.hpp"
 #include "server.hpp"
 #include "http.hpp"
+#include "http_request.hpp"
 #include "log.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
@@ -82,19 +83,16 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 	}
 	else
 	{
-		HttpRequest request;
-		request.parse(buffer.c_str(), fd);
+		HttpRequest message(buffer.c_str(), fd);
+		HttpRequestHandler &requestHandler = HttpRequestFactory::makeRequest(message);
+		HttpResponse response = requestHandler.create_response(config);
 
-		RequestHandler rh(config, request);
-		rh.handler();
-		std::string buff = rh._http_response.serialize();
-		LOG(INFO) << "buffer size: " << buff.size();
-		LOG(INFO) << "buffer:\n|" << buff << "|";
-
+		std::string buff = response.serialize();
 		if (send(fd, buff.c_str(), buff.size(), 0) <= 0)
 		{
 			throw HttpServerException("Error writing to socket");
 		}
+		delete &requestHandler;
 	}
 	close(fd);
 }
@@ -118,12 +116,10 @@ HttpServer::SocketsVector HttpServer::_initSockets(Config config)
 
 void HttpServer::run(Config config)
 {
+	pollFdVector fds;
 
 	_sockets = _initSockets(config);
-
-	pollFdVector fds;
-	SocketsVector::iterator it;
-	for (it = _sockets.begin(); it != _sockets.end(); it++)
+	for (SocketsVector::iterator it = _sockets.begin(); it != _sockets.end(); it++)
 	{
 		fds.push_back((*it)->getPollfd());
 	}

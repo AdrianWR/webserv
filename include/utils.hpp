@@ -10,15 +10,14 @@
 #include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
-
-#include "log.hpp"
-
 #include <ctime>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <cerrno>
+#include "log.hpp"
+#include "enum.hpp"
 
 // *****************************************************
 // Auxiliary Functions
@@ -111,7 +110,7 @@ public:
   LocationBlock &operator=(const LocationBlock &);
 
 public:
-  std::map<std::string, bool> _allowed_methods;
+  std::map<HttpMethod, bool> _allowed_methods;
   std::string _redirection;
   std::string _root;
   bool _autoindex;

@@ -8,33 +8,53 @@
 
 #define SP " "
 #define CRLF "\r\n"
+#define HOST "host"
+#define METHOD "method"
 
-const std::string BaseHttp::_delimiter = "\r\n";
-const BaseHttp::MethodMap BaseHttp::_methodName =
-		BaseHttp::_initializeMethodNames();
+const std::string HttpRequest::_crlf = "\r\n";
 
-std::map<HttpMethodEnum, std::string> BaseHttp::_initializeMethodNames()
+const HttpRequest::MethodMap HttpRequest::_methodMap = HttpRequest::_initializeMethodNames();
+
+HttpRequest::HttpRequest() : _method(HTTP_GET)
 {
-	std::map<HttpMethodEnum, std::string> method_names;
-	method_names.insert(std::make_pair(HTTP_GET, "GET"));
-	method_names.insert(std::make_pair(HTTP_POST, "POST"));
-	method_names.insert(std::make_pair(HTTP_PUT, "PUT"));
-	method_names.insert(std::make_pair(HTTP_DELETE, "DELETE"));
-	method_names.insert(std::make_pair(HTTP_HEAD, "HEAD"));
-	method_names.insert(std::make_pair(HTTP_OPTIONS, "OPTIONS"));
-	method_names.insert(std::make_pair(HTTP_CONNECT, "CONNECT"));
-	method_names.insert(std::make_pair(HTTP_TRACE, "TRACE"));
-	method_names.insert(std::make_pair(HTTP_PATCH, "PATCH"));
+}
+
+HttpRequest::HttpRequest(const HttpRequest &m) : _method(m._method), _path(m._path)
+{
+}
+
+HttpRequest &HttpRequest::operator=(const HttpRequest &m)
+{
+	if (this != &m)
+	{
+		_method = m._method;
+		_path = m._path;
+	}
+	return *this;
+}
+
+HttpRequest::HttpRequest(const char *buffer, int &fd)
+{
+	this->parse(buffer, fd);
+}
+
+HttpRequest::~HttpRequest() {}
+
+HttpRequest::MethodMap HttpRequest::_initializeMethodNames()
+{
+	HttpRequest::MethodMap method_names;
+
+	method_names["GET"] = HTTP_GET;
+	method_names["POST"] = HTTP_POST;
+	method_names["PUT"] = HTTP_PUT;
+	method_names["DELETE"] = HTTP_DELETE;
+	method_names["HEAD"] = HTTP_HEAD;
+	method_names["OPTIONS"] = HTTP_OPTIONS;
+
 	return method_names;
 }
 
-BaseHttp::BaseHttp() : _methodEnum(HTTP_GET) {}
-
-BaseHttp::~BaseHttp() {}
-
-// BaseHttp::BaseHttp(const char *buffer) {}
-
-BaseHttp::HeaderField BaseHttp::_parseHeaderField(const std::string &str)
+HttpRequest::HeaderField HttpRequest::_parse_header_field(const std::string &str)
 {
 	std::string::size_type pos = str.find(':');
 	if (pos == std::string::npos)
@@ -47,21 +67,22 @@ BaseHttp::HeaderField BaseHttp::_parseHeaderField(const std::string &str)
 	return HeaderField(key, value);
 }
 
-BaseHttp::HeaderMap BaseHttp::_parseStatusLine(const std::string &str)
+HttpRequest::HeaderMap HttpRequest::_parse_status_line(const std::string &str)
 {
 	std::stringstream ss(str);
 	HeaderMap headers;
+	std::string method;
 
-	LOG(DEBUG) << "ss: |" << ss << "|";
-	ss >> headers["method"] >> headers["path"] >> headers["version"];
+	ss >> method >> _path >> _version;
 	if (ss.fail())
 		throw HttpException("Invalid status line !");
-	if (headers["method"] == "")
+	if (method.size() == 0)
 		throw HttpException("Invalid status line: method is empty");
+	_method = _methodMap.at(method);
 	return headers;
 }
 
-size_t BaseHttp::_get_chunk_size(int &fd)
+size_t HttpRequest::_get_chunk_size(int &fd)
 {
 	std::string line;
 	std::size_t pos;
@@ -73,13 +94,18 @@ size_t BaseHttp::_get_chunk_size(int &fd)
 	return (_convert_chunk_size(line.substr(0, pos)));
 }
 
-size_t BaseHttp::_convert_chunk_size(std::string chunk_size)
+size_t HttpRequest::_convert_chunk_size(std::string chunk_size)
 {
 	std::size_t size;
 	std::stringstream s_stream(chunk_size);
 
 	s_stream >> std::hex >> size;
 	return (size);
+}
+
+void HttpRequest::_next_line(std::string &ss, std::string::size_type pos)
+{
+	ss.erase(0, pos + _crlf.size());
 }
 
 /**
@@ -89,32 +115,30 @@ size_t BaseHttp::_convert_chunk_size(std::string chunk_size)
  * @return The header map. The keys are the header names. The values are the
  * values, as defined in RFC 2616.
  */
-BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd)
+void HttpRequest::parse(const char *buffer, int &fd)
 {
 	HeaderMap headers;
 	std::string ss(buffer);
 	std::string body;
-	size_t delimiter_size = _delimiter.size();
+	size_t delimiter_size = _crlf.size();
 
 	// Parse first header line
-	std::string::size_type pos = ss.find(_delimiter);
+	std::string::size_type pos = ss.find(_crlf);
 	if (pos == std::string::npos)
 		throw HttpException("Failed to parse header");
 	std::string header = ss.substr(0, pos);
-	headers = _parseStatusLine(header); // Might be overridden by subclass
+	headers = _parse_status_line(header);
 	ss.erase(0, pos + delimiter_size);
-	LOG(DEBUG) << "header: |" << header << "|";
 
 	// Parse remaining header lines
 	std::string header_line;
 	while (ss.size() > 0)
 	{
-		pos = ss.find(_delimiter);
+		pos = ss.find(_crlf);
 		header_line = ss.substr(0, pos);
 		if (header_line.size() == 0)
 			break;
-		LOG(DEBUG) << "header_line: |" << header_line << "|";
-		headers.insert(_parseHeaderField(header_line));
+		headers.insert(_parse_header_field(header_line));
 		ss.erase(0, pos + delimiter_size);
 	}
 
@@ -139,34 +163,25 @@ BaseHttp::HeaderMap BaseHttp::parse(const char *buffer, int &fd)
 			headers.insert(HeaderField("content-length", IntToString(length)));
 		}
 	}
-	if (headers["method"] == "POST")
+	if (_method == HTTP_POST)
 	{
 		body = ss.substr(2);
 		headers.insert(HeaderField("body", body));
 	}
 
 	_headers = headers;
-	LOG(INFO) << "Parsed headers:\n"
-						<< _headers;
-	return headers;
 }
 
-HttpMethodEnum BaseHttp::getMethod() { return _methodEnum; }
+HttpMethod HttpRequest::getMethod() const { return _method; }
 
-/**
- * @brief: Get the headers of the HTTP request. "method", "path" and "version"
- * are always present.
- *
- * @return: A std::map<std::string, std::string> of header fields.
- *
- * @note: The returned map is a copy of the internal map.
- */
-BaseHttp::HeaderMap BaseHttp::getHeaders() { return _headers; }
+const std::string HttpRequest::getPath() const { return _path; }
+
+const HttpRequest::HeaderMap HttpRequest::getHeaders() const { return _headers; }
 
 std::ostream &operator<<(std::ostream &os,
-												 const BaseHttp::HeaderMap &header_map)
+												 const HttpRequest::HeaderMap &header_map)
 {
-	BaseHttp::HeaderMap::const_iterator it;
+	HttpRequest::HeaderMap::const_iterator it;
 
 	for (it = header_map.begin(); it != header_map.end(); it++)
 	{

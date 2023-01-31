@@ -2,6 +2,7 @@
 #include "http.hpp"
 
 #define DOUBLE_CRLF "\r\n\r\n"
+#define DEFAULT "default"
 
 // **********************************************************
 // Utility functions
@@ -72,7 +73,6 @@ bool string_to_file(std::string file_path, std::string str)
   new_file.open(file_path.c_str(), std::ios::binary);
   if (!new_file.is_open())
     return false;
-  LOG(DEBUG) << "file opened ? " << new_file.is_open();
   new_file.write(str.c_str(), str.length());
   new_file.close();
   return true;
@@ -217,14 +217,32 @@ LocationBlock Config::parse_location(std::fstream &fs, std::string buffer)
     // alllowed_methods
     else if (!last_rword.compare("allowed_methods"))
     {
+      HttpMethod method_key;
       std::string key = buffer;
+
       fs >> buffer;
       bool aux;
       if (!buffer.compare("true"))
         aux = true;
       else
         aux = false;
-      loc._allowed_methods[key] = aux;
+      if (key == "GET")
+      {
+        method_key = HTTP_GET;
+      }
+      else if (key == "POST")
+      {
+        method_key = HTTP_POST;
+      }
+      else if (key == "DELETE")
+      {
+        method_key = HTTP_DELETE;
+      }
+      else
+      {
+        method_key = HTTP_UNKNOWN;
+      }
+      loc._allowed_methods[method_key] = aux;
     }
     // cgi_param
     else if (!last_rword.compare("cgi_param"))
@@ -417,9 +435,9 @@ bool ReservedWords::is_reserved_word(std::string query_string)
 // *****************************************************
 LocationBlock::LocationBlock()
 {
-  _allowed_methods["GET"] = true;
-  _allowed_methods["POST"] = true;
-  _allowed_methods["DELETE"] = true;
+  _allowed_methods[HTTP_GET] = true;
+  _allowed_methods[HTTP_POST] = true;
+  _allowed_methods[HTTP_DELETE] = true;
   _redirection = "";
   _root = "/www/";
   _autoindex = true;
@@ -450,11 +468,11 @@ LocationBlock &LocationBlock::operator=(const LocationBlock &rhs)
 void LocationBlock::print_location(std::ofstream &cout)
 {
   cout << "get_allowed:"
-       << "\t\t" << _allowed_methods["GET"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_GET] << std::endl;
   cout << "post_allowed:"
-       << "\t\t" << _allowed_methods["POST"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_POST] << std::endl;
   cout << "delete_allowed:"
-       << "\t\t" << _allowed_methods["DELETE"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_DELETE] << std::endl;
   cout << "redirection:"
        << "\t\t" << _redirection << std::endl;
   cout << "root:"
@@ -476,7 +494,7 @@ void LocationBlock::print_location(std::ofstream &cout)
 // *****************************************************
 ConfigBlock::ConfigBlock()
 {
-  _block_name = "empty";
+  _block_name = DEFAULT;
   _listen.push_back(-1);
   _server_name.push_back("none");
   _error_page[404] = "./errors/404.html";
