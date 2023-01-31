@@ -1,4 +1,8 @@
 #include "utils.hpp"
+#include "http.hpp"
+
+#define DOUBLE_CRLF "\r\n\r\n"
+#define DEFAULT "default"
 
 // **********************************************************
 // Utility functions
@@ -6,79 +10,84 @@
 
 static bool has_delimiter(std::string line, std::string delimiter)
 {
-	return (line.rfind(delimiter) != std::string::npos);
+  return (line.rfind(delimiter) != std::string::npos);
 }
 
-void	receive_line(int fd, std::string &line, std::string delimiter)
+void receive_line(int fd, std::string &line, std::string delimiter)
 {
-	char		buffer[2] = {0};
-	ssize_t		num_of_bytes;	
-	std::string temp_line;
+  char buffer[2] = {0};
+  ssize_t num_of_bytes;
+  std::string temp_line;
 
-	while (true)
-	{
-		num_of_bytes = recv(fd, buffer, 1, 0);
-		if (num_of_bytes == ERROR)
-			throw (std::exception());
-		if (num_of_bytes <= 0)
-			break ;
-		temp_line += buffer;
-        if (has_delimiter(temp_line, delimiter))
-            break ;
-	}
-	line = temp_line;
+  while (true)
+  {
+    num_of_bytes = recv(fd, buffer, 1, 0);
+    if (num_of_bytes == ERROR)
+      throw(std::exception());
+    if (num_of_bytes <= 0)
+      break;
+    temp_line += buffer;
     if (has_delimiter(temp_line, delimiter))
-		line.resize(line.rfind(delimiter));
+      break;
+  }
+  line = temp_line;
+  if (has_delimiter(temp_line, delimiter))
+    line.resize(line.rfind(delimiter));
 }
 
-bool ends_in_two_delimiters(std::string buffer) {
-	size_t pos = 0;
+bool ends_in_two_delimiters(std::string buffer)
+{
+  size_t pos = 0;
 
-	pos = buffer.rfind("\r\n\r\n");
-	if (pos + 4 == buffer.size() && buffer.size() > 4) {
-		return true;
-	}
-	return false;
+  pos = buffer.rfind(DOUBLE_CRLF);
+  return (pos + 4 == buffer.size() && buffer.size() > 4);
 }
 
-std::string file_to_string(std::string file_path) {
-	std::string line;
-	std::stringstream buffer;
-	std::ifstream myfile(file_path.c_str(), std::ifstream::in);
+std::string file_to_string(std::string file_path)
+{
+  std::string line;
+  std::stringstream buffer;
+  std::ifstream myfile(file_path.c_str(), std::ifstream::in);
 
-	LOG(INFO) << " ======= begin file_to_string ========";
-	LOG(INFO) << "file_path: " << file_path;
+  LOG(INFO) << " ======= begin file_to_string ========";
+  LOG(INFO) << "file_path: " << file_path;
 
-	// Se arquivo existe, serve arquivo
-	if (myfile.is_open()) {
-		buffer << myfile.rdbuf();
-		myfile.close();
-		return buffer.str();
-	} else {
-	LOG(INFO) << "Unable to open file";
-	return "";
-	}
+  // Se arquivo existe, serve arquivo
+  if (myfile.is_open())
+  {
+    buffer << myfile.rdbuf();
+    myfile.close();
+    return buffer.str();
+  }
+  else
+  {
+    LOG(INFO) << "Unable to open file";
+    return "";
+  }
 }
 
-bool string_to_file(std::string file_path, std::string str) {
-	std::ofstream new_file;
+bool string_to_file(std::string file_path, std::string str)
+{
+  std::ofstream new_file;
 
-	new_file.open(file_path.c_str(), std::ios::binary);
-	if (!new_file.is_open()) return false;
-	LOG(DEBUG) << "file opened ? " << new_file.is_open();
-	new_file.write(str.c_str(), str.length());
-	new_file.close();
-	return true;
+  new_file.open(file_path.c_str(), std::ios::binary);
+  if (!new_file.is_open())
+    return false;
+  new_file.write(str.c_str(), str.length());
+  new_file.close();
+  return true;
 }
 
-std::string IntToString(int a) {
+std::string IntToString(int a)
+{
   std::ostringstream temp;
 
   temp << a;
   return temp.str();
 }
 
-size_t StringToInt(std::string s) {
+size_t StringToInt(std::string s)
+{
   std::stringstream temp;
   size_t i;
 
@@ -88,32 +97,39 @@ size_t StringToInt(std::string s) {
   return i;
 }
 
-bool file_exist(std::string path) {
-	struct stat   buffer;   
-	return (stat (path.c_str(), &buffer) == 0);
+bool file_exist(std::string path)
+{
+  struct stat buffer;
+  return (stat(path.c_str(), &buffer) == 0);
 }
 
-std::string path_is(std::string path) {
-	struct stat s;
+std::string path_is(std::string path)
+{
+  struct stat s;
 
-	if(stat(path.c_str(), &s) == 0) {
-		if(s.st_mode & S_IFDIR) {
-			//it's a directory
-			return ("dir");
-		}
-		else if(s.st_mode & S_IFREG) {
-			//it's a file
-			return("file");
-		}
-	}
-	return("error");
+  if (stat(path.c_str(), &s) == 0)
+  {
+    if (s.st_mode & S_IFDIR)
+    {
+      // it's a directory
+      return ("dir");
+    }
+    else if (s.st_mode & S_IFREG)
+    {
+      // it's a file
+      return ("file");
+    }
+  }
+  return ("error");
 }
 
-bool end_in_slash(std::string str) {
-	char a = str[str.length()-1];
-	LOG(DEBUG) << "a: " << a;
-	if (a == '/') return true;
-	return false;
+bool end_in_slash(std::string str)
+{
+  char a = str[str.length() - 1];
+  LOG(DEBUG) << "a: " << a;
+  if (a == '/')
+    return true;
+  return false;
 }
 // **********************************************************
 
@@ -122,16 +138,19 @@ bool end_in_slash(std::string str) {
 // *****************************************************
 Config::Config() {}
 
-Config::~Config() {
+Config::~Config()
+{
 }
 
-Config &Config::operator=(const Config &s) {
+Config &Config::operator=(const Config &s)
+{
   if (this != &s)
     return *this;
   return *this;
 }
 
-void Config::printa_linha(std::fstream &fileStream) {
+void Config::printLine(std::fstream &fileStream)
+{
   std::string buffer;
 
   fileStream >> buffer;
@@ -140,63 +159,94 @@ void Config::printa_linha(std::fstream &fileStream) {
   std::cout << " " << buffer << "|" << std::endl;
 }
 
-LocationBlock Config::parse_location(std::fstream &fs, std::string buffer) {
+LocationBlock Config::parse_location(std::fstream &fs, std::string buffer)
+{
   ReservedWords r = ReservedWords();
   std::string last_rword = "";
   LocationBlock loc;
 
   loc = LocationBlock();
-  while (buffer.compare("}") != 0) {
-	// Check comment
-	if (buffer[0] == '#') {
-		while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)  {
-			  fs >> buffer;
-		};
-	};
-    if (r.is_reserved_word(buffer)) {
+  while (buffer.compare("}") != 0)
+  {
+    // Check comment
+    if (buffer[0] == '#')
+    {
+      while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)
+      {
+        fs >> buffer;
+      };
+    };
+    if (r.is_reserved_word(buffer))
+    {
       last_rword = buffer;
       fs >> buffer;
     };
     // redirection
-    if (!last_rword.compare("redirection")) {
+    if (!last_rword.compare("redirection"))
+    {
       loc._redirection = buffer;
     }
     // root
-    else if (!last_rword.compare("root")) {
+    else if (!last_rword.compare("root"))
+    {
       loc._root = buffer;
     }
     // upload_path
-    else if (!last_rword.compare("upload_path")) {
+    else if (!last_rword.compare("upload_path"))
+    {
       loc._upload_path = buffer;
     }
     // cgi_pass
-    else if (!last_rword.compare("cgi_pass")) {
+    else if (!last_rword.compare("cgi_pass"))
+    {
       loc._cgi_pass = buffer;
     }
     // autoindex
-    else if (!last_rword.compare("autoindex")) {
+    else if (!last_rword.compare("autoindex"))
+    {
       if (!buffer.compare("true"))
         loc._autoindex = true;
       else
         loc._autoindex = false;
     }
     // index
-    else if (!last_rword.compare("index")) {
+    else if (!last_rword.compare("index"))
+    {
       loc._index.push_back(buffer);
     }
     // alllowed_methods
-    else if (!last_rword.compare("allowed_methods")) {
+    else if (!last_rword.compare("allowed_methods"))
+    {
+      HttpMethod method_key;
       std::string key = buffer;
+
       fs >> buffer;
       bool aux;
       if (!buffer.compare("true"))
         aux = true;
       else
         aux = false;
-      loc._allowed_methods[key] = aux;
+      if (key == "GET")
+      {
+        method_key = HTTP_GET;
+      }
+      else if (key == "POST")
+      {
+        method_key = HTTP_POST;
+      }
+      else if (key == "DELETE")
+      {
+        method_key = HTTP_DELETE;
+      }
+      else
+      {
+        method_key = HTTP_UNKNOWN;
+      }
+      loc._allowed_methods[method_key] = aux;
     }
     // cgi_param
-    else if (!last_rword.compare("cgi_param")) {
+    else if (!last_rword.compare("cgi_param"))
+    {
       std::string key = buffer;
       fs >> buffer;
       loc._cgi_param[key] = buffer;
@@ -207,82 +257,98 @@ LocationBlock Config::parse_location(std::fstream &fs, std::string buffer) {
 }
 
 ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
-                                            std::string &buffer) {
-	int temp_port;
-	ConfigBlock stub;
-	std::string last_rword = "";
-	std::string location_key = "";
-	ReservedWords r = ReservedWords();
-	LocationBlock stub_loc;
+                                            std::string &buffer)
+{
+  int temp_port;
+  ConfigBlock stub;
+  std::string last_rword = "";
+  std::string location_key = "";
+  ReservedWords r = ReservedWords();
+  LocationBlock stub_loc;
 
-	stub = ConfigBlock();
-	stub._block_name = buffer;
-	LOG(INFO) << "Parsing Block: " << buffer;
-	while (buffer.compare("}") != 0) {
-	// Check comment
-	if (buffer[0] == '#') {
-		while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)  {
-			  fileStream >> buffer;
-		};
-	};
-	if (buffer.compare("}") == 0) break;
-	// If is reserved word then cursor is at the begining of line
-	if (r.is_reserved_word(buffer)) {
-		last_rword = buffer;
-		fileStream >> buffer;
-	};
-	// client_max_body_size
-	if (!last_rword.compare("client_max_body_size")) {
-	std::istringstream(buffer) >> stub._client_max_body_size;
-	}
-	// server_name
-	else if (!last_rword.compare("server_name")) {
-	  stub._server_name.push_back(buffer);
-	}
-	// listen
-	else if (!last_rword.compare("listen")) {
-		std::istringstream(buffer) >> temp_port;
-		stub._listen.push_back(temp_port);
-		_available_ports.insert(static_cast<short>(temp_port));
-	}
-	// error_page
-	else if (!last_rword.compare("error_page")) {
-		int key;
-		std::istringstream(buffer) >> key;
-		fileStream >> buffer;
-		stub._error_page[key] = buffer;
-	}
-	// location
-	else if (!last_rword.compare("location")) {
-		std::string location_key = buffer;
-		stub_loc = parse_location(fileStream, buffer);
-		stub._location[location_key] = stub_loc;
-	}
-	fileStream >> buffer;
-} // end while
+  stub = ConfigBlock();
+  stub._block_name = buffer;
+  LOG(INFO) << "Parsing Block: " << buffer;
+  while (buffer.compare("}") != 0)
+  {
+    // Check comment
+    if (buffer[0] == '#')
+    {
+      while (!r.is_reserved_word(buffer) && buffer.compare("}") != 0)
+      {
+        fileStream >> buffer;
+      };
+    };
+    if (buffer.compare("}") == 0)
+      break;
+    // If is reserved word then cursor is at the begining of line
+    if (r.is_reserved_word(buffer))
+    {
+      last_rword = buffer;
+      fileStream >> buffer;
+    };
+    // client_max_body_size
+    if (!last_rword.compare("client_max_body_size"))
+    {
+      std::istringstream(buffer) >> stub._client_max_body_size;
+    }
+    // server_name
+    else if (!last_rword.compare("server_name"))
+    {
+      stub._server_name.push_back(buffer);
+    }
+    // listen
+    else if (!last_rword.compare("listen"))
+    {
+      std::istringstream(buffer) >> temp_port;
+      stub._listen.push_back(temp_port);
+      _available_ports.insert(static_cast<short>(temp_port));
+    }
+    // error_page
+    else if (!last_rword.compare("error_page"))
+    {
+      int key;
+      std::istringstream(buffer) >> key;
+      fileStream >> buffer;
+      stub._error_page[key] = buffer;
+    }
+    // location
+    else if (!last_rword.compare("location"))
+    {
+      std::string location_key = buffer;
+      stub_loc = parse_location(fileStream, buffer);
+      stub._location[location_key] = stub_loc;
+    }
+    fileStream >> buffer;
+  } // end while
 
-	// Remove defaults from containers
-	if (stub._listen.front() == -1)
-		stub._listen.erase(stub._listen.begin());
-	if (!stub._server_name.front().compare("none"))
-		stub._server_name.erase(stub._server_name.begin());
-	// Se location vazio ou se nao tem location /, adiciona location default
-	if (stub._location.find("/") == stub._location.end()) {
-		stub.add_default_location();
-	};
-	return (stub);
+  // Remove defaults from containers
+  if (stub._listen.front() == -1)
+    stub._listen.erase(stub._listen.begin());
+  if (!stub._server_name.front().compare("none"))
+    stub._server_name.erase(stub._server_name.begin());
+  // Se location vazio ou se nao tem location /, adiciona location default
+  if (stub._location.find("/") == stub._location.end())
+  {
+    stub.add_default_location();
+  };
+  return (stub);
 }
 
-void Config::generate_config_map() {
+void Config::generate_config_map()
+{
   ConfigBlock stub;
   std::string key;
 
   if (_config_vector.size() == 0)
     return;
-  for (size_t i = 0; i < _config_vector.size(); i++) {
+  for (size_t i = 0; i < _config_vector.size(); i++)
+  {
     stub = _config_vector[i];
-    for (size_t j = 0; j < stub._listen.size(); j++) {
-      for (size_t k = 0; k < stub._server_name.size(); k++) {
+    for (size_t j = 0; j < stub._listen.size(); j++)
+    {
+      for (size_t k = 0; k < stub._server_name.size(); k++)
+      {
         key = stub._server_name[k] + ":" + IntToString(stub._listen[j]);
         _config_map[key] = stub;
         _config_map[key]._listen.clear();
@@ -302,38 +368,43 @@ void Config::generate_config_map() {
  *
  * @note: The returned map is a copy of the internal map.
  */
-bool Config::parse_file(std::string file) {
-	ConfigBlock stub;
-	std::fstream fileStream;
-	std::string buffer = "";
+bool Config::parse_file(std::string file)
+{
+  ConfigBlock stub;
+  std::fstream fileStream;
+  std::string buffer = "";
 
-	fileStream.open(file.c_str());
-	if (!fileStream.is_open()) {
-		LOG(ERROR) << "Failed to open file " << file;
-	return false;
-	}
-	// file loop
-	LOG(INFO) << "Parsing Config File";
-	while (fileStream >> buffer) {
-		stub = ConfigBlock();
-		stub = parse_config_block_file(fileStream, buffer);
-		// se stub nao tem listen ou server name -> erro
-		if (!stub.check_listen_and_server_name()){
-			LOG(ERROR) << "Missing 'listen' and 'server_name' directives !";
-		};
-		// se stub nano tem location -> colocar um location default
-		_config_vector.push_back(stub);
-	};
-	generate_config_map();
-	// Output config map to a file config_map.txt for easy checking
-	print_mapc(_config_map);
-	return true;
+  fileStream.open(file.c_str());
+  if (!fileStream.is_open())
+  {
+    LOG(ERROR) << "Failed to open file " << file;
+    return false;
+  }
+  // file loop
+  LOG(INFO) << "Parsing Config File";
+  while (fileStream >> buffer)
+  {
+    stub = ConfigBlock();
+    stub = parse_config_block_file(fileStream, buffer);
+    // se stub nao tem listen ou server name -> erro
+    if (!stub.check_listen_and_server_name())
+    {
+      LOG(ERROR) << "Missing 'listen' and 'server_name' directives !";
+    };
+    // se stub nano tem location -> colocar um location default
+    _config_vector.push_back(stub);
+  };
+  generate_config_map();
+  // Output config map to a file config_map.txt for easy checking
+  print_mapc(_config_map);
+  return true;
 }
 
 // *****************************************************
 // Class ReservedWords
 // *****************************************************
-ReservedWords::ReservedWords() {
+ReservedWords::ReservedWords()
+{
   list.insert("listen");
   list.insert("root");
   list.insert("server_name");
@@ -352,7 +423,8 @@ ReservedWords::ReservedWords() {
   list.insert("allowed_methods");
 }
 
-bool ReservedWords::is_reserved_word(std::string query_string) {
+bool ReservedWords::is_reserved_word(std::string query_string)
+{
   if (list.find(query_string) == list.end())
     return false;
   return true;
@@ -361,22 +433,26 @@ bool ReservedWords::is_reserved_word(std::string query_string) {
 // *****************************************************
 // Class LocationBlock
 // *****************************************************
-LocationBlock::LocationBlock() {
-  _allowed_methods["GET"] = true;
-  _allowed_methods["POST"] = true;
-  _allowed_methods["DELETE"] = true;
+LocationBlock::LocationBlock()
+{
+  _allowed_methods[HTTP_GET] = true;
+  _allowed_methods[HTTP_POST] = true;
+  _allowed_methods[HTTP_DELETE] = true;
   _redirection = "";
   _root = "/www/";
   _autoindex = true;
   _cgi_pass = "";
-  _upload_path = "./www/uploads";
+  _upload_path = "/www/uploads";
 }
 
-LocationBlock::~LocationBlock() {
+LocationBlock::~LocationBlock()
+{
 }
 
-LocationBlock &LocationBlock::operator=(const LocationBlock &rhs) {
-  if (this != &rhs) {
+LocationBlock &LocationBlock::operator=(const LocationBlock &rhs)
+{
+  if (this != &rhs)
+  {
     _allowed_methods = rhs._allowed_methods;
     _redirection = rhs._redirection;
     _root = rhs._root;
@@ -389,13 +465,14 @@ LocationBlock &LocationBlock::operator=(const LocationBlock &rhs) {
   return *this;
 }
 
-void LocationBlock::print_location(std::ofstream &cout) {
+void LocationBlock::print_location(std::ofstream &cout)
+{
   cout << "get_allowed:"
-       << "\t\t" << _allowed_methods["GET"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_GET] << std::endl;
   cout << "post_allowed:"
-       << "\t\t" << _allowed_methods["POST"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_POST] << std::endl;
   cout << "delete_allowed:"
-       << "\t\t" << _allowed_methods["DELETE"] << std::endl;
+       << "\t\t" << _allowed_methods[HTTP_DELETE] << std::endl;
   cout << "redirection:"
        << "\t\t" << _redirection << std::endl;
   cout << "root:"
@@ -415,8 +492,9 @@ void LocationBlock::print_location(std::ofstream &cout) {
 // *****************************************************
 // Class ConfigBlock
 // *****************************************************
-ConfigBlock::ConfigBlock() {
-  _block_name = "empty";
+ConfigBlock::ConfigBlock()
+{
+  _block_name = DEFAULT;
   _listen.push_back(-1);
   _server_name.push_back("none");
   _error_page[404] = "./errors/404.html";
@@ -424,11 +502,14 @@ ConfigBlock::ConfigBlock() {
       8; // max size for the client body, defaults to 8 000
 }
 
-ConfigBlock::~ConfigBlock() {
+ConfigBlock::~ConfigBlock()
+{
 }
 
-ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
-  if (this != &rhs) {
+ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs)
+{
+  if (this != &rhs)
+  {
     _block_name = rhs._block_name;
     _listen = rhs._listen;
     _server_name = rhs._server_name;
@@ -439,36 +520,42 @@ ConfigBlock &ConfigBlock::operator=(const ConfigBlock &rhs) {
   return *this;
 }
 
-void ConfigBlock::print_block_file(std::ofstream &cout) {
-	cout << "=======================================================\n";
-	cout << "block_name: " << _block_name << std::endl;
-	cout << "listen: \n";
-	print_vector(_listen, cout);
-	cout << "server_name: \n";
-	print_vector(_server_name, cout);
-	cout << "client_max_body_size:"
-	   << "\t\t" << _client_max_body_size << std::endl;
-	cout << "error_page:\n";
-	print_map(_error_page, cout);
-	std::map<std::string, LocationBlock>::iterator i;
-	for (i = _location.begin(); i != _location.end(); i++) {
-		cout << "------------------------------\n";
-		cout << "location:"
-			 << "\t\t" << i->first << std::endl;
-		i->second.print_location(cout);
-	};
-	cout << "=======================================================\n";
+void ConfigBlock::print_block_file(std::ofstream &cout)
+{
+  cout << "=======================================================\n";
+  cout << "block_name: " << _block_name << std::endl;
+  cout << "listen: \n";
+  print_vector(_listen, cout);
+  cout << "server_name: \n";
+  print_vector(_server_name, cout);
+  cout << "client_max_body_size:"
+       << "\t\t" << _client_max_body_size << std::endl;
+  cout << "error_page:\n";
+  print_map(_error_page, cout);
+  std::map<std::string, LocationBlock>::iterator i;
+  for (i = _location.begin(); i != _location.end(); i++)
+  {
+    cout << "------------------------------\n";
+    cout << "location:"
+         << "\t\t" << i->first << std::endl;
+    i->second.print_location(cout);
+  };
+  cout << "=======================================================\n";
 }
 
-bool ConfigBlock::check_listen_and_server_name(){
-	if (_listen.front() == -1) return false;
-	if (!_server_name.front().compare("none")) return false;
-	return true;
+bool ConfigBlock::check_listen_and_server_name()
+{
+  if (_listen.front() == -1)
+    return false;
+  if (!_server_name.front().compare("none"))
+    return false;
+  return true;
 }
 
-void ConfigBlock::add_default_location() {
-	LocationBlock lb;
-	_location["/"] = lb;
+void ConfigBlock::add_default_location()
+{
+  LocationBlock lb;
+  _location["/"] = lb;
 }
 
 // *****************************************************
@@ -476,7 +563,8 @@ void ConfigBlock::add_default_location() {
 // *****************************************************
 AutoIndexGenerator::AutoIndexGenerator(void) { return; }
 
-AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src) {
+AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src)
+{
   (void)src;
   return;
 }
@@ -484,14 +572,16 @@ AutoIndexGenerator::AutoIndexGenerator(AutoIndexGenerator const &src) {
 AutoIndexGenerator::~AutoIndexGenerator(void) { return; }
 
 AutoIndexGenerator &
-AutoIndexGenerator::operator=(AutoIndexGenerator const &src) {
+AutoIndexGenerator::operator=(AutoIndexGenerator const &src)
+{
   (void)src;
   return *this;
 }
 
 std::string AutoIndexGenerator::getPage(const char *path,
                                         std::string const &host, int port,
-										std::string loc) {
+                                        std::string loc)
+{
   std::string dirName(path);
   LOG(DEBUG) << "dirname: " << dirName;
   DIR *dir = opendir(path);
@@ -505,14 +595,16 @@ std::string AutoIndexGenerator::getPage(const char *path,
     <h1>INDEX</h1>\n\
     <p>\n";
 
-  if (dir == NULL) {
+  if (dir == NULL)
+  {
     std::cerr << "Error: could not open [" << path << "]" << std::endl;
     return "";
   }
   if (dirName[0] != '/')
     dirName = "/" + dirName;
   for (struct dirent *dirEntry = readdir(dir); dirEntry;
-       dirEntry = readdir(dir)) {
+       dirEntry = readdir(dir))
+  {
     page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), loc, host, port);
   }
   page += "\
@@ -525,7 +617,8 @@ std::string AutoIndexGenerator::getPage(const char *path,
 
 std::string AutoIndexGenerator::getLink(std::string const &dirEntry,
                                         std::string const &dirName,
-                                        std::string const &host, int port) {
+                                        std::string const &host, int port)
+{
   std::stringstream ss;
   ss << "\t\t<p><a href=\"http://" + host + ":" << port
      << dirName + "/" + dirEntry + "\">" + dirEntry + "</a></p>\n";

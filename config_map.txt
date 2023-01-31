@@ -25,7 +25,7 @@ index:
 [0]	|site1_root.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/cgi
 get_allowed:		1
@@ -37,7 +37,7 @@ autoindex:		1
 index: 
 cgi pass:		.py
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/diretorio
 get_allowed:		1
@@ -50,7 +50,7 @@ index:
 [0]	|index.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/getnok
 get_allowed:		0
@@ -62,7 +62,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/getok
 get_allowed:		1
@@ -74,7 +74,7 @@ autoindex:		0
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/outrodir
 get_allowed:		1
@@ -86,7 +86,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/redirection
 get_allowed:		1
@@ -99,7 +99,7 @@ index:
 [0]	|index.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/uploads
 get_allowed:		1
@@ -111,7 +111,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 =======================================================
 www.site1.com:8082:
 =======================================================
@@ -140,7 +140,7 @@ index:
 [0]	|site1_root.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/cgi
 get_allowed:		1
@@ -152,7 +152,7 @@ autoindex:		1
 index: 
 cgi pass:		.py
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/diretorio
 get_allowed:		1
@@ -165,7 +165,7 @@ index:
 [0]	|index.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/getnok
 get_allowed:		0
@@ -177,7 +177,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/getok
 get_allowed:		1
@@ -189,7 +189,7 @@ autoindex:		0
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/outrodir
 get_allowed:		1
@@ -201,7 +201,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/redirection
 get_allowed:		1
@@ -214,7 +214,7 @@ index:
 [0]	|index.html|
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/uploads
 get_allowed:		1
@@ -226,7 +226,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 =======================================================
 www.site2.com:8082:
 =======================================================
@@ -255,7 +255,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/cgi
 get_allowed:		1
@@ -267,7 +267,7 @@ autoindex:		1
 index: 
 cgi pass:		.py
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/diretorio
 get_allowed:		1
@@ -279,7 +279,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/noupload
 get_allowed:		1
@@ -291,7 +291,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/uploadok
 get_allowed:		1
@@ -331,7 +331,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/deletenok
 get_allowed:		1
@@ -343,7 +343,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/deleteok
 get_allowed:		1
@@ -355,7 +355,7 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 ------------------------------
 location:		/sempermissao
 get_allowed:		1
@@ -367,5 +367,5 @@ autoindex:		1
 index: 
 cgi pass:		
 cgi_param:
-upload_path::		./www/uploads
+upload_path::		/www/uploads
 =======================================================

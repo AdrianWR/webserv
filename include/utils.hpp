@@ -10,21 +10,20 @@
 #include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
-
-#include "log.hpp"
-
 #include <ctime>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <cerrno>
+#include "log.hpp"
+#include "enum.hpp"
 
 // *****************************************************
 // Auxiliary Functions
 // *****************************************************
 
-void	receive_line(int fd, std::string &line, std::string delimiter);
+void receive_line(int fd, std::string &line, std::string delimiter);
 
 bool ends_in_two_delimiters(std::string buffer);
 std::string file_to_string(std::string file_path);
@@ -36,51 +35,61 @@ bool file_exist(std::string path);
 std::string path_is(std::string s);
 bool end_in_slash(std::string str);
 
-
-template <typename T> void print_vector(std::vector<T> v, std::ofstream &cout) {
+template <typename T>
+void print_vector(std::vector<T> v, std::ofstream &cout)
+{
   typename std::vector<T>::iterator it;
 
   int i = 0;
 
-  for (it = v.begin(); it != v.end(); it++) {
+  for (it = v.begin(); it != v.end(); it++)
+  {
     cout << "[" << i << "]\t|" << (*it) << "|" << std::endl;
     i++;
   }
 }
 
-template <typename T> void print_vectorc(std::vector<T> v) {
+template <typename T>
+void print_vectorc(std::vector<T> v)
+{
   std::ofstream cout("config_vector.txt", std::ofstream::trunc);
 
-  for (unsigned int i = 0; i < v.size(); i++) {
+  for (unsigned int i = 0; i < v.size(); i++)
+  {
     std::cout << "[" << i << "]\n";
     v[i].print_block_file(cout);
   }
 }
 
 template <typename A, typename B>
-void print_map(std::map<A, B> m, std::ofstream &cout) {
+void print_map(std::map<A, B> m, std::ofstream &cout)
+{
   typename std::map<A, B>::iterator it;
-  for (it = m.begin(); it != m.end(); it++) {
+  for (it = m.begin(); it != m.end(); it++)
+  {
     cout << "|" << it->first << " : " << it->second << "|" << std::endl;
   }
 }
 
-template <typename A, typename B> void print_mapc(std::map<A, B> m) {
+template <typename A, typename B>
+void print_mapc(std::map<A, B> m)
+{
   typename std::map<A, B>::iterator it;
   std::ofstream cout("config_map.txt", std::ofstream::trunc);
 
-  for (it = m.begin(); it != m.end(); it++) {
+  for (it = m.begin(); it != m.end(); it++)
+  {
     cout << it->first << ":\n";
     (it->second).print_block_file(cout);
   }
   cout.close();
 }
 
-
 // *****************************************************88
-// Class ReservedWords 
+// Class ReservedWords
 // *****************************************************88
-class ReservedWords {
+class ReservedWords
+{
 public:
   ReservedWords();
   std::set<std::string> list;
@@ -88,9 +97,10 @@ public:
 };
 
 // *****************************************************88
-// Class LocationBlock 
+// Class LocationBlock
 // *****************************************************88
-class LocationBlock {
+class LocationBlock
+{
 public:
   // Constructor
   LocationBlock();
@@ -100,7 +110,7 @@ public:
   LocationBlock &operator=(const LocationBlock &);
 
 public:
-  std::map<std::string, bool> _allowed_methods;
+  std::map<HttpMethod, bool> _allowed_methods;
   std::string _redirection;
   std::string _root;
   bool _autoindex;
@@ -114,11 +124,12 @@ public:
 };
 
 // *****************************************************88
-// Class ConfigBlock 
+// Class ConfigBlock
 // *****************************************************88
-class ConfigBlock {
+class ConfigBlock
+{
 public:
-	typedef std::map<std::string, LocationBlock> MapOfLocations;
+  typedef std::map<std::string, LocationBlock> MapOfLocations;
 
 public:
   // Constructor
@@ -131,9 +142,9 @@ public:
 public:
   std::string _block_name; // name of block in config file
   std::vector<int> _listen;
-  std::vector<std::string> _server_name; // "host" do http request !
-  int _client_max_body_size; // max size for the client body, defaults to 8
-                                // 000
+  std::vector<std::string> _server_name;          // "host" do http request !
+  int _client_max_body_size;                      // max size for the client body, defaults to 8
+                                                  // 000
   std::map<int, std::string> _error_page;         // error page redirections
   std::map<std::string, LocationBlock> _location; // map with n-location configs
 
@@ -144,14 +155,15 @@ public:
 };
 
 // *****************************************************88
-// Class Config 
+// Class Config
 // *****************************************************88
-class Config {
+class Config
+{
 public:
   typedef std::map<std::string, ConfigBlock> BlockMap;
   typedef std::vector<ConfigBlock> vector_of_blocks;
-  typedef short PortType;
-  typedef std::set<PortType> PortSet;
+  typedef short Port;
+  typedef std::set<Port> PortSet;
 
 private:
   vector_of_blocks _config_vector;
@@ -173,7 +185,7 @@ public:
   ConfigBlock parse_config_block_file(std::fstream &fileStream,
                                       std::string &buffer);
   LocationBlock parse_location(std::fstream &fs, std::string buffer);
-  void printa_linha(std::fstream &fileStream);
+  void printLine(std::fstream &fileStream);
   void generate_config_map();
 
   // Getters
@@ -182,20 +194,21 @@ public:
 };
 
 // *****************************************************88
-// Class AutoIndexGeerator 
+// Class AutoIndexGeerator
 // *****************************************************88
-class AutoIndexGenerator {
-    public:
-        AutoIndexGenerator(void);
-        AutoIndexGenerator(AutoIndexGenerator const &src);
-        virtual ~AutoIndexGenerator(void);
+class AutoIndexGenerator
+{
+public:
+  AutoIndexGenerator(void);
+  AutoIndexGenerator(AutoIndexGenerator const &src);
+  virtual ~AutoIndexGenerator(void);
 
-        AutoIndexGenerator   &operator=(AutoIndexGenerator const &src);
+  AutoIndexGenerator &operator=(AutoIndexGenerator const &src);
 
-        static std::string  getPage(const char *path, std::string const &host, int port, std::string loc);
-    private:
-        static std::string  getLink(std::string const &dirEntry, std::string const &dirName, std::string const &host, int port);
+  static std::string getPage(const char *path, std::string const &host, int port, std::string loc);
 
+private:
+  static std::string getLink(std::string const &dirEntry, std::string const &dirName, std::string const &host, int port);
 };
 
 #endif

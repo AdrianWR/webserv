@@ -1,11 +1,9 @@
-#ifndef HTTP_HPP
-#define HTTP_HPP
+#ifndef ENUM_HPP
+#define ENUM_HPP
 
-#include "utils.hpp"
-#include <map>
-#include <string>
-
-enum HttpMethod {
+enum HttpMethod
+{
+  HTTP_UNKNOWN,
   HTTP_GET,
   HTTP_POST,
   HTTP_PUT,
@@ -17,7 +15,8 @@ enum HttpMethod {
   HTTP_PATCH
 };
 
-enum HttpStatusCode {
+enum HttpStatusCode
+{
   STATUS_CODE_CONTINUE = 100,
   STATUS_CODE_SWITCHING_PROTOCOLS = 101,
   STATUS_CODE_EARLY_HINTS = 103,
@@ -75,78 +74,6 @@ enum HttpStatusCode {
   STATUS_CODE_LOOP_DETECTED = 508,
   STATUS_CODE_NOT_EXTENDED = 510,
   STATUS_CODE_NETWORK_AUTHENTICATION_REQUIRED = 511
-};
-
-class BaseHttp {
-
-public:
-  class HttpException : public std::exception {
-  public:
-    HttpException(const std::string &message) : message(message) {}
-    ~HttpException() throw() {}
-    virtual const char *what() const throw() { return message.c_str(); }
-
-  private:
-    std::string message;
-  };
-
-public:
-  // typedef enum HttpMethod HttpMethod;
-  typedef std::pair<std::string, std::string> HeaderField;
-  typedef std::map<std::string, std::string> HeaderMap;
-  typedef std::map<HttpMethod, std::string> MethodMap;
-
-protected:
-  HttpMethod _method;
-  HeaderMap _headers;
-  static const MethodMap _methodName;
-  static const std::map<HttpStatusCode, std::string> _status_codes;
-  static const std::string _delimiter;
-  static const std::string _header_delimiter;
-  static const std::string _http_version;
-
-  virtual HeaderMap _parseStatusLine(const std::string &statusLine);
-  HeaderField _parseHeaderField(const std::string &str);
-
-  static std::map<HttpMethod, std::string> _initializeMethodNames();
-  size_t _get_chunk_size(int &fd);
-  size_t _convert_chunk_size(std::string chunk_size);
-  // std::string _body;
-
-public:
-  BaseHttp();
-  // BaseHttp(const BaseHttp &);
-  BaseHttp &operator=(const BaseHttp &);
-  virtual ~BaseHttp() = 0;
-
-  BaseHttp(const char *buffer); // Construct with header from client
-  BaseHttp(const char *buffer,
-           int length); // Construct with header and body from client
-
-  HttpMethod getMethod();
-  HeaderMap getHeaders();
-  HeaderMap parse(const char *buffer, int &fd);
-};
-
-std::ostream &operator<<(std::ostream &os,
-                         const BaseHttp::HeaderMap &header_map);
-
-/**
- * @brief HttpRequest
- * @details
- * This class is used to represent an HTTP request.
- */
-
-class HttpRequest : public BaseHttp {
-
-protected:
-  HeaderMap _parseStatusLine(const std::string &statusLine);
-
-public:
-  HttpRequest();
-  // HttpRequest(const HttpRequest &);
-  HttpRequest &operator=(const HttpRequest &);
-  ~HttpRequest();
 };
 
 #endif

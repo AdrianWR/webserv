@@ -1,60 +1,42 @@
 NAME = webserv
 
-FLAGS = -Wall -Wextra -Werror -std=c++98
-FLAGS += -g
-FLAGS += -fsanitize=address
+CXX      = c++
+CXXFLAGS = -g -fsanitize=address
+CPPFLAGS =
+LDFLAGS  = -fsanitize=address
 
-CC = c++
-# CC = clang++
-
-OBJ_PATH = ./obj
-SRC_PATH = ./src
-
-LIB_PATH = ./lib
-LIB_NAME = webserv.a
-
-LIB = $(LIB_PATH)/$(LIB_NAME)
-
-SRC = $(notdir $(wildcard ./src/*.cpp))
-OBJ=$(addprefix $(OBJ_PATH)/, $(SRC:.cpp=.o))
-
-all: pre $(NAME)
-
-clean:
-	rm -fR ./obj
-	rm -fR ./lib
-
-fclean: clean
-	sudo rm /etc/hosts
-	sudo cp ./hosts_backup /etc/hosts
-
-	rm -f $(NAME)
-
-re: fclean all
-
-pre:
-
-	mkdir -p obj
-	mkdir -p lib
-	cp /etc/hosts ./hosts_backup
-	sudo rm /etc/hosts
-	sudo cp ./config_hosts /etc/hosts
+override CXXFLAGS += -Wall -Wextra -Werror -std=c++98
+override CPPFLAGS += -Iinclude
+override LDFLAGS	+=
 
 
-$(NAME): $(LIB)
-	$(CC) $(FLAGS) -g  main.cpp  -L. -I ./src $(LIB) -o $@
+OBJ_DIR = ./build
+SRC_DIR = ./src
 
-$(LIB): $(OBJ)
-	ar rcs $@ $(OBJ)
-	ranlib $@
+SRC   = $(notdir $(wildcard ./src/*.cpp))
+OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 
-$(OBJ_PATH)/%.o:	$(SRC_PATH)/%.cpp
-	$(CC) -g $(FLAGS) -c $< -o $@
+.PHONY: intra run
 
-.PHONY: intra run pre
+all: $(NAME)
+
+$(NAME): $(OBJ_FILES)
+	$(CXX) $(LDFLAGS) $^ -o $@
+
+$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp
+	mkdir -p $(OBJ_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 intra:
 	./webserv ./www/conf/conf_tester
+
 run:
 	./webserv ./www/conf/conf
 
+clean:
+	$(RM) -r $(OBJ_DIR)
+
+fclean: clean
+	$(RM) $(NAME)
+
+re: fclean all
