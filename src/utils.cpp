@@ -1,5 +1,4 @@
 #include "utils.hpp"
-#include "http.hpp"
 
 #define DOUBLE_CRLF "\r\n\r\n"
 #define DEFAULT "default"

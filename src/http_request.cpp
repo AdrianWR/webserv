@@ -1,248 +1,191 @@
 #include "http_request.hpp"
-#include "http_response.hpp"
-#include "error.hpp"
+#include "log.hpp"
+#include "utils.hpp"
+#include <algorithm>
 #include <sstream>
-#include <cstdlib>
-#include <cstdio>
+#include <string>
 #include <cstring>
-#include <sys/types.h>
-#include <sys/wait.h>
 
+#define SP " "
+#define CRLF "\r\n"
 #define HOST "host"
+#define METHOD "method"
 
-HttpRequestHandler &HttpRequestFactory::makeRequest(const HttpRequest &message)
+const std::string HttpRequest::_crlf = "\r\n";
+
+const HttpRequest::MethodMap HttpRequest::_methodMap = HttpRequest::_initializeMethodNames();
+
+HttpRequest::HttpRequest() : _method(HTTP_GET)
 {
-  HttpMethod method = message.getMethod();
-  switch (method)
-  {
-  case HTTP_GET:
-    return *(new GetRequestHandler(message));
-  case HTTP_POST:
-    return *(new PostRequestHandler(message));
-  case HTTP_DELETE:
-    return *(new DeleteRequestHandler(message));
-  default:
-    return *(new HttpRequestHandler(message));
-  }
 }
 
-HttpRequestHandler::HttpRequestHandler(const HttpRequest &message)
+HttpRequest::HttpRequest(const HttpRequest &m) : _method(m._method), _path(m._path)
 {
-  _headers = message.getHeaders();
-  _host = _headers[HOST].substr(0, _headers[HOST].find(":"));
-  _port = _headers[HOST].substr(_headers[HOST].rfind(":") + 1);
-  _method = message.getMethod();
-  _uri = _host + message.getPath();
-  _body = (_headers.find("body") != _headers.end() ? _headers["body"] : "");
-  _content_length = (_headers.find("content-length") != _headers.end() ? StringToInt(_headers["content-length"]) : 0);
 }
 
-HttpRequestHandler::~HttpRequestHandler()
+HttpRequest &HttpRequest::operator=(const HttpRequest &m)
 {
-  if (_get_request_content(_path) == CONTENT_CGI)
-  {
-    free(_cmd[0]);
-    free(_cmd[1]);
-    delete[] _cmd;
-    if (_method == HTTP_POST)
-    {
-      free(_env[0]);
-      delete[] _env;
-    }
-  }
+	if (this != &m)
+	{
+		_method = m._method;
+		_path = m._path;
+	}
+	return *this;
 }
 
-bool HttpRequestHandler::_forbidden_method(LocationBlock location_config)
+HttpRequest::HttpRequest(const char *buffer, int &fd)
 {
-  return (location_config._allowed_methods[_method] == HTTP_UNKNOWN);
+	this->parse(buffer, fd);
 }
 
-RequestedContentType HttpRequestHandler::_get_request_content(std::string path)
+HttpRequest::~HttpRequest() {}
+
+HttpRequest::MethodMap HttpRequest::_initializeMethodNames()
 {
-  if (_cgi_pass != "" && (path.find(this->_cgi_pass) != std::string::npos))
-  {
-    return CONTENT_CGI;
-  }
-  if (path.find_last_of("/") == path.size() - 1)
-  {
-    return CONTENT_DIR;
-  }
-  else
-  {
-    return CONTENT_FILE;
-  }
+	HttpRequest::MethodMap method_names;
+
+	method_names["GET"] = HTTP_GET;
+	method_names["POST"] = HTTP_POST;
+	method_names["PUT"] = HTTP_PUT;
+	method_names["DELETE"] = HTTP_DELETE;
+	method_names["HEAD"] = HTTP_HEAD;
+	method_names["OPTIONS"] = HTTP_OPTIONS;
+
+	return method_names;
 }
 
-bool HttpRequestHandler::_check_redirection()
+HttpRequest::HeaderField HttpRequest::_parse_header_field(const std::string &str)
 {
-  return (_location_config._redirection != "");
+	std::string::size_type pos = str.find(':');
+	if (pos == std::string::npos)
+		return HeaderField("", "");
+	std::string key = str.substr(0, pos);
+	std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+	std::string value = str.substr(pos + 1);
+	if (value.size() > 0 && value[0] == ' ')
+		value.erase(0, 1);
+	return HeaderField(key, value);
 }
 
-std::string HttpRequestHandler::_extract_location(std::string uri)
+HttpRequest::HeaderMap HttpRequest::_parse_status_line(const std::string &str)
 {
-  ConfigBlock::MapOfLocations::iterator it;
-  std::string key;
-  bool match;
-  size_t p;
+	std::stringstream ss(str);
+	HeaderMap headers;
+	std::string method;
 
-  size_t pos1 = uri.find("/");
-  std::string s = uri.substr(pos1);
-  match = false;
-  for (it = _server_config._location.begin(); it != _server_config._location.end(); it++)
-  {
-    key = it->first;
-    if (key != "/")
-    {
-      p = s.find(key);
-      if (p == 0)
-      {
-        match = true;
-        break;
-      }
-    };
-  }
-  if (!match)
-  {
-    key = "/";
-  }
-  return key;
+	ss >> method >> _path >> _version;
+	if (ss.fail())
+		throw HttpException("Invalid status line !");
+	if (method.size() == 0)
+		throw HttpException("Invalid status line: method is empty");
+	_method = _methodMap.at(method);
+	return headers;
 }
 
-std::string HttpRequestHandler::_generate_path(std::string uri, std::string location,
-                                               std::string root)
+size_t HttpRequest::_get_chunk_size(int &fd)
 {
-  if (location == "/")
-    root += "/";
+	std::string line;
+	std::size_t pos;
 
-  std::string uri_exhost = uri.substr(uri.find("/"));
-  size_t pos = uri_exhost.find(location);
-  size_t loc_len = location.length();
-  std::string uri_root = "." + uri_exhost.replace(pos, loc_len, root);
-  std::string full_path = uri_root;
-
-  // Se uri_root eh dir e nao termina em / -> add /
-  if (path_is(uri_root) == "dir" && !end_in_slash(uri_root))
-  {
-    full_path = full_path + "/";
-  }
-
-  return (full_path);
+	receive_line(fd, line, CRLF);
+	if (line == "")
+		return (0);
+	pos = line.find(SP);
+	return (_convert_chunk_size(line.substr(0, pos)));
 }
 
-void HttpRequestHandler::_load_config(Config &config)
+size_t HttpRequest::_convert_chunk_size(std::string chunk_size)
 {
-  _config_map = config.getBlockMap();
-  std::string conf_key = _host + ":" + _port;
-  _server_config = _config_map[conf_key];
+	std::size_t size;
+	std::stringstream s_stream(chunk_size);
 
-  if (_server_config._block_name == "default")
-  {
-    LOG(DEBUG) << "Invalid host:port requested";
-    throw HttpRequest::HttpException("Invalid host:port requested");
-  }
-  _location = _extract_location(_uri);
-  _location_config = _server_config._location[_location];
-  _cgi_pass = this->_location_config._cgi_pass;
+	s_stream >> std::hex >> size;
+	return (size);
 }
 
-HttpResponse HttpRequestHandler::_fetch_cgi()
+void HttpRequest::_next_line(std::string &ss, std::string::size_type pos)
 {
-  HttpResponse response;
-  int pid;
-  std::string executable;
-  std::string file_path;
-  char **cmd = new char *[3];
-
-  std::FILE *temp_file = std::tmpfile();
-  int temp_fd = fileno(temp_file);
-
-  executable = "/usr/bin/python3";
-  file_path = this->_path;
-
-  memset(cmd, 0, 3 * sizeof(char *));
-  cmd[0] = strdup(executable.c_str());
-  cmd[1] = strdup(file_path.c_str());
-  this->_cmd = cmd;
-  if (this->_method == HTTP_GET)
-  {
-    this->_env = NULL;
-  }
-  else
-  {
-    char **env = new char *[1];
-    memset(env, 0, 1 * sizeof(char *));
-    std::string var_string = "QUERY_STRING=" + _body;
-    env[0] = strdup((var_string.c_str()));
-    this->_env = env;
-  }
-  pid = fork();
-  if (pid == 0)
-  {
-    dup2(temp_fd, STDOUT_FILENO);
-    execve(this->_cmd[0], this->_cmd, this->_env);
-    close(temp_fd);
-  }
-  waitpid(pid, NULL, 0);
-  response = _get_script_output(temp_file);
-  fclose(temp_file);
-
-  return response;
+	ss.erase(0, pos + _crlf.size());
 }
 
-static int _get_file_size(std::FILE *temp_file)
+/**
+ * @brief Parse the header from the client. The header parsed is stored in the
+ * Http object to be used in other methods.
+ * @param buffer The bytes buffer containing the request header.
+ * @return The header map. The keys are the header names. The values are the
+ * values, as defined in RFC 2616.
+ */
+void HttpRequest::parse(const char *buffer, int &fd)
 {
-  int size;
+	HeaderMap headers;
+	std::string ss(buffer);
+	std::string body;
+	size_t delimiter_size = _crlf.size();
 
-  fseek(temp_file, 0, SEEK_END);
-  size = ftell(temp_file);
-  rewind(temp_file);
-  return (size);
+	// Parse first header line
+	std::string::size_type pos = ss.find(_crlf);
+	if (pos == std::string::npos)
+		throw HttpException("Failed to parse header");
+	std::string header = ss.substr(0, pos);
+	headers = _parse_status_line(header);
+	ss.erase(0, pos + delimiter_size);
+
+	// Parse remaining header lines
+	std::string header_line;
+	while (ss.size() > 0)
+	{
+		pos = ss.find(_crlf);
+		header_line = ss.substr(0, pos);
+		if (header_line.size() == 0)
+			break;
+		headers.insert(_parse_header_field(header_line));
+		ss.erase(0, pos + delimiter_size);
+	}
+
+	// Checar se o key existe
+	if (headers.find("transfer-encoding") != headers.end())
+	{
+		if (headers["transfer-encoding"] == "chunked")
+		{
+			int length = 0;
+			std::string temp_line;
+			std::size_t chunk_size;
+			chunk_size = this->_get_chunk_size(fd);
+			while (chunk_size > 0)
+			{
+				receive_line(fd, temp_line, CRLF);
+				body += temp_line;
+				length += chunk_size;
+				receive_line(fd, temp_line, CRLF);
+				chunk_size = this->_get_chunk_size(fd);
+			}
+			headers.insert(HeaderField("body", body));
+			headers.insert(HeaderField("content-length", IntToString(length)));
+		}
+	}
+	if (_method == HTTP_POST)
+	{
+		body = ss.substr(2);
+		headers.insert(HeaderField("body", body));
+	}
+
+	_headers = headers;
 }
 
-HttpResponse HttpRequestHandler::_get_script_output(std::FILE *temp_file)
+HttpMethod HttpRequest::getMethod() const { return _method; }
+
+const std::string HttpRequest::getPath() const { return _path; }
+
+const HttpRequest::HeaderMap HttpRequest::getHeaders() const { return _headers; }
+
+std::ostream &operator<<(std::ostream &os,
+												 const HttpRequest::HeaderMap &header_map)
 {
+	HttpRequest::HeaderMap::const_iterator it;
 
-  HttpResponse response;
-
-  int size = _get_file_size(temp_file);
-  char *buffer = new char[size + 1];
-
-  memset(buffer, 0, size + 1);
-  fread(buffer, 1, size, temp_file);
-  if (size < 0)
-  {
-    Error error(500, _server_config);
-    response.set(error.code, error.msg, error.body);
-  }
-  else
-  {
-    response.set(200, "OK", std::string(buffer));
-  }
-  delete[] buffer;
-
-  return response;
-}
-
-HttpResponse HttpRequestHandler::create_response(Config &config)
-{
-  // Defaults to unknown request handler
-
-  HttpResponse response;
-
-  try
-  {
-    _load_config(config);
-  }
-  catch (HttpRequest::HttpException &e)
-  {
-    Error error(404, this->_server_config);
-    response.add_content_type(".html");
-    response.set(error.code, error.msg, "<html> Error 404 </html>");
-    return response;
-  }
-
-  Error error(STATUS_CODE_METHOD_NOT_ALLOWED, _server_config);
-  response.set(error.code, error.msg, error.body);
-
-  return response;
+	for (it = header_map.begin(); it != header_map.end(); it++)
+	{
+		os << it->first << ": " << it->second << std::endl;
+	}
+	return os;
 }

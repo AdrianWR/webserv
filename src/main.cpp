@@ -1,5 +1,4 @@
 #include "log.hpp"
-#include "req_handler.hpp"
 #include "server.hpp"
 #include "socket.hpp"
 #include "utils.hpp"

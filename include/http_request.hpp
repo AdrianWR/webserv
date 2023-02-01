@@ -1,114 +1,65 @@
-#ifndef HTTP_REQUEST_HPP
-#define HTTP_REQUEST_HPP
+#ifndef HTTP_HPP
+#define HTTP_HPP
 
-#include "http.hpp"
-#include "http_response.hpp"
+#include "utils.hpp"
+#include "enum.hpp"
+#include <map>
+#include <string>
 
-enum RequestedContentType
+class HttpRequest
 {
-  CONTENT_CGI,
-  CONTENT_DIR,
-  CONTENT_FILE
-};
 
-/**
- * @brief HttpRequest
- * @details
- * This class is used to represent an HTTP request.
- */
-
-class HttpRequestHandler
-{
 public:
+  class HttpException : public std::exception
+  {
+  public:
+    HttpException(const std::string &message) : message(message) {}
+    ~HttpException() throw() {}
+    virtual const char *what() const throw() { return message.c_str(); }
+
+  private:
+    std::string message;
+  };
+
+public:
+  typedef std::pair<std::string, std::string> HeaderField;
   typedef std::map<std::string, std::string> HeaderMap;
+  typedef std::map<std::string, HttpMethod> MethodMap;
 
 protected:
+  static const MethodMap _methodMap;
+  static const std::map<HttpStatusCode, std::string> _status_codes;
+  static const std::string _crlf;
+  static const std::string _header_delimiter;
+  static const std::string _http_version;
+  static MethodMap _initializeMethodNames();
+
   HttpMethod _method;
   HeaderMap _headers;
-  std::string _host;
-  std::string _port;
-  std::string _uri;
-  std::string _body;
-  std::string _cgi_pass; // Post
-  std::string _location;
   std::string _path;
-  int _content_length;
-  Config::BlockMap _config_map;
-  ConfigBlock _server_config;
-  LocationBlock _location_config;
+  std::string _version;
+  std::string _request_body; // Post
 
-  char **_env;
-  char **_cmd;
-
-  bool _forbidden_method(LocationBlock location_config);
-  bool _check_redirection();
-  RequestedContentType _get_request_content(std::string path);
-  std::string _extract_location(std::string uri);
-  std::string _generate_path(std::string uri, std::string location, std::string root);
-  HttpResponse _get_script_output(std::FILE *temp_file);
-  HttpResponse _fetch_cgi();
-  void _load_config(Config &config);
+  HeaderMap _parse_status_line(const std::string &statusLine);
+  HeaderField _parse_header_field(const std::string &str);
+  size_t _get_chunk_size(int &fd);
+  size_t _convert_chunk_size(std::string chunk_size);
+  void _next_line(std::string &ss, std::string::size_type pos);
 
 public:
-  HttpRequestHandler(){};
-  HttpRequestHandler(const HttpRequest &);
-  virtual ~HttpRequestHandler();
+  HttpRequest();
+  HttpRequest(const HttpRequest &);
+  HttpRequest &operator=(const HttpRequest &);
+  HttpRequest(const char *buffer, int &fd); // Construct with header and body from client
+  ~HttpRequest();
 
-  virtual HttpResponse create_response(Config &config);
+  HttpMethod getMethod() const;
+  const HeaderMap getHeaders() const;
+  const std::string getPath() const;
+  void parse(const char *buffer, int &fd);
 };
 
-class GetRequestHandler : public HttpRequestHandler
-{
-protected:
-  HttpResponse _fetch_file(std::string path);
-  HttpResponse _fetch_dir(std::string path, std::string host, std::string port);
-  HttpResponse _try_autoindex(std::string host, std::string port);
-  HttpResponse _try_index_page(std::string path);
-
-public:
-  GetRequestHandler(){};
-  GetRequestHandler(const HttpRequest &);
-
-  HttpResponse create_response(Config &config);
-};
-
-class PostRequestHandler : public HttpRequestHandler
-{
-protected:
-  HttpResponse _fetch_file(std::string path);
-
-public:
-  PostRequestHandler(){};
-  PostRequestHandler(const HttpRequest &);
-
-  HttpResponse create_response(Config &config);
-};
-
-class DeleteRequestHandler : public HttpRequestHandler
-{
-protected:
-  HttpResponse _fetch_file(std::string path);
-
-public:
-  DeleteRequestHandler(){};
-  DeleteRequestHandler(const HttpRequest &);
-
-  HttpResponse create_response(Config &config);
-};
-
-class UnknownRequestHandler : public HttpRequestHandler
-{
-public:
-  UnknownRequestHandler(){};
-  UnknownRequestHandler(const HttpRequest &);
-
-  HttpResponse create_response(Config &config);
-};
-
-class HttpRequestFactory
-{
-public:
-  static HttpRequestHandler &makeRequest(const HttpRequest &message);
-};
+std::ostream &operator<<(std::ostream &os,
+                         const HttpRequest::HeaderMap &header_map);
 
 #endif
