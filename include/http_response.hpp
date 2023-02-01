@@ -1,5 +1,5 @@
-#ifndef HTTPRESPONSE_HPP
-#define HTTPRESPONSE_HPP
+#ifndef HTTP_RESPONSE_HPP
+#define HTTP_RESPONSE_HPP
 
 #include <map>
 #include <vector>

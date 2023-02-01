@@ -2,6 +2,7 @@
 #include "server.hpp"
 #include "socket.hpp"
 #include "utils.hpp"
+#include "config.hpp"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>

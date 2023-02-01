@@ -1,4 +1,5 @@
 #include "http_request_handler.hpp"
+#include "autoindex.hpp"
 #include "error.hpp"
 
 GetRequestHandler::GetRequestHandler(const HttpRequest &m) : HttpRequestHandler(m) {}
@@ -19,6 +20,7 @@ HttpResponse GetRequestHandler::_try_index_page(std::string path)
     std::string output = file_to_string(full_path);
     if (!output.empty())
     {
+      response.add_content_type(full_path);
       response.set(200, "OK", output);
       break;
     };

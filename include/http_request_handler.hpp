@@ -3,6 +3,7 @@
 
 #include "http_request.hpp"
 #include "http_response.hpp"
+#include "config.hpp"
 
 enum RequestedContentType
 {

@@ -1,7 +1,6 @@
 #ifndef ERROR_HTTP
 #define ERROR_HTTP
 
-#include "utils.hpp"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -9,11 +8,14 @@
 #include <set>
 #include <string>
 #include <vector>
-
+#include "utils.hpp"
+#include "config.hpp"
 #include "log.hpp"
+
 // *****************************************************
 // Class Error
 // *****************************************************
+
 class Error
 {
 public:

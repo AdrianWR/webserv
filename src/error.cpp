@@ -18,7 +18,7 @@ const Error &Error::set(size_t c, ConfigBlock sc)
 	error_dic[403] = "Forbidden";
 	error_dic[404] = "Not Found";
 	error_dic[405] = "Method Not Allowed";
-	error_dic[413] = "Entity to Large"; // so para post
+	error_dic[413] = "Entity Too Large"; // so para post
 	error_dic[500] = "Internal Server Error";
 
 	// Init Values

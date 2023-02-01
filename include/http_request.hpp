@@ -1,5 +1,5 @@
-#ifndef HTTP_HPP
-#define HTTP_HPP
+#ifndef HTTP_REQUEST_HPP
+#define HTTP_REQUEST_HPP
 
 #include "utils.hpp"
 #include "enum.hpp"

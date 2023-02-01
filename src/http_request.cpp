@@ -10,6 +10,9 @@
 #define CRLF "\r\n"
 #define HOST "host"
 #define METHOD "method"
+#define TRANSFER_ENCODING "transfer-encoding"
+#define CHUNKED "chunked"
+#define BODY "body"
 
 const std::string HttpRequest::_crlf = "\r\n";
 
@@ -143,9 +146,9 @@ void HttpRequest::parse(const char *buffer, int &fd)
 	}
 
 	// Checar se o key existe
-	if (headers.find("transfer-encoding") != headers.end())
+	if (headers.find(TRANSFER_ENCODING) != headers.end())
 	{
-		if (headers["transfer-encoding"] == "chunked")
+		if (headers[TRANSFER_ENCODING] == CHUNKED)
 		{
 			int length = 0;
 			std::string temp_line;
@@ -159,14 +162,14 @@ void HttpRequest::parse(const char *buffer, int &fd)
 				receive_line(fd, temp_line, CRLF);
 				chunk_size = this->_get_chunk_size(fd);
 			}
-			headers.insert(HeaderField("body", body));
+			headers.insert(HeaderField(BODY, body));
 			headers.insert(HeaderField("content-length", IntToString(length)));
 		}
 	}
 	if (_method == HTTP_POST)
 	{
 		body = ss.substr(2);
-		headers.insert(HeaderField("body", body));
+		headers.insert(HeaderField(BODY, body));
 	}
 
 	_headers = headers;
