@@ -13,8 +13,9 @@ override LDFLAGS	+=
 OBJ_DIR = ./build
 SRC_DIR = ./src
 
-SRC   = $(notdir $(wildcard ./src/*.cpp))
-OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
+SRC_FILES   = $(wildcard $(SRC_DIR)/*.cpp)
+INCLUDE_FILES = $(wildcard include/*.hpp)
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 .PHONY: intra run
 
@@ -23,15 +24,15 @@ all: $(NAME)
 $(NAME): $(OBJ_FILES)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.cpp $(INCLUDE_FILES)
 	mkdir -p $(OBJ_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-intra:
-	./webserv ./www/conf/conf_tester
+intra: $(NAME)
+	./$< ./www/conf/conf_tester
 
-run:
-	./webserv ./www/conf/conf
+run: $(NAME)
+	./$< ./www/conf/conf
 
 clean:
 	$(RM) -r $(OBJ_DIR)

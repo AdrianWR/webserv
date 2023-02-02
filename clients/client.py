@@ -1,6 +1,7 @@
 import http.client
 import time
 
+
 def chunk_data(data, chunk_size):
 	dl = len(data)
 	ret = ""
@@ -17,7 +18,7 @@ def chunk_data(data, chunk_size):
 
 
 def set_headers(connection: http.client.HTTPConnection):
-	url = "/uploadok/py.txt"
+	url = "/uploadok/pyc.txt"
 	
 	connection.putrequest("POST", url)
 	connection.putheader("Transfer-Encoding", "chunked")

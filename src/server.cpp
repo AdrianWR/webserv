@@ -72,10 +72,8 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 			break;
 		}
 	}
-	LOG(DEBUG) << "total_bytes_read: " << total_bytes_read;
 	if (bytes_read <= 0)
 	{
-		LOG(DEBUG) << "Closing fd: " << fd;
 		close(fd);
 		fd = -1;
 	}
@@ -148,9 +146,16 @@ void HttpServer::run(Config config)
 		// Check for new clients to handle
 		for (std::size_t i = listeners_size; i < fds.size(); i++)
 		{
-			if (fds[i].fd > 0 && fds[i].revents & POLLIN)
+			if (fds[i].fd > 0 && (fds[i].revents & POLLIN))
 			{
-				_handleConnection(fds[i].fd, config);
+				try
+				{
+					_handleConnection(fds[i].fd, config);
+				}
+				catch (std::exception &e)
+				{
+					LOG(ERROR) << e.what();
+				}
 			}
 			else if (fds[i].fd <= 0)
 			{

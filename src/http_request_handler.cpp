@@ -39,17 +39,6 @@ HttpRequestHandler::HttpRequestHandler(const HttpRequest &message)
 
 HttpRequestHandler::~HttpRequestHandler()
 {
-  if (_get_request_content(_path) == CONTENT_CGI)
-  {
-    free(_cmd[0]);
-    free(_cmd[1]);
-    delete[] _cmd;
-    if (_method == HTTP_POST)
-    {
-      free(_env[0]);
-      delete[] _env;
-    }
-  }
 }
 
 bool HttpRequestHandler::_forbidden_method(LocationBlock location_config)
@@ -153,6 +142,16 @@ HttpResponse HttpRequestHandler::_fetch_cgi()
   std::string file_path;
   char **cmd = new char *[3];
 
+  // Check if script exists in path
+  std::ifstream file(_path.c_str(), std::ifstream::in);
+  if (!file.is_open())
+  {
+    Error error(404, _server_config);
+    response.set(error.code, error.msg, error.body);
+    return response;
+  }
+  file.close();
+
   std::FILE *temp_file = std::tmpfile();
   int temp_fd = fileno(temp_file);
 
@@ -185,6 +184,16 @@ HttpResponse HttpRequestHandler::_fetch_cgi()
   waitpid(pid, NULL, 0);
   response = _get_script_output(temp_file);
   fclose(temp_file);
+
+  // Free stuff
+  free(_cmd[0]);
+  free(_cmd[1]);
+  delete[] _cmd;
+  if (_method == HTTP_POST)
+  {
+    free(_env[0]);
+    delete[] _env;
+  }
 
   return response;
 }
