@@ -2,10 +2,9 @@ server {
 	listen 4242;
 	listen [::]:4242;
 
-  server_name www.site1.com
+  server_name www.site1.com;
 
 	root /var/www/example;
-	index index.html index.htm;
 
 	location / {
 		root /var/www/example;
