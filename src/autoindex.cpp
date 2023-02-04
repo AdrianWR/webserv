@@ -28,7 +28,7 @@ AutoIndexGenerator::operator=(AutoIndexGenerator const &src)
 
 std::string AutoIndexGenerator::getPage(const char *path,
                                         std::string const &host, int port,
-                                        std::string loc)
+                                        std::string &uri_path)
 {
   std::string dirName(path);
   LOG(DEBUG) << "dirname: " << dirName;
@@ -48,12 +48,12 @@ std::string AutoIndexGenerator::getPage(const char *path,
     std::cerr << "Error: could not open [" << path << "]" << std::endl;
     return "";
   }
-  if (dirName[0] != '/')
-    dirName = "/" + dirName;
+  if (!uri_path.empty() && uri_path[uri_path.length() - 1] == '/')
+    uri_path.erase(uri_path.end() - 1);
   for (struct dirent *dirEntry = readdir(dir); dirEntry;
        dirEntry = readdir(dir))
   {
-    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), loc, host, port);
+    page += AutoIndexGenerator::getLink(std::string(dirEntry->d_name), uri_path, host, port);
   }
   page += "\
     </p>\n\
@@ -64,11 +64,11 @@ std::string AutoIndexGenerator::getPage(const char *path,
 }
 
 std::string AutoIndexGenerator::getLink(std::string const &dirEntry,
-                                        std::string const &dirName,
+                                        std::string const &uri_path,
                                         std::string const &host, int port)
 {
   std::stringstream ss;
   ss << "\t\t<p><a href=\"http://" + host + ":" << port
-     << dirName + "/" + dirEntry + "\">" + dirEntry + "</a></p>\n";
+     << uri_path + "/" + dirEntry + "\">" + dirEntry + "</a></p>\n";
   return ss.str();
 }

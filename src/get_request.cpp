@@ -38,18 +38,19 @@ HttpResponse GetRequestHandler::_try_index_page(std::string path)
 HttpResponse GetRequestHandler::_try_autoindex(std::string host, std::string port)
 {
   HttpResponse response;
+  std::string _uri_path = _uri.substr(_uri.find("/"));
 
   // se autoindex on executa autoindex
   if (_location_config._autoindex)
   {
     AutoIndexGenerator auto_index;
-    std::string ai_page = auto_index.getPage(_path.c_str(), host, StringToInt(port), _location);
+    std::string ai_page = auto_index.getPage(_path.c_str(), host, StringToInt(port), _uri_path);
     response.add_content_type(".html");
     response.set(200, "OK", ai_page);
   }
   else
   {
-    Error error(404, _server_config);
+    Error error(403, _server_config);
     response.set(error.code, error.msg, error.body);
   };
 
