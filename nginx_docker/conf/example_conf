@@ -1,0 +1,20 @@
+server {
+	listen 4242;
+	listen [::]:4242;
+
+  server_name www.site1.com;
+
+	root /var/www/example;
+
+	location / {
+		root /var/www/example;
+    autoindex on;
+	}
+
+  location /test {
+		root /var/www/example;
+	}
+
+	access_log /var/log/nginx/nginx.vhost.access.log;
+	error_log /var/log/nginx/nginx.vhost.error.log;
+}
