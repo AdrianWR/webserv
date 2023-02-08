@@ -35,7 +35,6 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 	std::string temp;
 	char c = {0};
 	int bytes_read = 1;
-	int total_bytes_read = 0;
 
 	while (bytes_read > 0)
 	{
@@ -44,7 +43,6 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 		if (bytes_read <= 0)
 			break;
 		buffer += c;
-		total_bytes_read += bytes_read;
 		if (ends_in_two_delimiters(buffer))
 		{
 			// Read body
@@ -66,13 +64,12 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 					if (bytes_read <= 0)
 						break;
 					buffer += c;
-					total_bytes_read += bytes_read;
 				}
 			}
 			break;
 		}
 	}
-	if (bytes_read <= 0)
+	if (bytes_read < 0)
 	{
 		close(fd);
 		fd = -1;
@@ -86,6 +83,8 @@ void HttpServer::_handleConnection(int &fd, Config &config)
 		std::string buff = response.serialize();
 		if (send(fd, buff.c_str(), buff.size(), 0) <= 0)
 		{
+			close(fd);
+			fd = -1;
 			throw HttpServerException("Error writing to socket");
 		}
 		delete &requestHandler;
@@ -137,7 +136,7 @@ void HttpServer::run(Config config)
 			if (fds[i].revents & POLLIN)
 			{
 				int new_fd = TCPServerSocket::accept_connection(fds[i].fd);
-				struct pollfd new_pollfd = {new_fd, POLLIN, 0};
+				struct pollfd new_pollfd = {new_fd, POLLIN | POLLOUT, 0};
 				fds.push_back(new_pollfd);
 				LOG(DEBUG) << "New fd accepted: " << new_fd;
 			}
@@ -146,7 +145,7 @@ void HttpServer::run(Config config)
 		// Check for new clients to handle
 		for (std::size_t i = listeners_size; i < fds.size(); i++)
 		{
-			if (fds[i].fd > 0 && (fds[i].revents & POLLIN))
+			if (fds[i].fd > 0 && (fds[i].revents & POLLIN || fds[i].revents & POLLOUT))
 			{
 				try
 				{

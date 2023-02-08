@@ -69,17 +69,22 @@ bool HttpRequestHandler::_check_redirection()
 
 std::string HttpRequestHandler::_extract_location(std::string uri)
 {
+  // pega uri da 1a barra em diante (inclusive barrra)
+  // troca location /palavra por root (./dir/)
+
   ConfigBlock::MapOfLocations::iterator it;
   std::string key;
   bool match;
   size_t p;
 
+  LOG(INFO) << "uri: " << uri;
   size_t pos1 = uri.find("/");
   std::string s = uri.substr(pos1);
   match = false;
   for (it = _server_config._location.begin(); it != _server_config._location.end(); it++)
   {
     key = it->first;
+    LOG(INFO) << "key: " << key;
     if (key != "/")
     {
       p = s.find(key);
@@ -90,6 +95,7 @@ std::string HttpRequestHandler::_extract_location(std::string uri)
       }
     };
   }
+  LOG(INFO) << "match? : " << match;
   if (!match)
   {
     key = "/";
@@ -132,6 +138,8 @@ void HttpRequestHandler::_load_config(Config &config)
   _location = _extract_location(_uri);
   _location_config = _server_config._location[_location];
   _cgi_pass = this->_location_config._cgi_pass;
+  LOG(INFO) << "LOCATION: " << _location;
+  LOG(INFO) << "URI: " << _uri;
 }
 
 HttpResponse HttpRequestHandler::_fetch_cgi()

@@ -53,6 +53,7 @@ HttpResponse DeleteRequestHandler::create_response(Config &config)
   }
 
   _path = _generate_path(_uri, _location, _location_config._root);
+
   switch (_get_request_content(_path))
   {
   case CONTENT_CGI:

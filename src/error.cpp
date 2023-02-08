@@ -57,14 +57,14 @@ std::string Error::fetch_error_page(size_t code, ConfigBlock sc)
 	page_path = sc._error_page[code];
 	if (page_path == "")
 	{
-		body = "No Error Page 1";
+		body = "HTTP Error " + IntToString(code) + "\n";
 		return body;
 	}
 	// se nao achar arquivo, erro padrao
 	body = file_to_string(page_path);
-	if (body.size() == 0)
+	if (body.empty())
 	{
-		body = "No Error Page 2";
+		body = "HTTP Error " + IntToString(code) + "\n";
 		return body;
 	}
 
