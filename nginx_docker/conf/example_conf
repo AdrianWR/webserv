@@ -1,10 +1,33 @@
 server {
 	listen 4242;
-	listen [::]:4242;
+	listen 4244;
+	listen 4244;
 
   server_name www.site1.com;
 
 	root /var/www/example;
+
+	location / {
+		root /var/www/example;
+    autoindex on;
+	}
+
+  location /test {
+		root /var/www/example;
+	}
+
+	access_log /var/log/nginx/nginx.vhost.access.log;
+	error_log /var/log/nginx/nginx.vhost.error.log;
+}
+
+server {
+	listen 4243;
+	listen [::]:4243;
+
+  server_name www.site2.com;
+
+	root /var/www/example;
+	index example.html;
 
 	location / {
 		root /var/www/example;

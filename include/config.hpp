@@ -122,11 +122,12 @@ public:
                                       std::string &buffer);
   LocationBlock parse_location(std::fstream &fs, std::string buffer);
   void printLine(std::fstream &fileStream);
-  void generate_config_map();
+  bool generate_config_map();
 
   // Getters
   PortSet getAvailablePorts(void);
   BlockMap getBlockMap(void);
+  ConfigBlock getDefaultServerConfig(std::string port);
 };
 
 #endif

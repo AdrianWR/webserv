@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 
 #define HOST "host"
+#define DEFAULT "default"
 
 HttpRequestHandler &HttpRequestFactory::makeRequest(const HttpRequest &message)
 {
@@ -130,10 +131,14 @@ void HttpRequestHandler::_load_config(Config &config)
   std::string conf_key = _host + ":" + _port;
   _server_config = _config_map[conf_key];
 
-  if (_server_config._block_name == "default")
+  if (_server_config._block_name == DEFAULT)
   {
-    LOG(DEBUG) << "Invalid host:port requested";
-    throw HttpRequest::HttpException("Invalid host:port requested");
+    _server_config = config.getDefaultServerConfig(_port);
+    if (_server_config._block_name == DEFAULT)
+    {
+      LOG(INFO) << "Invalid host:port requested";
+      throw HttpRequest::HttpException("Invalid host:port requested");
+    }
   }
   _location = _extract_location(_uri);
   _location_config = _server_config._location[_location];

@@ -1,5 +1,8 @@
 #include "config.hpp"
 #include "utils.hpp"
+#include <set>
+#include <utility>
+#include <exception>
 
 // **********************************************************
 
@@ -205,18 +208,24 @@ ConfigBlock Config::parse_config_block_file(std::fstream &fileStream,
   return (stub);
 }
 
-void Config::generate_config_map()
+bool Config::generate_config_map()
 {
   ConfigBlock stub;
   std::string key;
 
   if (_config_vector.size() == 0)
-    return;
+    return true;
   for (size_t i = 0; i < _config_vector.size(); i++)
   {
     stub = _config_vector[i];
+    std::set<int> ports;
     for (size_t j = 0; j < stub._listen.size(); j++)
     {
+      std::pair<std::set<int>::iterator, bool> result = ports.insert(stub._listen[j]);
+      if (!result.second)
+      {
+        return false;
+      }
       for (size_t k = 0; k < stub._server_name.size(); k++)
       {
         key = stub._server_name[k] + ":" + IntToString(stub._listen[j]);
@@ -227,7 +236,8 @@ void Config::generate_config_map()
         _config_map[key]._server_name.push_back(stub._server_name[k]);
       }
     }
-  } // for config_vector
+  }
+  return true;
 }
 
 /**
@@ -264,10 +274,27 @@ bool Config::parse_file(std::string file)
     // se stub nano tem location -> colocar um location default
     _config_vector.push_back(stub);
   };
-  generate_config_map();
-  // Output config map to a file config_map.txt for easy checking
-  print_mapc(_config_map);
-  return true;
+  return generate_config_map();
+}
+
+ConfigBlock Config::getDefaultServerConfig(std::string port)
+{
+  ConfigBlock c;
+
+  vector_of_blocks::const_iterator it;
+  for (it = _config_vector.begin(); it != _config_vector.end(); it++)
+  {
+    std::vector<int>::const_iterator pit;
+    for (pit = it->_listen.begin(); pit != it->_listen.end(); pit++)
+    {
+      if (*pit == (int)StringToInt(port))
+      {
+        std::string key = it->_server_name[0] + ":" + port;
+        return _config_map[key];
+      }
+    }
+  }
+  return ConfigBlock();
 }
 
 // *****************************************************

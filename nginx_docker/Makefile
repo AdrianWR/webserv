@@ -22,10 +22,10 @@ build_no_cache:
 	docker build --no-cache=true -t $(IMAGE) .
 
 run_d:
-	docker run -d --rm -p 4242:4242 --name $(CONTAINER) -v "$(ROOT_PATH)/srcs:/var/www/example" -v "$(ROOT_PATH)/conf:/etc/nginx/sites-enabled" $(IMAGE)
+	docker run -d --rm -p 4242:4242 -p 4243:4243 --name $(CONTAINER) -v "$(ROOT_PATH)/srcs:/var/www/example" -v "$(ROOT_PATH)/conf:/etc/nginx/sites-enabled" $(IMAGE)
 
 run:
-	docker run --rm -p 4242:4242 --name $(CONTAINER) -v "$(ROOT_PATH)/srcs:/var/www/example" -v "$(ROOT_PATH)/conf:/etc/nginx/sites-enabled" $(IMAGE)
+	docker run --rm -p 4242:4242 -p 4243:4243 --name $(CONTAINER) -v "$(ROOT_PATH)/srcs:/var/www/example" -v "$(ROOT_PATH)/conf:/etc/nginx/sites-enabled" $(IMAGE)
 
 exec_bash:
 	docker exec -it $(CONTAINER) /bin/bash

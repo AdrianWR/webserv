@@ -1,9 +1,9 @@
 NAME = webserv
 
 CXX      = c++
-CXXFLAGS = -g -fsanitize=address
+CXXFLAGS =
 CPPFLAGS =
-LDFLAGS  = -fsanitize=address
+LDFLAGS  =
 
 override CXXFLAGS += -Wall -Wextra -Werror -std=c++98
 override CPPFLAGS += -Iinclude
